@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson01 Images As Arrays - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/pygments.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">All Lessons</a></li>
+                <li><a href="../../index.html#teaching">Back to Site</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=e8b29cc0"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Lesson-1:-Images-as-Arrays">Lesson 1: Images as Arrays<a class="anchor-link" href="#Lesson-1:-Images-as-Arrays">¶</a></h1><p>A digital image is just a grid of numbers. In this lesson we build a small image from scratch with NumPy, look at how grayscale and color images are represented, and display them with Matplotlib.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=400181a9">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=78c6caa4"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="A-grayscale-image-is-a-2D-array">A grayscale image is a 2D array<a class="anchor-link" href="#A-grayscale-image-is-a-2D-array">¶</a></h2><p>Each entry is a pixel intensity. For an 8-bit image, values range from 0 (black) to 255 (white).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=e4fd22d4">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">gray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+<span class="n">gray</span><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="mi">80</span><span class="p">,</span> <span class="mi">20</span><span class="p">:</span><span class="mi">80</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span>   <span class="c1"># a white square on a black background</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'shape:'</span><span class="p">,</span> <span class="n">gray</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s1">'dtype:'</span><span class="p">,</span> <span class="n">gray</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">'gray'</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Grayscale image (100x100)'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">'off'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>shape: (100, 100) dtype: uint8
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_png output_subarea">
+<img alt="No description has been provided for this image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYUAAAGaCAYAAADgo18GAAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjExLjEsIGh0dHBzOi8vbWF0cGxvdGxpYi5vcmcvctoD+AAAAAlwSFlzAAAPYQAAD2EBqD+naQAAEjVJREFUeJzt3AuwdfX8x/F16umu+6TSTfe7MRlNJKVCpCJFDWnSJHKtaAa5TpSRmGqEYca4CxVdRiUUhSTMoFITXSgp3e+X9Z/vb2Z/nPtz9nkOzvN/Xq+Zp+dpn7X3WWvtfdZ7r9/67TPS933fAUDXdUvZCwAMiAIAIQoAhCgAEKIAQIgCACEKAIQoABCiwJw45phjuk033XTePt5895GPfKR7wQte0Pks6ey9853v7PbZZ585fFaWTKKwiK6//vru6KOP7p7znOd06667bvfMZz6z/XC/7W1v6371q191S4qHHnqou/fee+ft481nN998c/eJT3yihXBkZGTM1+o1dOyxx3abbLJJt9pqq3Xnn3/+lI/zr3/9q3vHO97RbbbZZu21+JKXvKS79NJLF3nZmfpfr+u73vWu7sILL+zOO++8RdqOJV79mgtm5/Of/3y/zDLL9Pvtt19/4YUX9rfeemt/yy239Oeee26/11571a8P6S+99NIlYvceeeSR/Zprrjlnj/fQQw/19957b78kePvb395vuOGG/VNPPTXm9rPOOqvfcccd+5NPPrk/8cQT2+vp7LPPnnJ/bb/99v12223XX3nlle11eOyxx/YLFizoL7744lkvO1PzZV1f9apXtfVg9kRhln74wx/2IyMj/dFHHz3lMl/4whf6n/3sZ/2SYK6jsKR48MEH+9VWW61/3/veN+FroyPx1a9+ddoDbR2M6+u//e1vx9y+00479VtuueWsl52p+bKuFada/uqrr57VdtD3ho9m6fjjj+9WX3317uMf//iUyxxxxBFtKGng8MMP7571rGe1YZE3v/nN3cYbb9y9+MUvbl876aST2il3/VljjTXaMNQBBxzQXXXVVbl/fa/62i233DLhe5166qltfa677rr2/3/961/b99t666279dZbr9t11127L33pS92TTz455n61/Bvf+MZu8803757xjGe0U/OLLrooX5/Jek3n2muv7Q499NA2pLD22mu3/fHd7353VtcURu+/WucNNtig23777btvfetbGWaoZTbaaKNuiy22aPtkvGG25+yzz+6e97zndeuss05b75/+9KfdySef3O774IMPzsl21jDIPffc0+25554TvjZ+KGk6Z555Zhteefaznz3m9te85jXtOf7d73439LJ/+9vf2mt033337Z566qksd9ttt7XtfMUrXpHb/9frOrD77ru3dTnnnHNmvD6Mo4zDu+OOO9q7kQMOOGCo+732ta9twwT7779//53vfKe/8cYb+9NPP7197eGHH+7vvvvu9ufOO+/sf/Ob3/QHHnhgv8oqq/R/+ctf2jI33XRTv/TSS/fHH3/8hHdpm2++eU6bH3/88X7jjTfuX/SiF/VXXXVVf9ttt/WXX355f8QRR/TnnHNO7vfzn/+8X3HFFfvdd9+9ndHU8Fedkr/0pS/tb7/99hmv11RnCr/4xS/6lVZaqd97773bqX+t/6mnntovu+yy2e6pTPZ4g/130EEHtSG6erwPf/jD/VJLLdX/+Mc/7vfZZ5+2fXX7CSec0J6j888/f8xjzHR7vvnNb7YzwRraue6669o71Ve/+tXtOa/Hvf/+++dkO9/73ve2x7vvvvumXW66d9/1/C+//PL9vvvuO+kZbd3vy1/+8tDLltqftR9qPw9eW7vssku/1lprtdfLfFrXga233rrfddddJ103Fk4UZqF+8OsFWWObw6iDWt3vzDPPnNHyTzzxRL/qqqv2H/rQh3JbXb9YZ511+sceeyy31fWMety6xlH++Mc/tv+vU+npbLXVVi0m9YM+jMnWa7KDeI0Db7vttmPWtbznPe9pB+EHHnhg6CjUdp133nljbt9kk0361VdffUzwSm1bhWLY7XnyySf79ddfv3/hC184ZrlHHnmkX3fddSdEYVG28+CDD+5XXnnlha7jdAfaCkp97dBDD53ytfrJT35y6GVHb0eFt15nxxxzTPv3j370o3m5rmWPPfZobx6YHcNHszA4ZV5qqYm77/nPf36GJ+rPcccdN+brdZ9XvvKVk862OeGEE7rnPve5bbii7rvmmmt2999/f5vhNHDUUUd1t99+exvaGDjjjDO6FVdcsTvooIPa/9dw0dOe9rT2eDUb45FHHpnw/f785z+3IY9DDjmkW7BgwZTbOtP1Gu+GG27o/vCHP3QHHnhgt8wyy4z52l577dXdd9993ZVXXtkNa9lll+1e9rKXjblt2223bY+39957j7l9u+22m7COM9me2i+33nprt//++4+573LLLde9/OUvn9PtrKGjVVZZpVsUg2mskw3hDG4bLDPMsgMnnnhiGw6rYbZTTjml++hHP9rtscce83Jdy6qrrtrdfffds1o/um7qowFTWn/99TPmOl4dhGvcvsa3a0y8DkKj1Xjz+INHqYPKL3/5y+70009v49j1wq4Xfh3YHn300SxX1yBq/P+zn/1sG1etg9e5557bvf71r8/Bpe5bt1WQ6gBa32+nnXZqATjssMO6pZdeuo0LlxqXn85M12u8v//97+3vGoM/7bTTxvygP/HEE+3f//znP4d+ldX+Gx/j2u6nP/3pE+JWt9dBd9jtGaxXRWO8mhI5l9tZ61hBWhT1BqCe48mm8A5uq+tNwy47UK+Xmu5ZkazrMO9+97vn7bqW2p/1vDI7ojAL9U58q622ahceKwD1QzOw8sort78HB4TJ3umOV3G54IIL2kXQgw8+OLfXY9RZwWh1AHvLW97SLsT+6U9/ahdZax3qAutou+22W3uHWgekK664ovv2t7/dLnzXBeh6p1zvjsv4x5/teo1X78AHF+SPPPLISZdZaaWVumFNdnY23e2j30nOdHsGB5Q777xzwuONP8Av6nZWlOts4uGHH+5WWGGFbjZq22tCQZ39jTeYeFDRG3bZgTvuuKN97mbLLbdsZ0YVhQrgfFzXUs/lhhtuOKv1w4fXZu39739/e5c42QyXYT3++OPt7/HvbmrmxfjZQqXe7ddwUX3vL37xi22mzS677DLpY6+11lrdfvvt133jG99oM3Uuvvjidvs222zTznhqhsxUn6Iddr1Gqx/Wevz6fqOH00b/meyM6T9ppttTw1H1jnj0LKzBsOEll1wyp9u58847t7+vvvrqRdq2eo7rTcKNN9445vbvf//77U3MjjvuOKtla79UQGsIss6CP/axj7WzrNpn821dS52ZX3PNNWNm/TGkWV6LoO/74447rl10q4tv119/fWZM1GyfT33qU+1C2Fvf+tYxF0o32mijCfuu7lMXfetiZc2AqQu/dVFvt9126zfYYIM262W8ww8/vM0Kqe9x0kknjflafWDuqKOOajNmHn300fb4P/nJT9oMmZpNM1AXAmv960JefSiolrvhhhvaRd6aYTXMek12YbhmCNVsqTe96U39zTff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"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=3cd8d7d7"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="A-color-image-is-a-3D-array">A color image is a 3D array<a class="anchor-link" href="#A-color-image-is-a-3D-array">¶</a></h2><p>The third dimension holds the red, green, and blue channels, so the shape is <code>(height, width, 3)</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=d9497443">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+<span class="n">color</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span>        <span class="c1"># red channel on for the whole image</span>
+<span class="n">color</span><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="mi">80</span><span class="p">,</span> <span class="mi">20</span><span class="p">:</span><span class="mi">80</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span>  <span class="c1"># add green in the middle square -&gt; looks yellow</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'shape:'</span><span class="p">,</span> <span class="n">color</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s1">'dtype:'</span><span class="p">,</span> <span class="n">color</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Color image (100x100x3)'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">'off'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>shape: (100, 100, 3) dtype: uint8
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_png output_subarea">
+<img alt="No description has been provided for this image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYUAAAGaCAYAAADgo18GAAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjExLjEsIGh0dHBzOi8vbWF0cGxvdGxpYi5vcmcvctoD+AAAAAlwSFlzAAAPYQAAD2EBqD+naQAAERNJREFUeJzt3GmMJHUdx+HaZQEhcquIXHLJLb5AgpEoChoUATkUkSgeEQ0iEhBecHmAQSIBQfGAVwgmgsoRjnAoKkYDaFAIAVQQue/7kLvM75/017m3Z3cHdvB5kmGW6uqe6uqe+nT9q2rm9H3fdwDQdd1cawGAAVEAIEQBgBAFAEIUAAhRACBEAYAQBQBCFGahgw46qFtvvfVecz9rcfDNb36z22abbTrXdC5evvrVr3Y77bTTq70Y/xdE4RVw0003dfvvv3+3xRZbdG9+85u7t73tbd0HPvCB7oQTTugeeeSRaT/eM8880z3++OMzsqyv5s96td1xxx3dcccd10I4Z86cUbddffXV3cEHH9ytu+663YorrthddNFFkz5OvaYHHHBAt/7663errbZa98EPfrD7/e9/v9DzDmu2LOtzzz3XnX766d2HPvShbu211+422GCDbscdd+wuvPDCcfMeeOCB3aWXXjrhbSxi9WcumDmnnHJKP2/evH7XXXftr7jiiv7ee+/tb7311v7UU0/t11xzzf5973vftB/zi1/8Yr/KKqv0r4Rnnnmmf/zxx/v/B1/5ylf6tdZaq3/55ZdHTT/nnHP6rbbaqj/++OP7Y489tv4sTH/uuedOur4233zzfrPNNuuvueaa/s477+wPPvjg9h64/PLLF3jeYc2mZT366KP7/fffv//1r3/d33XXXf0NN9zQ3tu1zMcdd9y4+et3qJ4bM0sUZtAll1zSz5kzp21sJlIb28MPP3yxjsL/i6effrpfccUV+8MOO2zcbSMjccYZZ0y5oa2Ncd3+17/+ddT0rbfeut9www0XeN5hzdZlHWmTTTbpV1999QmDV8tw7bXXLtDPYziGj2bQkUce2a2wwgrdd77znQlvX3755btjjjlm1LQrr7yy+8hHPtKtscYa3eqrr97GUf/4xz8O9fOGue/nP//57u1vf3sbEvrSl77UrbPOOm0oazrHFEY+xuc+97luzTXX7DbffPPu5z//eYYZap4aEqihspNPPnnc49Y6qaGN+lp55ZW7t771rd0ee+zR/eUvfxk377nnntu9613vakNvNd7/u9/9rjv++OPbfZ9++ulR8958883dPvvs04ZOVl111Tb/L3/5y/muuxoGeeyxx7rtt99+3G1jh5KmcvbZZ7fhlXe84x2jpn/84x/v/v73v3d/+9vfpj3v3Xff3V6nnXfeuXv55Zcz37333tueZ73mg+mvhWVdbrnluiWWWGLc9Pe///3tPuedd97Qz5HpE4UZ8uCDD3Z//vOfu+22265bdtllh7pPvdnrjV8byUsuuaSNoVY4tt122+6CCy5YJPetjehgY14bwCuuuKL76Ec/Oq1jCoPHqKjstttuLTy1Qd9777273/72t91nPvOZtlH4wx/+0DbQdZDw4osvHjdG/O9//7t9/fOf/+zOOeecbu7cuW191bSBCs3uu+/evfOd72zR+8EPftC+aty8lmHkAeGrrrqq23LLLbuHH364O+uss9r633PPPdtynXLKKVOuv1rWUvdfULUs119/fbfJJpuMu20w7brrrpv2vBX4733ve208/eijj27TXnzxxfbcnnrqqe4nP/lJW3ezfVmfffbZ9trW63bEEUeMu70+YG200UYLfcyF+Rhyj4JpqnHXWr017jqMl156qY1nb7HFFuN2sWssd+21187u9tjho+ncd88992zLdfbZZy/wUNXgMS688MJR09ddd91+pZVW6s8777xR0zfYYIN+p512mu/PevHFF/sVVlih//rXv57ntcYaa/Tvec97Rs337LPP9quttlpbhieffDLTa7x700037Z9//vlR8x9yyCH98ssv3z/11FOT/uy99tqrX2655ea7jFMNyTzxxBPttn322WfS98N3v/vdac878nnMnTu3v/TSS/uDDjqo/bvG42f7su6www7tda+h1mWWWaY/7bTTJn1O2223XXuvM3PsKcyQl156qX0f9hNcDXvU2S/1iWqk2l3+xCc+0d1+++1tN31R3LeWaaq9g2EstdRS7ayRkTbddNPuiSeeaGeQjLTZZpu1vYGxeyA1dFZ7ADUsVENBq6yySvfkk09m3nped911V9sbGWnppZfuPvzhD4+adsstt3Q33HBD97GPfaxbcsklR922ww47tOW65pprJn0+NXRUe1YLY7DXMtGwyGDaYJ7pzDtw7LHHtuGw2iurM9e+9a1vtT2r2b6s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"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=35df26b0"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Simple-pixel-level-operations">Simple pixel-level operations<a class="anchor-link" href="#Simple-pixel-level-operations">¶</a></h2><p>Because an image is just an array, standard NumPy operations apply directly, e.g. inverting intensities.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=88675206">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">inverted</span> <span class="o">=</span> <span class="mi">255</span> <span class="o">-</span> <span class="n">gray</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">'gray'</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Original'</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">'off'</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">inverted</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">'gray'</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Inverted (255 - pixel)'</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">'off'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_png output_subarea">
+<img alt="No description has been provided for this image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAjoAAAErCAYAAADXKiljAAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjExLjEsIGh0dHBzOi8vbWF0cGxvdGxpYi5vcmcvctoD+AAAAAlwSFlzAAAPYQAAD2EBqD+naQAAFV5JREFUeJzt3QmwHFXZBuBODEuIGDRi3DAqKOKuAVQwGvclaLmViomUiiiiIuAuoogLKi4gbkhFgxtqRLTclRJUlKXcUcQVI6UoBFkEEjXJ/PX2X31rMrm5mRuy3e8+T1UqMNPT09Mzffrt75zTmdLr9XoNAEBBU7f2BgAAbC6CDgBQlqADAJQl6AAAZQk6AEBZgg4AUJagAwCUJegAAGUJOpPY0Ucf3TzxiU/caq/f1t4H2PR+/OMfN/e///2bn/zkJ0Mt/8Mf/rDZd999m6uvvnrSfh1nnnlmu8/+/ve/b7b3ePSjH90cd9xxI///3//+t3nEIx7RnHHGGU01gs4E9Ne//rV505ve1Dz2sY9tG4SEgOOPP75Zvnz5uNazbNmy5uKLL97o7bipr9/W3gc2pbPOOqs9WX3729/e5nfs5z//+XZbr7jiik2+7uuuu6755S9/2Vx//fUbXDY36j/iiCOavffeu7nlLW858viaNWua73znO82LX/zi5uEPf3jzhCc8oXnNa14zahD405/+1H6W0f7kc27sslvSVVdd1e6zhI/N5de//nV7Lulsv/32zaMe9ajmqKOOalauXNlUMm1rbwDj86lPfao55JBD2oP90EMPbe54xzs2f/7zn5sTTzyxefe739184QtfaB7zmMcMta53vOMdQzU+m+v1UNk111zTnqwmQmXiyiuv3Own1mF85StfaX72s5+tEzJe8IIXNJ/97Gebww47rK1CpN15z3ve09ztbndrvv71rzfz588fWXbFihXtZ3nLW97SPPnJT15rPWkv+41n2S3paU97Whv2bn/722/R933Zy17WvO1tb2sWL17cvPSlL22qEHQmkHPOOad53vOe1/7JD7GTqs7Tn/705klPelLz1Kc+tS0R3+Me99jg+u50pzvdpO25qa8H6PeRj3yk2W+//Zo99thjrcd33nnn5rzzzmvmzp078liqD2nncnJOdWK09imVmWGMZ9kt4Va3ulX7Z0vbZZddmgMOOKD9HioFHV1XE8hrX/va9oA/6aST1nluu+22az760Y+2VyhvfvObRx4//PDDm2c84xltKTJXQl0laKyxL+eee27zzGc+s3nwgx/chqo//OEPzQc+8IF1GoLRXt+9X64M3/rWtzbz5s1r+4L7g1nn/e9//0iZ+IEPfGDbP/y6171us/ZLw9b0yU9+sv29p9pz+umnt93P+++/f/PGN76xufHGG0eWS3dXlsv4lkEXXXRR+9yXv/zlkcdyfJ988snt8ZgLn1zwDI616H/vT3/6083jH//4tmqQ4/Cd73xnu8zjHve4kWPyggsuGNf647LLLmurLg95yEPaCkm674Z17bXXtsunW2pQtrE/5MSOO+7Ythu/+c1vmv/973/Ntq5//3/84x9v28WHPvShzbHHHrtOZXxwjE7a0+zPhJD//Oc/a3X1pY1Ou/6vf/1r5PGf/vSnbeU/oXHevHltN98///nPobYzv4vs09/+9rdNFSo6E8Tll1/eXHjhhc2znvWs5uY3v/moy9z5znduG66UcletWtVMmzat7db6y1/+0jz3uc9tD6qEoB/96EfrHfvy1a9+tW3EUiFKCTP96+kX32233doSb7/RXt+9Xw6ybEu6t7I9L3zhC5spU6a0JehOPkvCTWR7L7300rYcnRNAGvNb3OIWm2z/wbYgY2ByHL3vfe9rbrjhhvZi4fe//307LiLjJXIyjByrOZZOOeWU9mTV79RTT20uueSS9uQW//73v9vj6B//+Ed70txrr73akHLQQQc1P//5z9vjuP+9c0zmxJmTX8JSjsM8l7CTQHGb29ymXb6rqgy7/mx/QlBen+XSTqUykLZjGLnAylicrGNQ2rJBaTPSzXXrW9+6vdAblIuzvP8OO+zQ3O9+92te8pKXNPe85z1Hfe/xLLuxuv2f/ZXPecwxx7RjhHIB+61vfav5wQ9+0I6TGW2MTh5/wxve0DzsYQ9rXv7ylzcf+9jH2sfzXZ522mlt6OwqQJ/4xCfa9jffT9r71atXNyeccEIbFPO93eEOdxhzO3OB2/Ug5LsuoceEcM455/TydR1zzDFjLrdo0aJ2uWXLlrX/v2DBgt7UqVN7n/nMZ0aWWb16dfv3woULe3PmzBl5fNWqVb3ddtutt//++6+1ziuuuKK38847t+vtN/j6/vc744wz1np8/vz5vb322muDn/Oaa67pTZs2rXfSSSeN+T6wrVu6dGl7zJx++ukjj51wwgntY0ccccRayx577LHtcXP55ZePPHbIIYf0dtppp96111478tjKlSt7s2bN6h144IEjjx1++OG9HXbYoXfJJZestc5TTjmlN2XKlJHHu/c+9NBD12kLTj755Pa5yy67bJ3PMez6c5zOmDGjd+WVV44ss2bNmt4+++zTrvvss88ec3+deOKJ7XIXX3xxbxjHH398u/zRRx+91uMXXXRRb7/99ustXry4d+6557b7f+7cub3tt99+nXZpPMveVN3+P+yww0Zt2/vbvFNPPbV97NJLL11r2SyTx5csWdI766yz2t/MUUcdNfJ8vr98VwcffPBar1uxYkXbth900EEjj82ePXud5SK/t7zHkUce2atC19UE0SX70a5c+nXP95c381i6ojpTp47+tf/qV79qS8+LFi1a6/Fdd9116AHOMX369LYq1C+l7HSB5eqi/4osVx+pHj3oQQ9qS7XdVWquWKGq5zznOescH7nKT3Wnc/DBB7fdWZ/73OdGHksFJlf7ea6T53Olv+eee661znQhp2sj1YJ+Cxcu3GBb0G/Y9X/ta19rFixY0FZYOqni9r/fWPK5on+21fp885vfbLv70nWVyki/bGeqQ6kep1vw2c9+dtsFePe7372tLPd3EY5n2UGjzdjK1PgNGWxf0+alGp9q+oZkaEDa8lScsq353bzrXe8aef5LX/pS2/a/6EUvWqebb8GCBc03vvGNDb5HKuk3u9nNRr6PCnRdTRC3ve1t279TPt5QF1cal9mzZ488llLlaKXfQV1/8GizDYYtP3evzzb0S1k1wSb907NmzRpp7NNgpby6zz77tAdYXpcZFGM1MDDRDR5PXbdDZj91Ev7vc5/7tOM5uhNX/vsud7lL88hHPrL9/xwn6RJJF1K6ihM8In93/502od+cOXOG3s5h159uuIyxGa2dGHbSwowZM0becyzp4knIShhJ+5Hupn6jXQym6yfd9+kmSvdN12U+nmUHdTO2+mUfbMj69tHf/va3Zhjvfe97my9+8Yvt+2df9LftGTYQ+b3k8cHvafny5e14prEumBOUckG6viESE5GgM0Hc6173agPC2Wefvd5lMmDw/PPPbx7wgAesNb4lFZbxNDSjHawJKMMaK1R1B10OyKVLl7ZT4l/1qleNPJ+Dd5jGAiay9R0j3fHRSeUm95XJ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"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=9eaf929e"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><p>Modify the color image above so the square is cyan instead of yellow. Which channel(s) do you need to change?</p>
+</div>
+</div>
+</div>
+
+    </div>
+</body>
+</html>

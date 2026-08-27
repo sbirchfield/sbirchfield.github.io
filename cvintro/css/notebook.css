@@ -1,0 +1,66 @@
+/* Notebook-specific styling layered on top of the site's base styles.css */
+
+.notebook-container {
+    max-width: 900px;
+}
+
+.notebook-container h1 {
+    font-size: 2em;
+    margin-top: 0;
+}
+
+.notebook-container .jp-Cell,
+.notebook-container .cell {
+    margin-bottom: 1.2em;
+}
+
+/* Hide the "In [1]:" / "Out[1]:" execution-count prompts */
+.notebook-container .prompt,
+.notebook-container .jp-InputPrompt,
+.notebook-container .jp-OutputPrompt {
+    display: none;
+}
+
+/* Hide heading permalink markers (¶); reveal on hover */
+.notebook-container .anchor-link {
+    visibility: hidden;
+    text-decoration: none;
+    margin-left: 6px;
+}
+
+.notebook-container h1:hover .anchor-link,
+.notebook-container h2:hover .anchor-link,
+.notebook-container h3:hover .anchor-link,
+.notebook-container h4:hover .anchor-link {
+    visibility: visible;
+}
+
+.notebook-container .jp-InputArea-editor,
+.notebook-container div.input_area {
+    background-color: #f6f8fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    padding: 10px 14px;
+    overflow-x: auto;
+}
+
+.notebook-container pre {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+.notebook-container .jp-OutputArea-output img,
+.notebook-container .output_area img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 10px 0;
+}
+
+.notebook-container .jp-RenderedText pre,
+.notebook-container .output_text pre {
+    background-color: #ffffff;
+    border-left: 3px solid #3498db;
+    padding: 8px 12px;
+}
