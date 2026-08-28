@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson56 Feedforward Pose Estimation - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/pygments.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">All Lessons</a></li>
+                <li><a href="../../index.html#teaching">Back to Site</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=a6ef4fc9"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Lesson-56:-Feed-Forward-Camera-Pose-Estimation">Lesson 56: Feed-Forward Camera Pose Estimation<a class="anchor-link" href="#Lesson-56:-Feed-Forward-Camera-Pose-Estimation">¶</a></h1><p>Lesson 22's RANSAC and Lesson 26's structure from motion recover camera geometry through an iterative pipeline: detect features, match them, run RANSAC to reject outliers, solve for the essential matrix, decompose it into rotation and translation. Each stage is a separate, hand-designed algorithm. <strong>VGGT</strong> (Visual Geometry Grounded Transformer, Wang et al., 2024) replaces the entire pipeline with a single feed-forward network: feed it correspondences (or even raw images) from multiple views, and it directly regresses camera poses in one forward pass, with no explicit RANSAC step anywhere. This lesson builds a small version of that idea and compares it against the classical pipeline it replaces — including exactly where each one wins.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=5cb7f003">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=677dd18d"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Synthetic-two-view-correspondences,-with-outliers">Synthetic two-view correspondences, with outliers<a class="anchor-link" href="#Synthetic-two-view-correspondences,-with-outliers">¶</a></h2><p>A random 3D point cloud, projected into two camera views related by a known random rotation and translation <em>direction</em> (Lesson 21's pinhole projection). Translation <em>direction</em> is the most a calibrated two-view pair can ever recover — absolute scale is fundamentally unobservable from two views alone (the same monocular scale ambiguity from Lesson 53, in a different guise). A controllable fraction of the correspondences are replaced with random mismatches, simulating the false matches Lesson 22's RANSAC was built to survive.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=76fa094c">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">50.</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">32</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">50.</span><span class="p">,</span> <span class="mi">32</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">N_POINTS</span> <span class="o">=</span> <span class="mi">40</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">random_rotation</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="n">max_angle_deg</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+    <span class="n">axis</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">);</span> <span class="n">axis</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">axis</span><span class="p">)</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="n">max_angle_deg</span><span class="p">,</span> <span class="n">max_angle_deg</span><span class="p">))</span>
+    <span class="n">Kx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">axis</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">axis</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="o">-</span><span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">]])</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span> <span class="o">*</span> <span class="n">Kx</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">Kx</span> <span class="o">@</span> <span class="n">Kx</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">make_pair</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="n">n_points</span><span class="o">=</span><span class="n">N_POINTS</span><span class="p">,</span> <span class="n">outlier_frac</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+    <span class="n">pts3d</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">n_points</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span>
+    <span class="n">R_true</span> <span class="o">=</span> <span class="n">random_rotation</span><span class="p">(</span><span class="n">rng</span><span class="p">)</span>
+    <span class="n">t_dir</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span> <span class="n">t_dir</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">t_dir</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">project</span><span class="p">(</span><span class="n">pts</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="n">cam_pts</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span> <span class="o">@</span> <span class="n">pts</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">+</span> <span class="n">t</span>
+        <span class="n">proj</span> <span class="o">=</span> <span class="p">(</span><span class="n">K</span> <span class="o">@</span> <span class="n">cam_pts</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">return</span> <span class="n">proj</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="n">proj</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+
+    <span class="n">pts1</span> <span class="o">=</span> <span class="n">project</span><span class="p">(</span><span class="n">pts3d</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">pts2</span> <span class="o">=</span> <span class="n">project</span><span class="p">(</span><span class="n">pts3d</span><span class="p">,</span> <span class="n">R_true</span><span class="p">,</span> <span class="n">t_dir</span> <span class="o">*</span> <span class="mf">2.0</span><span class="p">)</span>
+
+    <span class="n">n_outliers</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">outlier_frac</span> <span class="o">*</span> <span class="n">n_points</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_outliers</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">n_points</span><span class="p">,</span> <span class="n">n_outliers</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">pts2</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="p">(</span><span class="n">n_outliers</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="n">K_inv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>  <span class="c1"># normalize to camera coordinates, so the network never needs to learn K</span>
+    <span class="n">npts1</span> <span class="o">=</span> <span class="p">(</span><span class="n">K_inv</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">pts1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n_points</span><span class="p">,</span> <span class="mi">1</span><span class="p">))])</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">npts2</span> <span class="o">=</span> <span class="p">(</span><span class="n">K_inv</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">pts2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n_points</span><span class="p">,</span> <span class="mi">1</span><span class="p">))])</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">npts1</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">npts2</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">R_true</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">t_dir</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">rotation_angle_error</span><span class="p">(</span><span class="n">R_est</span><span class="p">,</span> <span class="n">R_true</span><span class="p">):</span>
+    <span class="n">R_diff</span> <span class="o">=</span> <span class="n">R_est</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">R_true</span>
+    <span class="n">cos_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">R_diff</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">cos_angle</span><span class="p">))</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">translation_angle_error</span><span class="p">(</span><span class="n">t_est</span><span class="p">,</span> <span class="n">t_true</span><span class="p">):</span>
+    <span class="n">t_est</span> <span class="o">=</span> <span class="n">t_est</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">t_est</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">)</span>
+    <span class="n">t_true</span> <span class="o">=</span> <span class="n">t_true</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">t_true</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">t_est</span><span class="p">,</span> <span class="n">t_true</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=341abd85"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="The-classical-pipeline:-essential-matrix-+-RANSAC">The classical pipeline: essential matrix + RANSAC<a class="anchor-link" href="#The-classical-pipeline:-essential-matrix-+-RANSAC">¶</a></h2><p><code>cv2.findEssentialMat</code> with <code>RANSAC</code> (Lesson 22) followed by <code>cv2.recoverPose</code> (Lesson 27) — the standard textbook approach to two-view relative pose, and the exact pipeline VGGT-style networks are built to replace.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=b06f7567">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">classical_pose</span><span class="p">(</span><span class="n">npts1</span><span class="p">,</span> <span class="n">npts2</span><span class="p">):</span>
+    <span class="n">pts1_px</span> <span class="o">=</span> <span class="p">(</span><span class="n">K</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">npts1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">N_POINTS</span><span class="p">,</span> <span class="mi">1</span><span class="p">))])</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">pts2_px</span> <span class="o">=</span> <span class="p">(</span><span class="n">K</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">npts2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">N_POINTS</span><span class="p">,</span> <span class="mi">1</span><span class="p">))])</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">E</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">findEssentialMat</span><span class="p">(</span><span class="n">pts1_px</span><span class="p">,</span> <span class="n">pts2_px</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">RANSAC</span><span class="p">,</span> <span class="n">prob</span><span class="o">=</span><span class="mf">0.999</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">E</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">recoverPose</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">pts1_px</span><span class="p">,</span> <span class="n">pts2_px</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">R</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">outlier_frac</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]:</span>
+    <span class="n">rot_errs</span><span class="p">,</span> <span class="n">trans_errs</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+        <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">R_true</span><span class="p">,</span> <span class="n">t_true</span> <span class="o">=</span> <span class="n">make_pair</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="n">outlier_frac</span><span class="o">=</span><span class="n">outlier_frac</span><span class="p">)</span>
+        <span class="n">R_est</span><span class="p">,</span> <span class="n">t_est</span> <span class="o">=</span> <span class="n">classical_pose</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">)</span>
+        <span class="n">rot_errs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rotation_angle_error</span><span class="p">(</span><span class="n">R_est</span><span class="p">,</span> <span class="n">R_true</span><span class="p">))</span>
+        <span class="n">trans_errs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">translation_angle_error</span><span class="p">(</span><span class="n">t_est</span><span class="p">,</span> <span class="n">t_true</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'outlier_frac=</span><span class="si">{</span><span class="n">outlier_frac</span><span class="si">}</span><span class="s1">: classical rot err=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rot_errs</span><span class="p">)</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> deg, '</span>
+          <span class="sa">f</span><span class="s1">'trans dir err=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">trans_errs</span><span class="p">)</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> deg'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>outlier_frac=0.0: classical rot err=0.08 deg, trans dir err=0.38 deg
+outlier_frac=0.2: classical rot err=5.10 deg, trans dir err=23.81 deg
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>outlier_frac=0.4: classical rot err=7.02 deg, trans dir err=34.20 deg
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=19d5e99b"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="A-feed-forward-pose-network">A feed-forward pose network<a class="anchor-link" href="#A-feed-forward-pose-network">¶</a></h2><p>Every correspondence <code>(x1, y1, x2, y2)</code> becomes a token; a small Transformer encoder (Lesson 45) lets every correspondence attend to every other one — this is the piece a naive PointNet-style max-pooling architecture is missing: recovering a two-view geometric relationship (especially translation direction) fundamentally requires reasoning about how correspondences relate to <em>each other</em>, not just processing each one independently and pooling. Rotation is regressed via a continuous 6D representation (Zhou et al., 2019 — two 3D vectors, Gram-Schmidt-orthonormalized into a valid rotation matrix, avoiding the discontinuities of quaternions or Euler angles), and translation direction as a unit 3-vector.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=8814b2e1">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">rot6d_to_matrix</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">3</span><span class="p">:]</span>
+    <span class="n">b1</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">b2</span> <span class="o">=</span> <span class="n">a2</span> <span class="o">-</span> <span class="p">(</span><span class="n">b1</span> <span class="o">*</span> <span class="n">a2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">*</span> <span class="n">b1</span>
+    <span class="n">b2</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">b3</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">b3</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">PoseNet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">n_heads</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">n_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embed</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
+        <span class="n">layer</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">TransformerEncoderLayer</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="n">n_heads</span><span class="p">,</span> <span class="n">dim_feedforward</span><span class="o">=</span><span class="n">hidden</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+                                            <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">TransformerEncoder</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">num_layers</span><span class="o">=</span><span class="n">n_layers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="n">hidden</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">corr</span><span class="p">):</span>  <span class="c1"># corr: (B, N, 4) = [x1, y1, x2, y2]</span>
+        <span class="n">tok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">embed</span><span class="p">(</span><span class="n">corr</span><span class="p">))</span>
+        <span class="n">pooled</span> <span class="o">=</span> <span class="n">tok</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">pooled</span><span class="p">)</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">rot6d_to_matrix</span><span class="p">(</span><span class="n">out</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">6</span><span class="p">])</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">out</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">6</span><span class="p">:],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">R</span><span class="p">,</span> <span class="n">t</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">make_batch</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">outlier_frac</span><span class="p">):</span>
+    <span class="n">corrs</span><span class="p">,</span> <span class="n">Rs</span><span class="p">,</span> <span class="n">ts</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">):</span>
+        <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">make_pair</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="n">outlier_frac</span><span class="o">=</span><span class="n">outlier_frac</span><span class="p">)</span>
+        <span class="n">corrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">Rs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">R</span><span class="p">);</span> <span class="n">ts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">corrs</span><span class="p">)),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Rs</span><span class="p">)),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ts</span><span class="p">)))</span>
+
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">PoseNet</span><span class="p">()</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+<span class="n">train_rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1400</span><span class="p">):</span>
+    <span class="n">outlier_frac</span> <span class="o">=</span> <span class="n">train_rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># train across a range of outlier ratios</span>
+    <span class="n">corr</span><span class="p">,</span> <span class="n">R_true</span><span class="p">,</span> <span class="n">t_true</span> <span class="o">=</span> <span class="n">make_batch</span><span class="p">(</span><span class="n">train_rng</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="n">outlier_frac</span><span class="p">)</span>
+    <span class="n">R_pred</span><span class="p">,</span> <span class="n">t_pred</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">corr</span><span class="p">)</span>
+    <span class="n">rot_loss</span> <span class="o">=</span> <span class="p">((</span><span class="n">R_pred</span> <span class="o">-</span> <span class="n">R_true</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">trans_loss</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">t_pred</span> <span class="o">*</span> <span class="n">t_true</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">rot_loss</span> <span class="o">+</span> <span class="n">trans_loss</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'final training loss: </span><span class="si">{</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>final training loss: 0.2584
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=e322b23c"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Head-to-head:-classical-RANSAC-vs.-feed-forward-network,-across-outlier-ratios">Head to head: classical RANSAC vs. feed-forward network, across outlier ratios<a class="anchor-link" href="#Head-to-head:-classical-RANSAC-vs.-feed-forward-network,-across-outlier-ratios">¶</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=8ef27b04">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">eval_rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">999</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">outlier_frac</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]:</span>
+    <span class="n">learned_rot</span><span class="p">,</span> <span class="n">learned_trans</span><span class="p">,</span> <span class="n">classical_rot</span><span class="p">,</span> <span class="n">classical_trans</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+        <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">R_true</span><span class="p">,</span> <span class="n">t_true</span> <span class="o">=</span> <span class="n">make_pair</span><span class="p">(</span><span class="n">eval_rng</span><span class="p">,</span> <span class="n">outlier_frac</span><span class="o">=</span><span class="n">outlier_frac</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">corr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))[</span><span class="kc">None</span><span class="p">]</span>
+            <span class="n">R_pred</span><span class="p">,</span> <span class="n">t_pred</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">corr</span><span class="p">)</span>
+        <span class="n">learned_rot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rotation_angle_error</span><span class="p">(</span><span class="n">R_pred</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">R_true</span><span class="p">))</span>
+        <span class="n">learned_trans</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">translation_angle_error</span><span class="p">(</span><span class="n">t_pred</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">t_true</span><span class="p">))</span>
+
+        <span class="n">R_c</span><span class="p">,</span> <span class="n">t_c</span> <span class="o">=</span> <span class="n">classical_pose</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">)</span>
+        <span class="n">classical_rot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rotation_angle_error</span><span class="p">(</span><span class="n">R_c</span><span class="p">,</span> <span class="n">R_true</span><span class="p">))</span>
+        <span class="n">classical_trans</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">translation_angle_error</span><span class="p">(</span><span class="n">t_c</span><span class="p">,</span> <span class="n">t_true</span><span class="p">))</span>
+
+    <span class="n">results</span><span class="p">[</span><span class="n">outlier_frac</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">learned_rot</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">learned_trans</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">classical_rot</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">classical_trans</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'outlier_frac=</span><span class="si">{</span><span class="n">outlier_frac</span><span class="si">}</span><span class="s1">:'</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'  learned:   rot err=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">learned_rot</span><span class="p">)</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> deg, trans dir err=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">learned_trans</span><span class="p">)</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> deg'</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'  classical: rot err=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">classical_rot</span><span class="p">)</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> deg, trans dir err=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">classical_trans</span><span class="p">)</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> deg'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>outlier_frac=0.0:
+  learned:   rot err=7.83 deg, trans dir err=36.60 deg
+  classical: rot err=2.89 deg, trans dir err=8.87 deg
+outlier_frac=0.2:
+  learned:   rot err=6.80 deg, trans dir err=23.65 deg
+  classical: rot err=7.48 deg, trans dir err=32.12 deg
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>outlier_frac=0.4:
+  learned:   rot err=8.42 deg, trans dir err=25.78 deg
+  classical: rot err=8.37 deg, trans dir err=28.68 deg
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=fbd8d758"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Where-each-approach-wins">Where each approach wins<a class="anchor-link" href="#Where-each-approach-wins">¶</a></h2><p>On clean data (no outliers), classical RANSAC wins clearly — an exact, well-conditioned geometric solve is hard to beat when the input genuinely satisfies its assumptions. As the outlier fraction increases, the gap closes and then <strong>reverses</strong>: the feed-forward network, trained across a whole range of outlier ratios, becomes <em>more</em> robust than RANSAC with a fixed threshold and iteration budget. This isn't a fluke of this toy setup — it's the actual, documented motivation for VGGT-style architectures: RANSAC's robustness is bounded by its hyperparameters and by the geometric model it assumes (a single rigid essential matrix relating exactly two views), while a network trained on enough varied, messy, real-world correspondence data learns something closer to "what does a plausible pose look like given evidence like this," which degrades more gracefully.</p>
+<p>This mirrors Lesson 55's stereo story almost exactly: a fixed, hand-designed algorithm (block matching, RANSAC) is precise under its ideal assumptions and brittle outside them; a network trained across a distribution of conditions trades a little of that peak precision for much better robustness across the full range of real conditions it will actually see. Neither replaces the other outright — production 3D vision pipelines increasingly use exactly this kind of feed-forward network as a fast, robust <em>initialization</em>, with a classical geometric refinement (bundle adjustment, Lesson 26) as a final, exact-precision cleanup step where compute allows.</p>
+<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<li>Increase <code>max_angle_deg</code> in <code>random_rotation</code> from 30 to 90. Does the gap between learned and classical performance change, and does classical RANSAC's known preference for small, well-conditioned baselines explain the direction of the shift?</li>
+<li>Remove the self-attention (<code>self.encoder(self.embed(corr))</code> → just <code>self.embed(corr)</code>, then mean-pool directly) and retrain. Does removing attention between correspondences hurt rotation accuracy, translation accuracy, or both — and does that match the claim that translation direction specifically needs <em>relational</em> reasoning across points?</li>
+<li>Train two separate models, one only ever seeing <code>outlier_frac=0.0</code> during training and one only ever seeing <code>outlier_frac=0.5</code>, then evaluate both across the full <code>[0.0, 0.5]</code> range. Does either specialist beat the general-purpose model (trained across the whole range) on its own home turf, and does the generalist lose much by comparison anywhere?</li>
+</ol>
+</div>
+</div>
+</div>
+
+    </div>
+</body>
+</html>

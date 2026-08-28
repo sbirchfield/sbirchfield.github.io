@@ -25,7 +25,7 @@
         </div>
     </nav>
     <div class="container notebook-container">
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=9169b250"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=390e76c7"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-45:-The-Transformer-Architecture">Lesson 45: The Transformer Architecture<a class="anchor-link" href="#Lesson-45:-The-Transformer-Architecture">¶</a></h1><p>Lesson 44 built one attention operation. A <strong>Transformer</strong> (Vaswani et al., 2017) wraps that operation into a reusable block and stacks many of them. This lesson fills in the three pieces attention alone is missing: <strong>multiple attention heads</strong> (so a layer can track several kinds of relationships at once), <strong>positional encoding</strong> (so order isn't invisible to a mechanism that otherwise treats a sequence as an unordered set), and the <strong>encoder block</strong> (attention plus a per-position feedforward network, wired together with residual connections and normalization).</p>
@@ -92,7 +92,7 @@
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>model dim = 16, heads = 4, dim per head = 4
-max abs diff vs nn.MultiheadAttention: 1.19e-07
+max abs diff vs nn.MultiheadAttention: 8.94e-08
 </pre>
 </div>
 </div>

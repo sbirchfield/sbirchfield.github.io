@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson50 Segment Anything - Introduction to Computer Vision</title>
+    <title>Lesson51 Segment Anything - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -25,10 +25,10 @@
         </div>
     </nav>
     <div class="container notebook-container">
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=77e51313"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=750cf14d"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-50:-Segment-Anything">Lesson 50: Segment Anything<a class="anchor-link" href="#Lesson-50:-Segment-Anything">¶</a></h1><p>Lesson 42's instance segmentation trained a network to output <em>every</em> instance's mask at once, then untangled them with center-voting. <strong>Segment Anything (SAM)</strong> (Kirillov et al., 2023) takes a different approach: segment on demand. Give the model a <em>prompt</em> — a point, a box, a rough scribble — and it returns the mask of whichever single object that prompt points to. This lesson builds SAM's core idea: inject the prompt as an explicit spatial signal alongside the image, and train the network to produce exactly the prompted object's mask, nothing else.</p>
+<h1 id="Lesson-51:-Segment-Anything">Lesson 51: Segment Anything<a class="anchor-link" href="#Lesson-51:-Segment-Anything">¶</a></h1><p>Lesson 42's instance segmentation trained a network to output <em>every</em> instance's mask at once, then untangled them with center-voting. <strong>Segment Anything (SAM)</strong> (Kirillov et al., 2023) takes a different approach: segment on demand. Give the model a <em>prompt</em> — a point, a box, a rough scribble — and it returns the mask of whichever single object that prompt points to. This lesson builds SAM's core idea: inject the prompt as an explicit spatial signal alongside the image, and train the network to produce exactly the prompted object's mask, nothing else.</p>
 </div>
 </div>
 </div>

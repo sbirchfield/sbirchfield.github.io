@@ -25,7 +25,7 @@
         </div>
     </nav>
     <div class="container notebook-container">
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=2ad3a51a"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=25bf8e0d"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-40:-Object-Detection-II-%E2%80%94-From-Classification-to-Regression">Lesson 40: Object Detection II — From Classification to Regression<a class="anchor-link" href="#Lesson-40:-Object-Detection-II-%E2%80%94-From-Classification-to-Regression">¶</a></h1><p>Lesson 39's sliding-window detector classified thousands of fixed-size windows and merged the survivors with NMS. That works, but it is fundamentally a <em>classification</em> approach bolted onto a search — the network never predicts a box directly, only "face or not, at this exact window." Modern detectors instead treat localization as a <strong>regression</strong> problem: given an image, directly predict box coordinates. This lesson builds the simplest possible version of that idea, then surveys how real detectors (R-CNN, YOLO, SSD) scale it up.</p>
