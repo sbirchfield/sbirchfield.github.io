@@ -28,7 +28,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=9aa037fa"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-21:-Projective-Geometry">Lesson 21: Projective Geometry<a class="anchor-link" href="#Lesson-21:-Projective-Geometry">¶</a></h1><p>Lesson 7 built a hierarchy of 2D transforms — Euclidean, similarity, affine — and noted that all three preserve parallel lines. This lesson covers the next, most general step: the <strong>projective transform (homography)</strong>, which models what a camera actually does when it looks at a flat surface from an angle, and which does <em>not</em> preserve parallelism. That's not a bug — it's exactly the phenomenon of a vanishing point, and it's the tool behind perspective correction and image stitching.</p>
+<h1 id="Lesson-21:-Projective-Geometry">Lesson 21: Projective Geometry<a class="anchor-link" href="#Lesson-21:-Projective-Geometry">¶</a></h1><p>Lesson 8 built a hierarchy of 2D transforms — Euclidean, similarity, affine — and noted that all three preserve parallel lines. This lesson covers the next, most general step: the <strong>projective transform (homography)</strong>, which models what a camera actually does when it looks at a flat surface from an angle, and which does <em>not</em> preserve parallelism. That's not a bug — it's exactly the phenomenon of a vanishing point, and it's the tool behind perspective correction and image stitching.</p>
 </div>
 </div>
 </div>
@@ -50,14 +50,14 @@
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Homogeneous-coordinates">Homogeneous coordinates<a class="anchor-link" href="#Homogeneous-coordinates">¶</a></h2><p>Represent a 2D point $(x, y)$ as a 3-vector $(x, y, 1)$. Any $3\times3$ matrix $H$ can then act on it by ordinary matrix multiplication; converting back to 2D means dividing by the third coordinate:</p>
 <p>$$\begin{bmatrix}x'\\y'\\w'\end{bmatrix} = H\begin{bmatrix}x\\y\\1\end{bmatrix}, \qquad (x_{\text{2D}}', y_{\text{2D}}') = \left(\frac{x'}{w'}, \frac{y'}{w'}\right)$$</p>
-<p>Two big payoffs: first, a $3\times3$ matrix can represent translation too (impossible with a $2\times2$ matrix alone, which is why Lesson 7 needed a separate translation vector $t$). Second, $H$ and $cH$ (any nonzero scalar multiple) represent the <em>exact same</em> transform, since the division cancels the scale — a homography has only 8 independent degrees of freedom, not 9.</p>
+<p>Two big payoffs: first, a $3\times3$ matrix can represent translation too (impossible with a $2\times2$ matrix alone, which is why Lesson 8 needed a separate translation vector $t$). Second, $H$ and $cH$ (any nonzero scalar multiple) represent the <em>exact same</em> transform, since the division cancels the scale — a homography has only 8 independent degrees of freedom, not 9.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=682b088c"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Parallel-lines-stop-being-parallel">Parallel lines stop being parallel<a class="anchor-link" href="#Parallel-lines-stop-being-parallel">¶</a></h2><p>The updated hierarchy, extending Lesson 7's table:</p>
+<h2 id="Parallel-lines-stop-being-parallel">Parallel lines stop being parallel<a class="anchor-link" href="#Parallel-lines-stop-being-parallel">¶</a></h2><p>The updated hierarchy, extending Lesson 8's table:</p>
 <table>
 <thead>
 <tr>

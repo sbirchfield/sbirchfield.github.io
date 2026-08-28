@@ -28,7 +28,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=d0f27f66"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-20:-Stereo-Matching">Lesson 20: Stereo Matching<a class="anchor-link" href="#Lesson-20:-Stereo-Matching">¶</a></h1><p>Two cameras viewing the same scene from slightly different positions see the same 3D points shifted by different amounts depending on depth — nearby points shift more, distant points shift less. <strong>Stereo matching</strong> finds these shifts (the <strong>disparity</strong>) at every pixel, which triangulation then converts into depth. The matching step itself is close cousin to two things we've already built: block matching (Lesson 17) and 1D optical flow (Lesson 19), just restricted to a single row instead of two dimensions.</p>
+<h1 id="Lesson-20:-Stereo-Matching">Lesson 20: Stereo Matching<a class="anchor-link" href="#Lesson-20:-Stereo-Matching">¶</a></h1><p>Two cameras viewing the same scene from slightly different positions see the same 3D points shifted by different amounts depending on depth — nearby points shift more, distant points shift less. <strong>Stereo matching</strong> finds these shifts (the <strong>disparity</strong>) at every pixel, which triangulation then converts into depth. The matching step itself is close cousin to two things we've already built: block matching (SSD, the sum-of-squared-differences idea) and 1D optical flow (Lesson 19), just restricted to a single row instead of two dimensions.</p>
 </div>
 </div>
 </div>
@@ -111,7 +111,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=a8ec13c0"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Block-matching-along-the-scanline">Block matching along the scanline<a class="anchor-link" href="#Block-matching-along-the-scanline">¶</a></h2><p>For each pixel in the left image, we slide a small block along the <em>same row</em> of the right image over a range of candidate disparities and keep the disparity with the lowest sum-of-squared-differences — the same SSD idea from Lesson 17's template matching, just restricted to a 1D search.</p>
+<h2 id="Block-matching-along-the-scanline">Block matching along the scanline<a class="anchor-link" href="#Block-matching-along-the-scanline">¶</a></h2><p>For each pixel in the left image, we slide a small block along the <em>same row</em> of the right image over a range of candidate disparities and keep the disparity with the lowest sum-of-squared-differences — the same SSD idea used for template matching, just restricted to a 1D search.</p>
 </div>
 </div>
 </div>

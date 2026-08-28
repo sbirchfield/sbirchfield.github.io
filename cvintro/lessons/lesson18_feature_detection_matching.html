@@ -28,7 +28,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=2cd7620a"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-18:-Feature-Detection-and-Matching">Lesson 18: Feature Detection and Matching<a class="anchor-link" href="#Lesson-18:-Feature-Detection-and-Matching">¶</a></h1><p>Lesson 17's template matching only finds a template at the <em>same</em> scale and orientation it appears in the template. This lesson builds toward feature-based matching, which survives rotation, scale, and even viewpoint changes: first <strong>corner detectors</strong> (Harris, Shi-Tomasi) that find distinctive, repeatable points, then <strong>SIFT</strong>, which adds scale-invariance and a descriptor that can be matched between two very different-looking images of the same scene.</p>
+<h1 id="Lesson-18:-Feature-Detection-and-Matching">Lesson 18: Feature Detection and Matching<a class="anchor-link" href="#Lesson-18:-Feature-Detection-and-Matching">¶</a></h1><p>Simple template matching only finds a template at the <em>same</em> scale and orientation it appears in the template. This lesson builds toward feature-based matching, which survives rotation, scale, and even viewpoint changes: first <strong>corner detectors</strong> (Harris, Shi-Tomasi) that find distinctive, repeatable points, then <strong>SIFT</strong>, which adds scale-invariance and a descriptor that can be matched between two very different-looking images of the same scene.</p>
 </div>
 </div>
 </div>
@@ -48,9 +48,9 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=a93774b9"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-structure-tensor:-what-makes-a-good-point-to-track?">The structure tensor: what makes a good point to track?<a class="anchor-link" href="#The-structure-tensor:-what-makes-a-good-point-to-track?">¶</a></h2><p>At each pixel, build the $2\times2$ <strong>structure tensor</strong> from the local window of gradients (Lesson 11):</p>
+<h2 id="The-structure-tensor:-what-makes-a-good-point-to-track?">The structure tensor: what makes a good point to track?<a class="anchor-link" href="#The-structure-tensor:-what-makes-a-good-point-to-track?">¶</a></h2><p>At each pixel, build the $2\times2$ <strong>structure tensor</strong> from the local window of gradients (Lesson 12):</p>
 <p>$$M = \sum_{\text{window}} \begin{bmatrix}I_x^2 &amp; I_xI_y \\ I_xI_y &amp; I_y^2\end{bmatrix}$$</p>
-<p>This should look familiar — it's exactly the moment covariance matrix from Lesson 5, but built from gradients instead of pixel coordinates. Its eigenvalues $\lambda_1 \ge \lambda_2$ describe the local intensity structure:</p>
+<p>This should look familiar — it's exactly the moment covariance matrix from Lesson 6, but built from gradients instead of pixel coordinates. Its eigenvalues $\lambda_1 \ge \lambda_2$ describe the local intensity structure:</p>
 <ul>
 <li>both small: <strong>flat</strong> region, gradients weak in every direction</li>
 <li>one large, one small: <strong>edge</strong>, gradient strong perpendicular to the edge, weak along it</li>
@@ -211,7 +211,7 @@
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="SIFT:-scale-space-extrema-and-descriptors">SIFT: scale-space extrema and descriptors<a class="anchor-link" href="#SIFT:-scale-space-extrema-and-descriptors">¶</a></h2><p>SIFT's pipeline, at a glance:</p>
 <ol>
-<li>Build a <strong>Difference-of-Gaussians (DoG) scale-space</strong> — exactly the DoG approximation to the Laplacian from Lesson 12, computed at many blur levels.</li>
+<li>Build a <strong>Difference-of-Gaussians (DoG) scale-space</strong> — exactly the DoG approximation to the Laplacian from Lesson 13, computed at many blur levels.</li>
 <li>Find keypoints as local extrema of DoG response across both space <em>and</em> scale — a point that's a maximum compared to its 8 spatial neighbors <em>and</em> the corresponding points one scale level up and down.</li>
 <li>Assign each keypoint a dominant orientation from the local gradient histogram, so descriptors can be made rotation-invariant.</li>
 <li>Build a 128-dimensional descriptor from histograms of gradient orientations in a $4\times4$ grid of subregions around the keypoint.</li>
@@ -363,7 +363,7 @@ good matches after Lowe ratio test: 105 / 163 candidate pairs
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=c48c271c"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Nearly all the ratio-test survivors are genuinely correct correspondences — something template matching (Lesson 17) simply cannot produce, since it never searches over rotation or scale at all. This is exactly what makes SIFT-style features the basis for tasks like image stitching, object recognition, and visual localization.</p>
+<p>Nearly all the ratio-test survivors are genuinely correct correspondences — something simple template matching simply cannot produce, since it never searches over rotation or scale at all. This is exactly what makes SIFT-style features the basis for tasks like image stitching, object recognition, and visual localization.</p>
 </div>
 </div>
 </div>

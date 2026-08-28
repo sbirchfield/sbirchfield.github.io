@@ -50,7 +50,7 @@
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="The-brightness-constancy-assumption">The brightness constancy assumption<a class="anchor-link" href="#The-brightness-constancy-assumption">¶</a></h2><p>Optical flow assumes a point's intensity doesn't change as it moves: $I(x, y, t) = I(x+u, y+v, t+1)$. A first-order Taylor expansion of the right side gives the <strong>optical flow constraint equation</strong>:</p>
 <p>$$I_x u + I_y v + I_t = 0$$</p>
-<p>where $I_x, I_y$ are the spatial gradients (Lesson 11) and $I_t$ is the frame-to-frame intensity difference. This is <strong>one equation with two unknowns</strong> ($u$ and $v$) at every single pixel — not enough information on its own to solve for the flow.</p>
+<p>where $I_x, I_y$ are the spatial gradients (Lesson 12) and $I_t$ is the frame-to-frame intensity difference. This is <strong>one equation with two unknowns</strong> ($u$ and $v$) at every single pixel — not enough information on its own to solve for the flow.</p>
 </div>
 </div>
 </div>
@@ -237,7 +237,7 @@ cv2.calcOpticalFlowPyrLK estimate:    (4.000, 3.000)  &lt;- accurate
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=72fe8766"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>OpenCV's <code>calcOpticalFlowPyrLK</code> handles large motions by running Lucas-Kanade <strong>iteratively</strong> (re-warping and re-linearizing until convergence) on an <strong>image pyramid</strong> (Lesson 10) — estimate coarsely on a small, blurry version of the image first, then refine level by level. This combination lets it recover large motions accurately even though the underlying linear approximation is only valid locally, one small step at a time.</p>
+<p>OpenCV's <code>calcOpticalFlowPyrLK</code> handles large motions by running Lucas-Kanade <strong>iteratively</strong> (re-warping and re-linearizing until convergence) on an <strong>image pyramid</strong> (Lesson 11) — estimate coarsely on a small, blurry version of the image first, then refine level by level. This combination lets it recover large motions accurately even though the underlying linear approximation is only valid locally, one small step at a time.</p>
 </div>
 </div>
 </div>
