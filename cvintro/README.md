@@ -31,9 +31,18 @@ pages on GitHub Pages (no server required).
 
 ```
 pip install nbconvert nbformat numpy matplotlib ipykernel opencv-python-headless pywavelets
+pip install torch --index-url https://download.pytorch.org/whl/cpu   # Part 2 (deep learning) lessons
 ```
 
 Add other CV libraries (scikit-image, etc.) as needed per lesson.
+
+## Course structure
+
+The lessons are organized into three parts, all listed on `index.html`:
+
+- **Part 1: Classical Computer Vision** (Lessons 1-28) — image processing, filtering, features, geometry, and 3D vision, all built from scratch and validated against OpenCV.
+- **Part 2: Deep Learning for Computer Vision** (Lessons 29-42) — neural networks, CNNs, and applications (classification, detection, segmentation), continuing the same lesson numbering and from-scratch/validate-then-use style. Kept lightweight/CPU-friendly (synthetic or small datasets) for now; may grow to use CIFAR-10-scale datasets later.
+- **Part 3: Transformers and Foundation Models** (Lessons 44-52; numbering continues from Part 2, no Lesson 43) — attention, the Transformer architecture, Vision Transformers, self-supervised/contrastive learning, DINOv2, vision-language models (CLIP-style), Segment Anything, and monocular/stereo depth estimation. Real foundation models (SAM, DINOv2, CLIP, FoundationStereo) are far too large to train or run directly in this course, so these lessons implement each system's core *mechanism* on small synthetic tasks (same from-scratch/validate-then-use style as Parts 1-2) and discuss what changes when the same mechanism is scaled up to a real foundation model.
 
 ## Interactive lessons
 

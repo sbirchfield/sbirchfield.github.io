@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson48 Dino Self Distillation - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/pygments.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">All Lessons</a></li>
+                <li><a href="../../index.html#teaching">Back to Site</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=a56d3927"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Lesson-48:-DINOv2-and-Self-Distillation">Lesson 48: DINOv2 and Self-Distillation<a class="anchor-link" href="#Lesson-48:-DINOv2-and-Self-Distillation">¶</a></h1><p>Lesson 47's contrastive loss needs explicit negative pairs (other images in the batch) to avoid the trivial solution of mapping every image to the same point. <strong>Self-distillation</strong>, the mechanism behind <strong>DINO</strong> (Caron et al., 2021) and its successor <strong>DINOv2</strong> (Oquab et al., 2023), removes negatives entirely: a slowly-updated "teacher" network guides a "student" network, with no labels and no negative pairs at all. Without a careful safeguard, this setup collapses to the trivial solution immediately — this lesson builds the safeguard (centering) from scratch and shows exactly why it's needed.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=806c39e0">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=4623af21"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Student,-teacher,-and-the-collapse-problem">Student, teacher, and the collapse problem<a class="anchor-link" href="#Student,-teacher,-and-the-collapse-problem">¶</a></h2><p>Both student and teacher are copies of the same small encoder architecture. The student is trained normally, with gradients. The teacher is <em>never</em> trained directly — after each step, its weights are nudged a small amount toward the student's current weights (an <strong>exponential moving average</strong>, or EMA). The student is trained to match the teacher's output distribution on a <em>different</em> augmented view of the same image.</p>
+<p>The obvious failure mode: if the teacher's output doesn't depend on the input at all (always predicts the same constant vector, regardless of image), the student can trivially match it by doing the same — perfect loss, zero information learned. This is <strong>representation collapse</strong>, and it's the central problem self-distillation has to solve.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=dd49b70d">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">make_image</span><span class="p">(</span><span class="n">shape_type</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">shape_type</span> <span class="o">==</span> <span class="s1">'plus'</span><span class="p">:</span>
+        <span class="n">img</span><span class="p">[</span><span class="n">cy</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">cy</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="n">cx</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span><span class="n">cx</span><span class="o">+</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">img</span><span class="p">[</span><span class="n">cy</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span><span class="n">cy</span><span class="o">+</span><span class="mi">4</span><span class="p">,</span> <span class="n">cx</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">cx</span><span class="o">+</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">yy</span><span class="p">,</span> <span class="n">xx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">size</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">size</span><span class="p">]</span>
+        <span class="n">img</span><span class="p">[((</span><span class="n">xx</span><span class="o">-</span><span class="n">cx</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">yy</span><span class="o">-</span><span class="n">cy</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">return</span> <span class="n">img</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">make_dataset</span><span class="p">(</span><span class="n">rng_local</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">position_range</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">12</span><span class="p">)):</span>
+    <span class="n">imgs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">shape_type</span> <span class="o">=</span> <span class="n">rng_local</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s1">'plus'</span><span class="p">,</span> <span class="s1">'circle'</span><span class="p">])</span>
+        <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span> <span class="o">=</span> <span class="n">rng_local</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="o">*</span><span class="n">position_range</span><span class="p">),</span> <span class="n">rng_local</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="o">*</span><span class="n">position_range</span><span class="p">)</span>
+        <span class="n">imgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">make_image</span><span class="p">(</span><span class="n">shape_type</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">))</span>
+        <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span> <span class="k">if</span> <span class="n">shape_type</span> <span class="o">==</span> <span class="s1">'plus'</span> <span class="k">else</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">imgs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">augment</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">rng_local</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">rng_local</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fliplr</span><span class="p">(</span><span class="n">img</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">rng_local</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">getRotationMatrix2D</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">angle</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">warpAffine</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">img</span> <span class="o">+</span> <span class="n">rng_local</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">X_unlabeled</span><span class="p">,</span> <span class="n">y_unlabeled</span> <span class="o">=</span> <span class="n">make_dataset</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Encoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_dim</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">AdaptiveMaxPool2d</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proj</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">out_dim</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">proj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">dino_loss</span><span class="p">(</span><span class="n">student_out</span><span class="p">,</span> <span class="n">teacher_out</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <span class="n">student_temp</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">teacher_temp</span><span class="o">=</span><span class="mf">0.04</span><span class="p">):</span>
+    <span class="n">student_logp</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">student_out</span> <span class="o">/</span> <span class="n">student_temp</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">teacher_p</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">((</span><span class="n">teacher_out</span> <span class="o">-</span> <span class="n">center</span><span class="p">)</span> <span class="o">/</span> <span class="n">teacher_temp</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># centering happens here</span>
+    <span class="k">return</span> <span class="o">-</span><span class="p">(</span><span class="n">teacher_p</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="o">*</span> <span class="n">student_logp</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=0d866242"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>dino_loss</code> has two anti-collapse mechanisms built in:</p>
+<ul>
+<li><strong>Centering</strong>: subtract a running average (<code>center</code>) of recent teacher outputs before the teacher's softmax. This stops the teacher from drifting toward always predicting whatever single class happens to be easiest — a constant output would get centered to exactly zero, canceling itself out.</li>
+<li><strong>Sharpening</strong>: the teacher's softmax uses a lower temperature (<code>0.04</code>) than the student's (<code>0.1</code>), making the teacher's target distribution more confident/peaked. A very flat, unconfident teacher target is close to a uniform distribution — not quite collapse, but not a useful learning signal either.</li>
+</ul>
+<p>Both tricks together are what let DINO train stably without any negative pairs at all.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=3b887ca5">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">train_dino</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">center_momentum</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">use_centering</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">student</span> <span class="o">=</span> <span class="n">Encoder</span><span class="p">()</span>
+    <span class="n">teacher</span> <span class="o">=</span> <span class="n">Encoder</span><span class="p">()</span>
+    <span class="n">teacher</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">student</span><span class="o">.</span><span class="n">state_dict</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">teacher</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">opt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">student</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">)</span>
+    <span class="n">center</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+    <span class="n">local_aug_rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span> <span class="o">+</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_unlabeled</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">epochs</span><span class="p">):</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">n</span><span class="p">)[:</span><span class="n">batch_size</span><span class="p">]</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">X_unlabeled</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">view1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">augment</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">local_aug_rng</span><span class="p">)</span> <span class="k">for</span> <span class="n">im</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">])</span>
+        <span class="n">view2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">augment</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">local_aug_rng</span><span class="p">)</span> <span class="k">for</span> <span class="n">im</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">])</span>
+        <span class="n">v1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">view1</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">v2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">view2</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">s1</span><span class="p">,</span> <span class="n">s2</span> <span class="o">=</span> <span class="n">student</span><span class="p">(</span><span class="n">v1</span><span class="p">),</span> <span class="n">student</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span> <span class="o">=</span> <span class="n">teacher</span><span class="p">(</span><span class="n">v1</span><span class="p">),</span> <span class="n">teacher</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span>
+
+        <span class="n">c</span> <span class="o">=</span> <span class="n">center</span> <span class="k">if</span> <span class="n">use_centering</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">center</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">dino_loss</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">dino_loss</span><span class="p">(</span><span class="n">s2</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+
+        <span class="n">opt</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">ps</span><span class="p">,</span> <span class="n">pt</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">student</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">teacher</span><span class="o">.</span><span class="n">parameters</span><span class="p">()):</span>
+                <span class="n">pt</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">mul_</span><span class="p">(</span><span class="n">momentum</span><span class="p">)</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">ps</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span> <span class="o">-</span> <span class="n">momentum</span><span class="p">)</span>  <span class="c1"># EMA teacher update</span>
+            <span class="k">if</span> <span class="n">use_centering</span><span class="p">:</span>
+                <span class="n">batch_center</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">center</span> <span class="o">=</span> <span class="n">center_momentum</span> <span class="o">*</span> <span class="n">center</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">center_momentum</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch_center</span>
+
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">output_std</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">student</span><span class="p">,</span> <span class="n">teacher</span><span class="p">,</span> <span class="n">output_std</span>
+
+<span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">std_centered</span> <span class="o">=</span> <span class="n">train_dino</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">use_centering</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">std_no_center</span> <span class="o">=</span> <span class="n">train_dino</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">use_centering</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'teacher output std, WITH centering:    </span><span class="si">{</span><span class="n">std_centered</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'teacher output std, WITHOUT centering: </span><span class="si">{</span><span class="n">std_no_center</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">  (closer to 0 = more collapsed)'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>teacher output std, WITH centering:    0.2595
+teacher output std, WITHOUT centering: 0.0773  (closer to 0 = more collapsed)
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=8fb753a1"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Centering roughly triples the teacher's output spread compared to training without it — the mechanism visibly does what it's supposed to. Now check whether that translates into a useful representation, the same way Lesson 47 did: freeze the teacher and train a linear probe on a handful of labeled examples.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=c8c2149d">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">make_noisy_dataset</span><span class="p">(</span><span class="n">rng_local</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span> <span class="n">position_range</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">12</span><span class="p">)):</span>
+    <span class="n">imgs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">shape_type</span> <span class="o">=</span> <span class="n">rng_local</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s1">'plus'</span><span class="p">,</span> <span class="s1">'circle'</span><span class="p">])</span>
+        <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span> <span class="o">=</span> <span class="n">rng_local</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="o">*</span><span class="n">position_range</span><span class="p">),</span> <span class="n">rng_local</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="o">*</span><span class="n">position_range</span><span class="p">)</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">make_image</span><span class="p">(</span><span class="n">shape_type</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">)</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">img</span> <span class="o">+</span> <span class="n">rng_local</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">noise</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">imgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+        <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span> <span class="k">if</span> <span class="n">shape_type</span> <span class="o">==</span> <span class="s1">'plus'</span> <span class="k">else</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">imgs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+
+<span class="n">X_probe_train</span><span class="p">,</span> <span class="n">y_probe_train</span> <span class="o">=</span> <span class="n">make_noisy_dataset</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="n">X_probe_test</span><span class="p">,</span> <span class="n">y_probe_test</span> <span class="o">=</span> <span class="n">make_noisy_dataset</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="mi">150</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">linear_probe_acc</span><span class="p">(</span><span class="n">enc</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">feat_train</span> <span class="o">=</span> <span class="n">enc</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">X_probe_train</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">feat_test</span> <span class="o">=</span> <span class="n">enc</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">X_probe_test</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">probe</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">feat_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">opt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">probe</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+    <span class="n">ytr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">y_probe_train</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">300</span><span class="p">):</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">probe</span><span class="p">(</span><span class="n">feat_train</span><span class="p">),</span> <span class="n">ytr</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="n">probe</span><span class="p">(</span><span class="n">feat_test</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">preds</span> <span class="o">==</span> <span class="n">y_probe_test</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="n">probe_accs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">seed</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">teacher</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">train_dino</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">probe_accs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">linear_probe_acc</span><span class="p">(</span><span class="n">teacher</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span> <span class="o">+</span> <span class="mi">50</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'linear probe on DINO-style teacher features: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">probe_accs</span><span class="p">)</span><span class="si">:</span><span class="s1">.1%</span><span class="si">}</span><span class="s1">  (+/- </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">probe_accs</span><span class="p">)</span><span class="si">:</span><span class="s1">.1%</span><span class="si">}</span><span class="s1">)'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'(Lesson 47 contrastive pretraining reached ~73% under the same probe setup)'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>linear probe on DINO-style teacher features: 50.7%  (+/- 4.3%)
+(Lesson 47 contrastive pretraining reached ~73% under the same probe setup)
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=7d7aceef"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The collapse safeguard measurably works — the teacher's outputs stay spread out, not constant. But at this toy scale (a few hundred training epochs, a few hundred unlabeled images), the linear probe lands close to chance, well behind Lesson 47's contrastive result on the identical task. This is an honest result, not a bug: self-distillation is known to be <em>more</em> sensitive to hyperparameters (EMA momentum, temperature schedule, centering rate) and generally needs substantially more training signal to reach a useful representation than a contrastive loss with explicit negatives does. Avoiding collapse is necessary but not sufficient for learning something useful — it just clears the way for enough training to eventually do so.</p>
+<h2 id="What-DINOv2-adds-at-real-scale">What DINOv2 adds at real scale<a class="anchor-link" href="#What-DINOv2-adds-at-real-scale">¶</a></h2><p><strong>DINOv2</strong> (Meta AI, 2023) is this exact mechanism — student/teacher self-distillation with centering, plus a few refinements (multiple small "local crops" alongside full-image "global crops", to make the task harder and richer) — scaled up to a curated 142-million-image <em>unlabeled</em> dataset and a Vision Transformer (Lesson 46) backbone with up to 1.1 billion parameters. At that scale, the representation isn't just "usable with a linear probe" — it exhibits striking emergent properties nobody explicitly trained for: attention maps from a DINOv2 ViT often outline object boundaries and parts without ever seeing a segmentation label (a direct preview of Lesson 50), and k-nearest-neighbor classification directly on frozen DINOv2 features rivals supervised training on several benchmarks, all without fine-tuning a single weight.</p>
+<p>The throughline from this lesson to DINOv2 is exactly the gap this notebook exposed: the <em>mechanism</em> (student, teacher, centering) is the same code at any scale; what changes between this toy version and a real foundation model is data volume, model capacity, and training duration — the same story as Lesson 35 (LeNet to AlexNet) and Lesson 47 (SimCLR at toy scale vs. at 1000+ GPU scale), told once more.</p>
+<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<li>Increase <code>epochs</code> in <code>train_dino</code> from 400 to 1200 (this will take longer to run). Does the linear probe accuracy improve noticeably, stay flat, or become unstable — and how does that compare to what more training epochs did for Lesson 47's contrastive approach?</li>
+<li>Set <code>teacher_temp=0.1</code> (matching the student's temperature exactly, removing the sharpening asymmetry) in <code>dino_loss</code>. Does the collapse comparison (with vs. without centering) still show a clear gap, or does removing sharpening make collapse happen even with centering turned on?</li>
+<li>Try <code>momentum=0.5</code> (a much faster-updating teacher) instead of <code>0.9</code>. A teacher that updates almost as fast as the student loses its main purpose — providing a stable, slowly-changing target. Does training become less stable, and can you see it in the collapse metric?</li>
+</ol>
+</div>
+</div>
+</div>
+
+    </div>
+</body>
+</html>

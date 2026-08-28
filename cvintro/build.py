@@ -3,9 +3,11 @@
 HTML in lessons/, wrapped so it matches the site's look and feel.
 
 Usage:
-    python build.py
+    python build.py               # build every notebook
+    python build.py lesson31      # build only notebooks matching this substring
 """
 import pathlib
+import sys
 
 from nbconvert import HTMLExporter
 from nbconvert.preprocessors import ExecutePreprocessor
@@ -80,8 +82,11 @@ def main():
     LESSONS_DIR.mkdir(exist_ok=True)
     build_pygments_css()
     notebooks = sorted(NOTEBOOKS_DIR.glob("*.ipynb"))
+    if len(sys.argv) > 1:
+        needle = sys.argv[1]
+        notebooks = [p for p in notebooks if needle in p.stem]
     if not notebooks:
-        print("No notebooks found in notebooks/")
+        print("No matching notebooks found in notebooks/")
         return
     for nb_path in notebooks:
         build_notebook(nb_path)
