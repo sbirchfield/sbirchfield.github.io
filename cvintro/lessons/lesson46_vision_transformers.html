@@ -34,10 +34,10 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=e9f39d0f"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=90df6053"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-46:-Vision-Transformers-(ViT)">Lesson 46: Vision Transformers (ViT)<a class="anchor-link" href="#Lesson-46:-Vision-Transformers-(ViT)">¶</a></h1><p>Lesson 45's Transformer encoder operates on a sequence of vectors. An image isn't a sequence — so the <strong>Vision Transformer</strong> (Dosovitskiy et al., 2020) turns it into one: chop the image into fixed-size patches, flatten and linearly embed each patch into a vector, and feed the resulting sequence straight into an ordinary Transformer encoder, exactly as built in Lesson 45. No convolution anywhere. This lesson builds that pipeline, and then runs the exact translation-generalization test from Lesson 33 to show precisely what a Transformer gives up by dropping convolution's built-in inductive bias.</p>
+<h1 id="Lesson-46:-Vision-Transformers-(ViT)">Lesson 46: Vision Transformers (ViT)<a class="anchor-link" href="#Lesson-46:-Vision-Transformers-(ViT)">¶</a></h1><p>Lesson 45's Transformer encoder operates on a sequence of vectors. An image isn't a sequence — so the <strong>Vision Transformer</strong> ("An Image is Worth 16x16 Words", Dosovitskiy et al., 2020<span class="landmark-paper">★</span>) turns it into one: chop the image into fixed-size patches, flatten and linearly embed each patch into a vector, and feed the resulting sequence straight into an ordinary Transformer encoder, exactly as built in Lesson 45. No convolution anywhere. This lesson builds that pipeline, and then runs the exact translation-generalization test from Lesson 33 to show precisely what a Transformer gives up by dropping convolution's built-in inductive bias.</p>
 </div>
 </div>
 </div>
@@ -100,7 +100,7 @@
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>image (2, 1, 16, 16) -&gt; patch sequence (2, 16, 16)  (16 patches of 16 values each)
-linear-on-patches vs. strided-conv max abs diff: 1.79e-07
+linear-on-patches vs. strided-conv max abs diff: 2.38e-07
 </pre>
 </div>
 </div>

@@ -282,7 +282,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=b8293efa"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="From-gradients-to-edges:-the-Canny-detector">From gradients to edges: the Canny detector<a class="anchor-link" href="#From-gradients-to-edges:-the-Canny-detector">¶</a></h2><p>Simply thresholding gradient magnitude gives thick, noisy edge blobs. The <strong>Canny</strong> edge detector refines this with a multi-stage pipeline:</p>
+<h2 id="From-gradients-to-edges:-the-Canny-detector">From gradients to edges: the Canny detector<a class="anchor-link" href="#From-gradients-to-edges:-the-Canny-detector">¶</a></h2><p>Simply thresholding gradient magnitude gives thick, noisy edge blobs. The <strong>Canny</strong> edge detector (Canny, 1986<span class="landmark-paper">★</span>) refines this with a multi-stage pipeline:</p>
 <ol>
 <li><strong>Smooth</strong> with a Gaussian, to suppress noise before differentiating.</li>
 <li><strong>Compute gradients</strong> (Sobel, internally) to get magnitude and direction at every pixel.</li>

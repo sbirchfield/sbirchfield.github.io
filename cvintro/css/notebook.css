@@ -26,6 +26,11 @@
     font-size: 0.9em;
 }
 
+.landmark-paper {
+    color: #d4a017;
+    margin-left: 2px;
+}
+
 .notebook-container .jp-Cell,
 .notebook-container .cell {
     margin-bottom: 1.2em;

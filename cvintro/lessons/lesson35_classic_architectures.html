@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=e9038248"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=bab5afa1"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-35:-Classic-Architectures">Lesson 35: Classic Architectures<a class="anchor-link" href="#Lesson-35:-Classic-Architectures">¶</a></h1><p>Lessons 33-34 built and trained one small CNN. This lesson looks at how CNN <em>architectures</em> evolved over roughly two decades, and works through the single biggest architectural idea in that history in detail: the residual connection, and the vanishing-gradient problem it was designed to fix.</p>
@@ -61,9 +61,10 @@
 <h2 id="A-brief-tour">A brief tour<a class="anchor-link" href="#A-brief-tour">¶</a></h2><p>A handful of architectures defined the field, each solving a specific problem with the previous one:</p>
 <ul>
 <li><strong>LeNet-5</strong> (1998) — the template Lesson 33 already implements: conv, pool, conv, pool, then fully-connected layers. Built for digit recognition on 32x32 images.</li>
-<li><strong>AlexNet</strong> (2012) — the same template, just much bigger (5 conv layers, ~60M parameters), trained on ImageNet using GPUs and ReLU instead of tanh/sigmoid. Its win in the 2012 ImageNet competition (top-5 error dropping from ~26% to ~15%) is usually cited as the event that restarted mainstream interest in neural networks.</li>
-<li><strong>VGG</strong> (2014) — replaced AlexNet's large 11x11/5x5 filters with a deep stack of small 3x3 convolutions. Two stacked 3x3 convs have the same <em>receptive field</em> as one 5x5 conv (Lesson 11's pyramid idea again) but fewer parameters and an extra nonlinearity in between.</li>
-<li><strong>ResNet</strong> (2015) — the subject of the rest of this lesson. Pushed depth from VGG's ~19 layers to 50, 101, even 152, by solving the problem that had made naively stacking more layers <em>worse</em>, not better.</li>
+<li><strong>AlexNet</strong> (Krizhevsky, Sutskever &amp; Hinton, 2012<span class="landmark-paper">★</span>) — the same template, just much bigger (5 conv layers, ~60M parameters), trained on <strong>ImageNet</strong> (Deng et al., 2009<span class="landmark-paper">★</span>) using GPUs and ReLU instead of tanh/sigmoid. Its win in the 2012 ImageNet competition (top-5 error dropping from ~26% to ~15%) is usually cited as the event that restarted mainstream interest in neural networks.</li>
+<li><strong>VGG</strong> (Simonyan &amp; Zisserman, 2014<span class="landmark-paper">★</span>) — replaced AlexNet's large 11x11/5x5 filters with a deep stack of small 3x3 convolutions. Two stacked 3x3 convs have the same <em>receptive field</em> as one 5x5 conv (Lesson 11's pyramid idea again) but fewer parameters and an extra nonlinearity in between.</li>
+<li><strong>GoogLeNet / Inception</strong> (Szegedy et al., 2015<span class="landmark-paper">★</span>) — went wider instead of just deeper: each "Inception module" runs several convolution sizes (1x1, 3x3, 5x5) side by side on the same input and concatenates their outputs, so the network doesn't have to commit to one filter size per layer. 1x1 convolutions are used first to cheaply shrink the channel count, keeping the wider module affordable.</li>
+<li><strong>ResNet</strong> (He et al., 2015<span class="landmark-paper">★</span>) — the subject of the rest of this lesson. Pushed depth from VGG's ~19 layers to 50, 101, even 152, by solving the problem that had made naively stacking more layers <em>worse</em>, not better.</li>
 </ul>
 </div>
 </div>
