@@ -7,6 +7,7 @@ Usage:
     python build.py lesson31      # build only notebooks matching this substring
 """
 import pathlib
+import re
 import sys
 
 from nbconvert import HTMLExporter
@@ -124,8 +125,26 @@ REFERENCES_PAGE_TEMPLATE = """<!DOCTYPE html>
 """
 
 
+def find_citing_lessons():
+    """Map each reference id to the sorted list of (lesson_number, filename) that cite it,
+    by scanning the already-built lesson pages for links back to references.html#id."""
+    citing = {}
+    for html_path in sorted(LESSONS_DIR.glob("lesson*.html")):
+        m = re.match(r"lesson(\d+)_", html_path.stem)
+        if not m:
+            continue
+        lesson_num = int(m.group(1))
+        text = html_path.read_text(encoding="utf-8")
+        for ref_id in set(re.findall(r'references\.html#([a-zA-Z0-9\-]+)"', text)):
+            citing.setdefault(ref_id, []).append((lesson_num, html_path.name))
+    for ref_id in citing:
+        citing[ref_id].sort()
+    return citing
+
+
 def build_references_page():
     entries = sorted(REFERENCES, key=lambda r: (r["sort_name"].lower(), r["year"]))
+    citing_lessons = find_citing_lessons()
     items = []
     for r in entries:
         star = ' <span class="landmark-paper">&#9733;</span>' if r.get("landmark") else ""
@@ -134,7 +153,14 @@ def build_references_page():
             title_html = f'<a href="{r["url"]}" target="_blank" rel="noopener">{title}</a>'
         else:
             title_html = title
-        items.append(f'            <li id="{r["id"]}">{r["authors"]} ({r["year"]}). {title_html}.{star}</li>')
+
+        lessons_html = ""
+        cited_in = citing_lessons.get(r["id"], [])
+        if cited_in:
+            links = ", ".join(f'<a href="lessons/{fname}">{num}</a>' for num, fname in cited_in)
+            lessons_html = f' ({links})'
+
+        items.append(f'            <li id="{r["id"]}">{r["authors"]} ({r["year"]}). {title_html}.{star}{lessons_html}</li>')
 
     page = REFERENCES_PAGE_TEMPLATE.format(items="\n".join(items))
     out_path = ROOT / "references.html"
