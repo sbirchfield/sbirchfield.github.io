@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson26 Structure From Motion - Introduction to Computer Vision</title>
+    <title>Lesson27 Structure From Motion - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -29,7 +29,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=725b135c"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-26:-Structure-from-Motion">Lesson 26: Structure from Motion<a class="anchor-link" href="#Lesson-26:-Structure-from-Motion">¶</a></h1><p>This lesson is a capstone: it assembles feature matching (Lesson 18), robust estimation (Lesson 22), the essential matrix and pose recovery (Lesson 24), and calibration (Lesson 25) into a complete pipeline that takes 2D image correspondences from two views and recovers <strong>both</strong> the cameras' relative motion <strong>and</strong> the 3D positions of the points that were being viewed — <strong>S</strong>tructure <strong>f</strong>rom <strong>M</strong>otion. The one genuinely new ingredient is <strong>triangulation</strong>: turning a matched 2D point pair, plus known camera poses, into a 3D point.</p>
+<h1 id="Lesson-27:-Structure-from-Motion">Lesson 27: Structure from Motion<a class="anchor-link" href="#Lesson-27:-Structure-from-Motion">¶</a></h1><p>This lesson is a capstone: it assembles feature matching (Lesson 18), robust estimation (Lesson 23), the essential matrix and pose recovery (Lesson 25), and calibration (Lesson 26) into a complete pipeline that takes 2D image correspondences from two views and recovers <strong>both</strong> the cameras' relative motion <strong>and</strong> the 3D positions of the points that were being viewed — <strong>S</strong>tructure <strong>f</strong>rom <strong>M</strong>otion. The one genuinely new ingredient is <strong>triangulation</strong>: turning a matched 2D point pair, plus known camera poses, into a 3D point.</p>
 </div>
 </div>
 </div>
@@ -52,11 +52,11 @@
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="The-pipeline,-at-a-glance">The pipeline, at a glance<a class="anchor-link" href="#The-pipeline,-at-a-glance">¶</a></h2><ol>
 <li><strong>Match features</strong> between two images (Lesson 18: SIFT + ratio test).</li>
-<li><strong>Estimate the essential matrix</strong> $E$ from those correspondences, robustly (Lesson 22: RANSAC), using known intrinsics $K$ (Lesson 25: calibration).</li>
-<li><strong>Recover relative pose</strong> $(R, t)$ from $E$ (Lesson 24: <code>cv2.recoverPose</code>) — up to an unknown scale on $t$.</li>
+<li><strong>Estimate the essential matrix</strong> $E$ from those correspondences, robustly (Lesson 23: RANSAC), using known intrinsics $K$ (Lesson 26: calibration).</li>
+<li><strong>Recover relative pose</strong> $(R, t)$ from $E$ (Lesson 25: <code>cv2.recoverPose</code>) — up to an unknown scale on $t$.</li>
 <li><strong>Triangulate</strong>: for every matched pair, intersect the two corresponding rays in 3D to recover a 3D point — new in this lesson.</li>
 </ol>
-<p>We build a synthetic two-camera scene (as in Lessons 24-25) so we always have ground truth to check the <em>entire</em> pipeline against, end to end.</p>
+<p>We build a synthetic two-camera scene (as in Lessons 25-26) so we always have ground truth to check the <em>entire</em> pipeline against, end to end.</p>
 </div>
 </div>
 </div>
@@ -94,7 +94,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=313721d7"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-1-2:-robust-essential-matrix-and-pose-recovery">Step 1-2: robust essential matrix and pose recovery<a class="anchor-link" href="#Step-1-2:-robust-essential-matrix-and-pose-recovery">¶</a></h2><p>Standing in for real (imperfect) feature matches from Lesson 18, we feed the correspondences through the same robust pipeline built in Lessons 22 and 24.</p>
+<h2 id="Step-1-2:-robust-essential-matrix-and-pose-recovery">Step 1-2: robust essential matrix and pose recovery<a class="anchor-link" href="#Step-1-2:-robust-essential-matrix-and-pose-recovery">¶</a></h2><p>Standing in for real (imperfect) feature matches from Lesson 18, we feed the correspondences through the same robust pipeline built in Lessons 23 and 25.</p>
 </div>
 </div>
 </div>
@@ -142,14 +142,14 @@ true translation direction:      [0.9806 0.     0.1961]
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=3b8cb849"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As in Lesson 24, <code>recoverPose</code> returns a <strong>unit-length</strong> translation direction — the actual baseline distance between the cameras is fundamentally unrecoverable from image correspondences alone. We'll come back to that.</p>
+<p>As in Lesson 25, <code>recoverPose</code> returns a <strong>unit-length</strong> translation direction — the actual baseline distance between the cameras is fundamentally unrecoverable from image correspondences alone. We'll come back to that.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=9f129208"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-3:-triangulation">Step 3: triangulation<a class="anchor-link" href="#Step-3:-triangulation">¶</a></h2><p>Given two camera projection matrices $P_1, P_2$ (each $3\times4$, mapping a 3D point to a 2D image point in homogeneous coordinates) and a matched pixel pair $(x_1, x_2)$, we want the 3D point $X$ satisfying both $x_1 \propto P_1 X$ and $x_2 \propto P_2 X$. Each view contributes 2 independent linear equations in $X$'s 4 homogeneous unknowns (cross-multiplying out the unknown scale factor), by the same DLT/SVD recipe used for homographies (Lesson 21) and the fundamental matrix (Lesson 24):</p>
+<h2 id="Step-3:-triangulation">Step 3: triangulation<a class="anchor-link" href="#Step-3:-triangulation">¶</a></h2><p>Given two camera projection matrices $P_1, P_2$ (each $3\times4$, mapping a 3D point to a 2D image point in homogeneous coordinates) and a matched pixel pair $(x_1, x_2)$, we want the 3D point $X$ satisfying both $x_1 \propto P_1 X$ and $x_2 \propto P_2 X$. Each view contributes 2 independent linear equations in $X$'s 4 homogeneous unknowns (cross-multiplying out the unknown scale factor), by the same DLT/SVD recipe used for homographies (Lesson 21) and the fundamental matrix (Lesson 25):</p>
 <p>$$A = \begin{bmatrix} u_1 P_1^{(3)} - P_1^{(1)} \\ v_1 P_1^{(3)} - P_1^{(2)} \\ u_2 P_2^{(3)} - P_2^{(1)} \\ v_2 P_2^{(3)} - P_2^{(2)} \end{bmatrix}, \qquad AX = 0$$</p>
 <p>where $P^{(i)}$ denotes row $i$ of $P$. The null space of $A$ (smallest-singular-value right singular vector) gives $X$.</p>
 </div>

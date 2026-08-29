@@ -26,7 +26,7 @@
         </div>
     </nav>
     <div class="container notebook-container">
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=2508934d"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=915bb157"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-37:-Image-Classification-in-Practice">Lesson 37: Image Classification in Practice<a class="anchor-link" href="#Lesson-37:-Image-Classification-in-Practice">¶</a></h1><p>Every classifier so far has been evaluated with a single number: overall accuracy. That number hides a lot. This lesson builds a 4-class classifier on a deliberately imbalanced dataset and shows why accuracy alone can be misleading, using the tools that reveal what's actually going wrong: the <strong>confusion matrix</strong>, and <strong>per-class precision and recall</strong>.</p>
@@ -242,20 +242,71 @@ test class counts:     {'plus': np.int64(56), 'circle': np.int64(48), 'square': 
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=f44a0b1d"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="True-positives,-false-positives,-true-negatives,-false-negatives">True positives, false positives, true negatives, false negatives<a class="anchor-link" href="#True-positives,-false-positives,-true-negatives,-false-negatives">¶</a></h2><p>Every cell of the confusion matrix above is a specific kind of correctness or mistake, but the standard vocabulary for talking about them is binary: pick one class and ask only "is it this, or not?" Collapsing the 4-class matrix down to "triangle vs. everything else" gives exactly four outcomes:</p>
+<ul>
+<li><strong>True positive (TP)</strong>: actually a triangle, predicted triangle. A hit.</li>
+<li><strong>False negative (FN)</strong>: actually a triangle, predicted something else. A miss — the model let it slip past.</li>
+<li><strong>False positive (FP)</strong>: actually <em>not</em> a triangle, predicted triangle anyway. A false alarm.</li>
+<li><strong>True negative (TN)</strong>: actually not a triangle, correctly predicted not-triangle.</li>
+</ul>
+<p>This is the same 2x2 table underlying every binary classifier's evaluation (a medical test's "positive/negative" result, a spam filter's "spam/not spam" decision) — a multi-class confusion matrix is just this table computed once per class, with everything off that class's row/column collapsed into "not this class."</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=06300321">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="bp">cls</span> <span class="o">=</span> <span class="n">SHAPES</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">'triangle'</span><span class="p">)</span>
+<span class="n">tp</span> <span class="o">=</span> <span class="n">cm</span><span class="p">[</span><span class="bp">cls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">]</span>
+<span class="n">fn</span> <span class="o">=</span> <span class="n">cm</span><span class="p">[</span><span class="bp">cls</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">-</span> <span class="n">tp</span>          <span class="c1"># true triangle, predicted something else</span>
+<span class="n">fp</span> <span class="o">=</span> <span class="n">cm</span><span class="p">[:,</span> <span class="bp">cls</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">-</span> <span class="n">tp</span>          <span class="c1"># predicted triangle, actually something else</span>
+<span class="n">tn</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">-</span> <span class="n">tp</span> <span class="o">-</span> <span class="n">fn</span> <span class="o">-</span> <span class="n">fp</span>        <span class="c1"># everything else, correctly not called triangle</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="s2">""</span><span class="si">:</span><span class="s1">&gt;18</span><span class="si">}{</span><span class="s2">"predicted triangle"</span><span class="si">:</span><span class="s1">&gt;20</span><span class="si">}{</span><span class="s2">"predicted NOT triangle"</span><span class="si">:</span><span class="s1">&gt;24</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="s2">"actually triangle"</span><span class="si">:</span><span class="s1">&gt;18</span><span class="si">}{</span><span class="n">tp</span><span class="si">:</span><span class="s1">&gt;20</span><span class="si">}{</span><span class="n">fn</span><span class="si">:</span><span class="s1">&gt;24</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="s2">"actually NOT triangle"</span><span class="si">:</span><span class="s1">&gt;18</span><span class="si">}{</span><span class="n">fp</span><span class="si">:</span><span class="s1">&gt;20</span><span class="si">}{</span><span class="n">tn</span><span class="si">:</span><span class="s1">&gt;24</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'TP=</span><span class="si">{</span><span class="n">tp</span><span class="si">}</span><span class="s1">, FP=</span><span class="si">{</span><span class="n">fp</span><span class="si">}</span><span class="s1">, FN=</span><span class="si">{</span><span class="n">fn</span><span class="si">}</span><span class="s1">, TN=</span><span class="si">{</span><span class="n">tn</span><span class="si">}</span><span class="s1">, total=</span><span class="si">{</span><span class="n">tp</span><span class="o">+</span><span class="n">fp</span><span class="o">+</span><span class="n">fn</span><span class="o">+</span><span class="n">tn</span><span class="si">}</span><span class="s1"> (test set size=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">y_test</span><span class="p">)</span><span class="si">}</span><span class="s1">)'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>                    predicted triangle  predicted NOT triangle
+ actually triangle                  29                      22
+actually NOT triangle                   0                     149
+
+TP=29, FP=0, FN=22, TN=149, total=200 (test set size=200)
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=f50b41fd"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Precision-and-recall">Precision and recall<a class="anchor-link" href="#Precision-and-recall">¶</a></h2><p>Two numbers per class, computed from the confusion matrix:</p>
+<h2 id="Precision-and-recall">Precision and recall<a class="anchor-link" href="#Precision-and-recall">¶</a></h2><p>Two numbers per class, computed directly from TP/FP/FN:</p>
 <ul>
-<li><strong>Recall</strong> = (true positives) / (all actual members of the class) — of everything that really <em>was</em> class <code>i</code>, what fraction did the model catch? Low recall means the model misses that class often.</li>
-<li><strong>Precision</strong> = (true positives) / (all predictions of the class) — of everything the model <em>called</em> class <code>i</code>, what fraction actually was? Low precision means the model cries wolf on that class often.</li>
+<li><strong>Recall</strong> = TP / (TP + FN) — of everything that really <em>was</em> class <code>i</code>, what fraction did the model catch? Low recall means the model misses that class often.</li>
+<li><strong>Precision</strong> = TP / (TP + FP) — of everything the model <em>called</em> class <code>i</code>, what fraction actually was? Low precision means the model cries wolf on that class often.</li>
 </ul>
+<p>(A less commonly needed but related pair, built from the other two quadrants: <strong>specificity</strong> = TN / (TN + FP), how well the model avoids false alarms on the negative class, and its complement the <strong>false positive rate</strong> = FP / (FP + TN) = 1 − specificity.)</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=fccace41">
 <div class="input">
-<div class="prompt input_prompt">In [5]:</div>
+<div class="prompt input_prompt">In [6]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="s2">"class"</span><span class="si">:</span><span class="s1">&gt;10</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="s2">"precision"</span><span class="si">:</span><span class="s1">&gt;10</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="s2">"recall"</span><span class="si">:</span><span class="s1">&gt;8</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="s2">"support"</span><span class="si">:</span><span class="s1">&gt;8</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>

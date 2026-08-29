@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson25 Camera Calibration - Introduction to Computer Vision</title>
+    <title>Lesson26 Camera Calibration - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -29,7 +29,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=e83ca348"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-25:-Camera-Calibration">Lesson 25: Camera Calibration<a class="anchor-link" href="#Lesson-25:-Camera-Calibration">¶</a></h1><p>Lesson 24 assumed the camera intrinsics $K$ were already known. This lesson shows how to actually get them: <strong>camera calibration</strong>, typically done by showing the camera a known flat pattern (a checkerboard) from several different angles. The classic approach (Zhang, 2000) works by extracting a <strong>homography</strong> between the checkerboard plane and each image — a direct callback to Lesson 21 — and combining constraints from several such homographies to pin down $K$.</p>
+<h1 id="Lesson-26:-Camera-Calibration">Lesson 26: Camera Calibration<a class="anchor-link" href="#Lesson-26:-Camera-Calibration">¶</a></h1><p>Lesson 25 assumed the camera intrinsics $K$ were already known. This lesson shows how to actually get them: <strong>camera calibration</strong>, typically done by showing the camera a known flat pattern (a checkerboard) from several different angles. The classic approach (Zhang, 2000) works by extracting a <strong>homography</strong> between the checkerboard plane and each image — a direct callback to Lesson 21 — and combining constraints from several such homographies to pin down $K$.</p>
 </div>
 </div>
 </div>
@@ -51,10 +51,10 @@
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="What-calibration-recovers">What calibration recovers<a class="anchor-link" href="#What-calibration-recovers">¶</a></h2><p>Two separate things:</p>
 <ol>
-<li><strong>Intrinsics</strong> $K = \begin{bmatrix}f_x &amp; s &amp; c_x\\0 &amp; f_y &amp; c_y\\0&amp;0&amp;1\end{bmatrix}$: focal lengths, principal point, and skew — the ideal pinhole part of the camera model used throughout Lessons 21 and 24.</li>
+<li><strong>Intrinsics</strong> $K = \begin{bmatrix}f_x &amp; s &amp; c_x\\0 &amp; f_y &amp; c_y\\0&amp;0&amp;1\end{bmatrix}$: focal lengths, principal point, and skew — the ideal pinhole part of the camera model used throughout Lessons 21 and 25.</li>
 <li><strong>Distortion coefficients</strong> $(k_1, k_2, p_1, p_2, k_3, \dots)$: real lenses aren't perfect pinholes. Radial distortion ($k_1, k_2, k_3$) bows straight lines into curves (barrel or pincushion, depending on sign); tangential distortion ($p_1, p_2$) accounts for the lens not being perfectly parallel to the sensor.</li>
 </ol>
-<p>Every equation in Lessons 21 and 24 secretly assumed distortion was already removed — calibration is the step that makes that assumption true.</p>
+<p>Every equation in Lessons 21 and 25 secretly assumed distortion was already removed — calibration is the step that makes that assumption true.</p>
 </div>
 </div>
 </div>
@@ -291,7 +291,7 @@ $$y_d = y(1 + k_1r^2 + k_2r^4 + k_3r^6) + p_1(r^2+2y^2) + 2p_2xy$$</p>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=ccdd40ee"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The lines are straight again, and the recovered points match the original ideal grid to within floating-point precision — the whole point of calibrating a real camera is to be able to do exactly this correction on real photos before handing them to any of the geometric machinery from Lessons 21 and 24, all of which implicitly assumes an ideal, distortion-free pinhole.</p>
+<p>The lines are straight again, and the recovered points match the original ideal grid to within floating-point precision — the whole point of calibrating a real camera is to be able to do exactly this correction on real photos before handing them to any of the geometric machinery from Lessons 21 and 25, all of which implicitly assumes an ideal, distortion-free pinhole.</p>
 </div>
 </div>
 </div>

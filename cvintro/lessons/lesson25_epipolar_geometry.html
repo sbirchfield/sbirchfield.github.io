@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson24 Epipolar Geometry - Introduction to Computer Vision</title>
+    <title>Lesson25 Epipolar Geometry - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -29,7 +29,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=d21c0372"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-24:-Epipolar-Geometry">Lesson 24: Epipolar Geometry<a class="anchor-link" href="#Lesson-24:-Epipolar-Geometry">¶</a></h1><p>Lesson 20's stereo matching assumed a <em>rectified</em> pair, where corresponding points always fall on the same row — a special case. This lesson covers the general two-view relationship between <strong>any</strong> pair of images of a static scene, calibrated or not: the <strong>fundamental matrix</strong> and <strong>essential matrix</strong>, which say that a point's match in the other image isn't just <em>somewhere</em> — it's constrained to lie on a single line.</p>
+<h1 id="Lesson-25:-Epipolar-Geometry">Lesson 25: Epipolar Geometry<a class="anchor-link" href="#Lesson-25:-Epipolar-Geometry">¶</a></h1><p>Lesson 20's stereo matching assumed a <em>rectified</em> pair, where corresponding points always fall on the same row — a special case. This lesson covers the general two-view relationship between <strong>any</strong> pair of images of a static scene, calibrated or not: the <strong>fundamental matrix</strong> and <strong>essential matrix</strong>, which say that a point's match in the other image isn't just <em>somewhere</em> — it's constrained to lie on a single line.</p>
 </div>
 </div>
 </div>
@@ -257,7 +257,7 @@ mean |x2^T F x1|, cv2 F:  1.09e-07
 <h2 id="From-fundamental-to-essential:-adding-calibration">From fundamental to essential: adding calibration<a class="anchor-link" href="#From-fundamental-to-essential:-adding-calibration">¶</a></h2><p>The fundamental matrix works in raw pixel coordinates and folds in the (unknown) camera intrinsics. If we <em>do</em> know the intrinsics $K$ (from camera calibration), we can remove them and work in normalized coordinates, giving the <strong>essential matrix</strong>:</p>
 <p>$$E = K_2^\top F K_1 \qquad \text{(same } K \text{ for both, if it's the same camera)}$$</p>
 <p>Unlike $F$ (7 degrees of freedom), $E$ has only 5 — it's built entirely from a relative rotation $R$ and translation direction $t$ between the two cameras: $E = [t]_\times R$. This means $E$ can be <em>decomposed</em> back into $R$ and $t$, which is how you recover camera motion from image correspondences alone.</p>
-<p>We estimate $E$ robustly with <code>cv2.findEssentialMat(..., method=cv2.RANSAC, ...)</code>, exactly the kind of outlier-rejecting fit built from scratch in Lesson 22.</p>
+<p>We estimate $E$ robustly with <code>cv2.findEssentialMat(..., method=cv2.RANSAC, ...)</code>, exactly the kind of outlier-rejecting fit built from scratch in Lesson 23.</p>
 </div>
 </div>
 </div>
