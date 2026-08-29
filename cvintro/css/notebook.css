@@ -9,6 +9,23 @@
     margin-top: 0;
 }
 
+.notebook-links {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 14px;
+    margin: 4px 0 20px;
+}
+
+.notebook-links img {
+    height: 28px;
+    display: block;
+}
+
+.notebook-links a {
+    font-size: 0.9em;
+}
+
 .notebook-container .jp-Cell,
 .notebook-container .cell {
     margin-bottom: 1.2em;

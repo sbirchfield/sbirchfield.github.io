@@ -19,6 +19,10 @@ NOTEBOOKS_DIR = ROOT / "notebooks"
 LESSONS_DIR = ROOT / "lessons"
 CSS_DIR = ROOT / "css"
 
+GITHUB_REPO = "sbirchfield/sbirchfield.github.io"
+GITHUB_BRANCH = "main"
+NOTEBOOK_REPO_PATH = "cvintro/notebooks"
+
 PAGE_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,6 +51,14 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
         </div>
     </nav>
     <div class="container notebook-container">
+        <div class="notebook-links">
+            <a href="https://colab.research.google.com/github/{repo}/blob/{branch}/{nb_repo_path}/{nb_name}" target="_blank" rel="noopener">
+                <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
+            </a>
+            <a href="https://raw.githubusercontent.com/{repo}/{branch}/{nb_repo_path}/{nb_name}" download>
+                <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
+            </a>
+        </div>
 {body}
     </div>
 </body>
@@ -65,7 +77,14 @@ def build_notebook(nb_path: pathlib.Path):
     body, _ = exporter.from_notebook_node(nb)
 
     title = nb_path.stem.replace("_", " ").title()
-    page = PAGE_TEMPLATE.format(title=title, body=body)
+    page = PAGE_TEMPLATE.format(
+        title=title,
+        body=body,
+        repo=GITHUB_REPO,
+        branch=GITHUB_BRANCH,
+        nb_repo_path=NOTEBOOK_REPO_PATH,
+        nb_name=nb_path.name,
+    )
 
     out_path = LESSONS_DIR / (nb_path.stem + ".html")
     out_path.write_text(page, encoding="utf-8")
