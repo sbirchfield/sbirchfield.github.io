@@ -14,6 +14,8 @@ from nbconvert.preprocessors import ExecutePreprocessor
 from pygments.formatters import HtmlFormatter
 import nbformat
 
+from references_data import REFERENCES
+
 ROOT = pathlib.Path(__file__).parent
 NOTEBOOKS_DIR = ROOT / "notebooks"
 LESSONS_DIR = ROOT / "lessons"
@@ -91,6 +93,55 @@ def build_notebook(nb_path: pathlib.Path):
     print(f"  -> {out_path.relative_to(ROOT)}")
 
 
+REFERENCES_PAGE_TEMPLATE = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>References - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="css/notebook.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>References</h1>
+        <p style="text-align: right;"><span class="landmark-paper">&#9733;</span> marks especially influential, highly-cited papers.</p>
+        <ul class="references-list">
+{items}
+        </ul>
+    </div>
+</body>
+</html>
+"""
+
+
+def build_references_page():
+    entries = sorted(REFERENCES, key=lambda r: (r["sort_name"].lower(), r["year"]))
+    items = []
+    for r in entries:
+        star = ' <span class="landmark-paper">&#9733;</span>' if r.get("landmark") else ""
+        title = r["title"]
+        if r.get("url"):
+            title_html = f'<a href="{r["url"]}" target="_blank" rel="noopener">{title}</a>'
+        else:
+            title_html = title
+        items.append(f'            <li id="{r["id"]}">{r["authors"]} ({r["year"]}). {title_html}.{star}</li>')
+
+    page = REFERENCES_PAGE_TEMPLATE.format(items="\n".join(items))
+    out_path = ROOT / "references.html"
+    out_path.write_text(page, encoding="utf-8")
+    print(f"  -> {out_path.relative_to(ROOT)}")
+
+
 def build_pygments_css():
     css = HtmlFormatter(style="default").get_style_defs(".highlight")
     out_path = CSS_DIR / "pygments.css"
@@ -101,6 +152,7 @@ def build_pygments_css():
 def main():
     LESSONS_DIR.mkdir(exist_ok=True)
     build_pygments_css()
+    build_references_page()
     notebooks = sorted(NOTEBOOKS_DIR.glob("*.ipynb"))
     if len(sys.argv) > 1:
         needle = sys.argv[1]

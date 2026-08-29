@@ -132,7 +132,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=b5a2d5da"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Lucas-Kanade:-solving-the-aperture-problem-with-a-window">Lucas-Kanade: solving the aperture problem with a window<a class="anchor-link" href="#Lucas-Kanade:-solving-the-aperture-problem-with-a-window">¶</a></h2><p>Lucas and Kanade's fix (1981): assume the flow $(u,v)$ is <strong>constant over a small window</strong>, then combine the flow constraint equation from every pixel in that window into an overdetermined least-squares system:</p>
+<h2 id="Lucas-Kanade:-solving-the-aperture-problem-with-a-window">Lucas-Kanade: solving the aperture problem with a window<a class="anchor-link" href="#Lucas-Kanade:-solving-the-aperture-problem-with-a-window">¶</a></h2><p><a href="../references.html#lucas-kanade-1981">Lucas and Kanade's fix (1981)</a>: assume the flow $(u,v)$ is <strong>constant over a small window</strong>, then combine the flow constraint equation from every pixel in that window into an overdetermined least-squares system:</p>
 <p>$$\underbrace{\begin{bmatrix}\sum I_x^2 &amp; \sum I_xI_y \\ \sum I_xI_y &amp; \sum I_y^2\end{bmatrix}}_{M}\begin{bmatrix}u\\v\end{bmatrix} = -\begin{bmatrix}\sum I_xI_t\\ \sum I_yI_t\end{bmatrix}$$</p>
 <p>$M$ is exactly the structure tensor from Lesson 18! This is not a coincidence: solving this system requires $M$ to be invertible, i.e. to have two large eigenvalues — precisely the Shi-Tomasi "good feature to track" condition. A flat region ($M$ near zero) or an edge (one small eigenvalue — the aperture problem again) gives an ill-conditioned or singular system; a corner gives a well-conditioned one. <strong>Corners are trackable for exactly the same reason they're good corners.</strong></p>
 </div>
@@ -325,7 +325,13 @@ cv2.calcOpticalFlowPyrLK estimate:    (4.000, 3.000)  &lt;- accurate
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>true motion: (5.0, -3.0)
+<pre>true motion: (5.0, -3.0)</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
 mean flow, ALL pixels:      (2.25, -1.35)  &lt;- biased low
 mean flow, TEXTURED pixels: (5.00, -3.00)  &lt;- accurate
 </pre>

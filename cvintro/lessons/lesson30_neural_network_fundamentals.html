@@ -214,6 +214,13 @@ max discrepancy: 1.01e-09
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=26944bc6"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Aside:-what's-a-tensor?">Aside: what's a tensor?<a class="anchor-link" href="#Aside:-what's-a-tensor?">¶</a></h3><p>This is the first appearance of PyTorch in the course, and with it, the word <strong>tensor</strong>. A tensor is just the general term for a grid of numbers of any dimensionality: a scalar is a 0-dimensional tensor, a vector is 1-dimensional, a matrix is 2-dimensional, and a stack of matrices (e.g. a batch of RGB images, indexed by <code>[batch, channel, height, width]</code>) is a 4-dimensional tensor. Every array used so far in this course — NumPy arrays, images, weight matrices — has really been a tensor all along; PyTorch's <code>torch.Tensor</code> is simply NumPy's <code>ndarray</code> with two extras bolted on: it can track a <code>.grad</code> for automatic differentiation (used below), and it can live on a GPU instead of the CPU for fast, parallel computation. A tensor's <code>.shape</code> (e.g. <code>(100, 2)</code> for <code>X_t</code> below) says exactly what NumPy's <code>.shape</code> would say for the same array — the two libraries are close enough that converting between them (<code>torch.tensor(numpy_array)</code>, <code>tensor.numpy()</code>) is essentially free.</p>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=cf7afe60"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">

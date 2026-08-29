@@ -31,6 +31,17 @@
     margin-left: 2px;
 }
 
+.references-list {
+    padding-left: 0;
+    list-style: none;
+}
+
+.references-list li {
+    margin-bottom: 12px;
+    padding-left: 1.5em;
+    text-indent: -1.5em;
+}
+
 .notebook-container .jp-Cell,
 .notebook-container .cell {
     margin-bottom: 1.2em;

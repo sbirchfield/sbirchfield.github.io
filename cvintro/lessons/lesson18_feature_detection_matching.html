@@ -108,7 +108,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=cd745658"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Harris-corner-detector">Harris corner detector<a class="anchor-link" href="#Harris-corner-detector">¶</a></h2><p>Directly computing eigenvalues everywhere is a bit expensive, so Harris and Stephens (1988) proposed a cheaper proxy using only $\det(M)$ and $\text{trace}(M)$ (which can be computed without ever finding eigenvalues):</p>
+<h2 id="Harris-corner-detector">Harris corner detector<a class="anchor-link" href="#Harris-corner-detector">¶</a></h2><p>Directly computing eigenvalues everywhere is a bit expensive, so <a href="../references.html#harris-stephens-1988">Harris and Stephens (1988)</a> proposed a cheaper proxy using only $\det(M)$ and $\text{trace}(M)$ (which can be computed without ever finding eigenvalues):</p>
 <p>$$R = \det(M) - k \cdot \text{trace}(M)^2, \qquad k \approx 0.04\text{--}0.06$$</p>
 <p>$R$ is large and positive at corners, negative at edges, and near zero on flat regions.</p>
 </div>
@@ -161,7 +161,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=f9cd5603"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Shi-Tomasi:-%22Good-Features-to-Track%22">Shi-Tomasi: "Good Features to Track"<a class="anchor-link" href="#Shi-Tomasi:-%22Good-Features-to-Track%22">¶</a></h2><p>Shi and Tomasi (1994) argued for using the <strong>minimum eigenvalue</strong> of $M$ directly instead of Harris's determinant/trace proxy:</p>
+<h2 id="Shi-Tomasi:-%22Good-Features-to-Track%22">Shi-Tomasi: "Good Features to Track"<a class="anchor-link" href="#Shi-Tomasi:-%22Good-Features-to-Track%22">¶</a></h2><p><a href="../references.html#shi-tomasi-1994">Shi and Tomasi (1994)</a> argued for using the <strong>minimum eigenvalue</strong> of $M$ directly instead of Harris's determinant/trace proxy:</p>
 <p>$$R_{\text{ST}} = \min(\lambda_1, \lambda_2)$$</p>
 <p>A point is only a strong corner if <em>both</em> eigenvalues are large — the minimum being large is exactly that condition, and (unlike Harris's $R$) it has a direct, easily interpretable meaning: it's proportional to the worst-case tracking precision in any direction.</p>
 </div>
@@ -211,7 +211,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=2caf0562"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-scale-problem">The scale problem<a class="anchor-link" href="#The-scale-problem">¶</a></h2><p>Harris and Shi-Tomasi both operate at a single, fixed window size. Zoom the same corner in or out, and it may stop looking like a corner at that fixed scale (a sharp corner becomes a gentle curve when zoomed out enough) — these detectors are <strong>not scale-invariant</strong>. <strong>SIFT</strong> (Scale-Invariant Feature Transform, Lowe, 1999/2004<span class="landmark-paper">★</span>) fixes this by searching for keypoints across an entire scale-space, not just one window size.</p>
+<h2 id="The-scale-problem">The scale problem<a class="anchor-link" href="#The-scale-problem">¶</a></h2><p>Harris and Shi-Tomasi both operate at a single, fixed window size. Zoom the same corner in or out, and it may stop looking like a corner at that fixed scale (a sharp corner becomes a gentle curve when zoomed out enough) — these detectors are <strong>not scale-invariant</strong>. <strong>SIFT</strong> (Scale-Invariant Feature Transform, <a href="../references.html#lowe-2004">Lowe, 1999/2004</a><span class="landmark-paper">★</span>) fixes this by searching for keypoints across an entire scale-space, not just one window size.</p>
 </div>
 </div>
 </div>
@@ -264,7 +264,13 @@
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>found 163 keypoints, each with a 128-dim descriptor
+<pre>found 163 keypoints, each with a 128-dim descriptor</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
 </pre>
 </div>
 </div>

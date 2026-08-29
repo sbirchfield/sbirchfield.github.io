@@ -282,7 +282,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=b8293efa"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="From-gradients-to-edges:-the-Canny-detector">From gradients to edges: the Canny detector<a class="anchor-link" href="#From-gradients-to-edges:-the-Canny-detector">¶</a></h2><p>Simply thresholding gradient magnitude gives thick, noisy edge blobs. The <strong>Canny</strong> edge detector (Canny, 1986<span class="landmark-paper">★</span>) refines this with a multi-stage pipeline:</p>
+<h2 id="From-gradients-to-edges:-the-Canny-detector">From gradients to edges: the Canny detector<a class="anchor-link" href="#From-gradients-to-edges:-the-Canny-detector">¶</a></h2><p>Simply thresholding gradient magnitude gives thick, noisy edge blobs. The <strong>Canny</strong> edge detector (<a href="../references.html#canny-1986">Canny, 1986</a><span class="landmark-paper">★</span>) refines this with a multi-stage pipeline:</p>
 <ol>
 <li><strong>Smooth</strong> with a Gaussian, to suppress noise before differentiating.</li>
 <li><strong>Compute gradients</strong> (Sobel, internally) to get magnitude and direction at every pixel.</li>
@@ -372,7 +372,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=4db89191"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="From-edges-to-lines:-the-Hough-transform">From edges to lines: the Hough transform<a class="anchor-link" href="#From-edges-to-lines:-the-Hough-transform">¶</a></h2><p>Edge detection finds <em>where</em> intensity changes sharply, but it doesn't know that a scattered set of edge pixels forms a straight line. The <strong>Hough transform</strong> (Hough, 1962; Duda &amp; Hart, 1972) answers a different question: given a set of edge points, which ones are consistent with lying on a common line?</p>
+<h2 id="From-edges-to-lines:-the-Hough-transform">From edges to lines: the Hough transform<a class="anchor-link" href="#From-edges-to-lines:-the-Hough-transform">¶</a></h2><p>Edge detection finds <em>where</em> intensity changes sharply, but it doesn't know that a scattered set of edge pixels forms a straight line. The <strong>Hough transform</strong> (<a href="../references.html#hough-1962">Hough, 1962</a>; <a href="../references.html#duda-hart-1972">Duda &amp; Hart, 1972</a>) answers a different question: given a set of edge points, which ones are consistent with lying on a common line?</p>
 <p>Parameterize a line not as $y=mx+b$ (which blows up for vertical lines) but by its distance from the origin and the angle of its normal:</p>
 <p>$$\rho = x\cos\theta + y\sin\theta$$</p>
 <p>For a <em>fixed</em> edge point $(x,y)$, this equation traces out a sinusoidal curve in $(\rho,\theta)$ space as $\theta$ varies — every $(\rho,\theta)$ pair on that curve describes a line through $(x,y)$. The key idea: if several edge points are <strong>colinear</strong>, their sinusoids all cross at the <em>same</em> $(\rho,\theta)$ — the parameters of the line they share.</p>

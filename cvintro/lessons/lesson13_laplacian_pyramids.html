@@ -162,7 +162,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=3eb00db7"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-Marr-Hildreth-detector:-Laplacian-of-Gaussian-(LoG)">The Marr-Hildreth detector: Laplacian of Gaussian (LoG)<a class="anchor-link" href="#The-Marr-Hildreth-detector:-Laplacian-of-Gaussian-(LoG)">¶</a></h2><p>The Laplacian, like any derivative, amplifies high-frequency noise — and a <em>second</em> derivative amplifies it even more than a first derivative does. Marr and Hildreth's fix (1980): <strong>smooth first</strong>, then take the Laplacian. Since convolution is associative, this is equivalent to convolving directly with a single combined kernel, the <strong>Laplacian of Gaussian (LoG)</strong>:</p>
+<h2 id="The-Marr-Hildreth-detector:-Laplacian-of-Gaussian-(LoG)">The Marr-Hildreth detector: Laplacian of Gaussian (LoG)<a class="anchor-link" href="#The-Marr-Hildreth-detector:-Laplacian-of-Gaussian-(LoG)">¶</a></h2><p>The Laplacian, like any derivative, amplifies high-frequency noise — and a <em>second</em> derivative amplifies it even more than a first derivative does. <a href="../references.html#marr-hildreth-1980">Marr and Hildreth's fix (1980)</a>: <strong>smooth first</strong>, then take the Laplacian. Since convolution is associative, this is equivalent to convolving directly with a single combined kernel, the <strong>Laplacian of Gaussian (LoG)</strong>:</p>
 <p>$$\text{LoG}_\sigma(I) = \nabla^2(G_\sigma * I) = (\nabla^2 G_\sigma) * I$$</p>
 <p>Edges are then found as <strong>zero crossings</strong> of the LoG response, rather than by thresholding its magnitude directly.</p>
 </div>

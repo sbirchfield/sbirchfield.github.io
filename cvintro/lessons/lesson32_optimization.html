@@ -186,7 +186,7 @@ max diff: 0.00e+00
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=5d15e784"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Adam:-per-parameter-adaptive-step-sizes">Adam: per-parameter adaptive step sizes<a class="anchor-link" href="#Adam:-per-parameter-adaptive-step-sizes">¶</a></h2><p><strong>Adam</strong> (Kingma &amp; Ba, 2014<span class="landmark-paper">★</span>) tracks both a momentum-like running mean of the gradient ($m$) <em>and</em> a running mean of the squared gradient ($v$), then divides the step by $\sqrt{v}$ — automatically shrinking the step size for parameters with consistently large gradients (like the steep $y$ direction here) and boosting it for parameters with small ones:</p>
+<h2 id="Adam:-per-parameter-adaptive-step-sizes">Adam: per-parameter adaptive step sizes<a class="anchor-link" href="#Adam:-per-parameter-adaptive-step-sizes">¶</a></h2><p><strong>Adam</strong> (<a href="../references.html#kingma-ba-2014">Kingma &amp; Ba, 2014</a><span class="landmark-paper">★</span>) tracks both a momentum-like running mean of the gradient ($m$) <em>and</em> a running mean of the squared gradient ($v$), then divides the step by $\sqrt{v}$ — automatically shrinking the step size for parameters with consistently large gradients (like the steep $y$ direction here) and boosting it for parameters with small ones:</p>
 <p>$$m \leftarrow \beta_1 m + (1-\beta_1)g, \qquad v \leftarrow \beta_2 v + (1-\beta_2)g^2, \qquad p \leftarrow p - \eta\frac{\hat{m}}{\sqrt{\hat{v}}+\epsilon}$$</p>
 <p>($\hat{m}, \hat{v}$ are bias-corrected versions of $m, v$, which matter mainly in the first few steps.)</p>
 </div>
@@ -413,9 +413,9 @@ all 4 hidden units still have identical weight vectors after 3000 steps of zero-
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>fixed weight std = 0.05, activation variance after 20 tanh layers:
-  width=  16: variance = 1.53e-28
-  width=  64: variance = 1.12e-16
-  width= 256: variance = 3.12e-05
+  width=  16: variance = 1.18e-29
+  width=  64: variance = 1.14e-16
+  width= 256: variance = 2.85e-05
 </pre>
 </div>
 </div>
@@ -425,7 +425,7 @@ all 4 hidden units still have identical weight vectors after 3000 steps of zero-
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=8d1078c3"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>A fixed std of 0.05 vanishes to essentially zero after 20 layers, and gets <em>worse</em> as the layer gets wider — more incoming connections means more terms summed into each output, so a fixed per-weight std pushes the pre-activation further from zero even as the individual weights stay the same size. <strong>Xavier/Glorot initialization</strong> (Glorot &amp; Bengio, 2010) fixes this by scaling the std with the layer's <strong>fan-in</strong> (number of inputs): <code>std = sqrt(1 / fan_in)</code>. Repeat the same experiment with Xavier-scaled weights:</p>
+<p>A fixed std of 0.05 vanishes to essentially zero after 20 layers, and gets <em>worse</em> as the layer gets wider — more incoming connections means more terms summed into each output, so a fixed per-weight std pushes the pre-activation further from zero even as the individual weights stay the same size. <strong>Xavier/Glorot initialization</strong> (<a href="../references.html#glorot-bengio-2010">Glorot &amp; Bengio, 2010</a>) fixes this by scaling the std with the layer's <strong>fan-in</strong> (number of inputs): <code>std = sqrt(1 / fan_in)</code>. Repeat the same experiment with Xavier-scaled weights:</p>
 </div>
 </div>
 </div>
@@ -461,11 +461,11 @@ all 4 hidden units still have identical weight vectors after 3000 steps of zero-
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Xavier std = sqrt(1/fan_in), activation variance after 20 tanh layers:
-  width=  16: variance = 0.024
-  width=  64: variance = 0.028
-  width= 256: variance = 0.026
+  width=  16: variance = 0.006
+  width=  64: variance = 0.022
+  width= 256: variance = 0.025
 
-nn.init.xavier_normal_ weight std: 0.0623  (formula predicts 0.0625)
+nn.init.xavier_normal_ weight std: 0.0625  (formula predicts 0.0625)
 </pre>
 </div>
 </div>
@@ -475,7 +475,7 @@ nn.init.xavier_normal_ weight std: 0.0623  (formula predicts 0.0625)
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=35277db1"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Xavier keeps the variance in the same ballpark regardless of width, instead of vanishing catastrophically. But Xavier's derivation assumes a symmetric activation like <code>tanh</code>; <strong>Kaiming/He initialization</strong> (He et al., 2015) is the same idea adjusted for <code>ReLU</code>, which zeros out roughly half its inputs and so needs twice the variance to compensate: <code>std = sqrt(2 / fan_in)</code>. Using Xavier's <code>tanh</code>-derived scale on a <code>ReLU</code> network still vanishes:</p>
+<p>Xavier keeps the variance in the same ballpark regardless of width, instead of vanishing catastrophically. But Xavier's derivation assumes a symmetric activation like <code>tanh</code>; <strong>Kaiming/He initialization</strong> (<a href="../references.html#he-2015-kaiming">He et al., 2015</a>) is the same idea adjusted for <code>ReLU</code>, which zeros out roughly half its inputs and so needs twice the variance to compensate: <code>std = sqrt(2 / fan_in)</code>. Using Xavier's <code>tanh</code>-derived scale on a <code>ReLU</code> network still vanishes:</p>
 </div>
 </div>
 </div>
@@ -510,8 +510,8 @@ nn.init.xavier_normal_ weight std: 0.0623  (formula predicts 0.0625)
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>ReLU net, Xavier scale (sqrt(1/fan_in), no ReLU correction): variance after 20 layers = 4.68e-07
-ReLU net, Kaiming scale (sqrt(2/fan_in)):                    variance after 20 layers = 0.361
+<pre>ReLU net, Xavier scale (sqrt(1/fan_in), no ReLU correction): variance after 20 layers = 1.38e-07
+ReLU net, Kaiming scale (sqrt(2/fan_in)):                    variance after 20 layers = 0.590
 
 nn.init.kaiming_normal_ weight std: 0.0883  (formula predicts 0.0884)
 </pre>

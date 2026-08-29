@@ -34,10 +34,10 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=45f9b961"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=59a7f64f"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-38:-Visualizing-and-Understanding-CNNs">Lesson 38: Visualizing and Understanding CNNs<a class="anchor-link" href="#Lesson-38:-Visualizing-and-Understanding-CNNs">¶</a></h1><p>A trained CNN is a black box in the sense that its millions of weights don't have obvious individual meanings. But <em>where in the input image</em> a prediction comes from is answerable, and answering it is often what separates "the model got the right answer" from "the model got the right answer for the right reason." This lesson builds two visualization tools from scratch: <strong>saliency maps</strong> (Simonyan et al., 2013) and <strong>Grad-CAM</strong> (Selvaraju et al., 2017).</p>
+<h1 id="Lesson-38:-Visualizing-and-Understanding-CNNs">Lesson 38: Visualizing and Understanding CNNs<a class="anchor-link" href="#Lesson-38:-Visualizing-and-Understanding-CNNs">¶</a></h1><p>A trained CNN is a black box in the sense that its millions of weights don't have obvious individual meanings. But <em>where in the input image</em> a prediction comes from is answerable, and answering it is often what separates "the model got the right answer" from "the model got the right answer for the right reason." This lesson builds two visualization tools from scratch: <strong>saliency maps</strong> (<a href="../references.html#simonyan-2013-saliency">Simonyan et al., 2013</a>) and <strong>Grad-CAM</strong> (<a href="../references.html#selvaraju-2017">Selvaraju et al., 2017</a>).</p>
 </div>
 </div>
 </div>
@@ -140,7 +140,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=4c3ef306"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Saliency-maps">Saliency maps<a class="anchor-link" href="#Saliency-maps">¶</a></h2><p>The idea (Simonyan et al., 2013): take the gradient of the predicted class <em>score</em> with respect to every input pixel. A pixel with a large-magnitude gradient is one where a small change would most change the prediction — i.e., a pixel the network is "looking at."</p>
+<h2 id="Saliency-maps">Saliency maps<a class="anchor-link" href="#Saliency-maps">¶</a></h2><p>The idea (<a href="../references.html#simonyan-2013-saliency">Simonyan et al., 2013</a>): take the gradient of the predicted class <em>score</em> with respect to every input pixel. A pixel with a large-magnitude gradient is one where a small change would most change the prediction — i.e., a pixel the network is "looking at."</p>
 </div>
 </div>
 </div>
@@ -186,7 +186,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=9b441f5c"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Grad-CAM">Grad-CAM<a class="anchor-link" href="#Grad-CAM">¶</a></h2><p>Raw saliency maps are pixel-level and tend to be noisy. <strong>Grad-CAM</strong> (Selvaraju et al., 2017) instead works on the last convolutional layer's feature maps, which are lower-resolution but far more semantically meaningful:</p>
+<h2 id="Grad-CAM">Grad-CAM<a class="anchor-link" href="#Grad-CAM">¶</a></h2><p>Raw saliency maps are pixel-level and tend to be noisy. <strong>Grad-CAM</strong> (<a href="../references.html#selvaraju-2017">Selvaraju et al., 2017</a>) instead works on the last convolutional layer's feature maps, which are lower-resolution but far more semantically meaningful:</p>
 <ol>
 <li>Take the gradient of the class score with respect to each channel of the last conv feature map.</li>
 <li>Average each channel's gradient spatially to get one importance weight per channel.</li>
