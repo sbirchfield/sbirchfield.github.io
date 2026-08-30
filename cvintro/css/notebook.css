@@ -45,10 +45,17 @@
 .lesson-nav {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
     gap: 20px;
     margin-top: 40px;
     padding-top: 20px;
     border-top: 1px solid #eaeaea;
+}
+
+.lesson-nav-prev,
+.lesson-nav-next {
+    flex: 1 1 45%;
+    min-width: 0;
 }
 
 .lesson-nav-prev {
@@ -57,7 +64,6 @@
 
 .lesson-nav-next {
     text-align: right;
-    margin-left: auto;
 }
 
 .lesson-nav a {
