@@ -63,13 +63,34 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
             </a>
         </div>
 {body}
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev">{prev_link}</div>
+            <div class="lesson-nav-next">{next_link}</div>
+        </div>
     </div>
 </body>
 </html>
 """
 
 
-def build_notebook(nb_path: pathlib.Path):
+def lesson_title(nb_path: pathlib.Path) -> str:
+    """The 'Lesson N: ...' heading from the notebook's title cell. Some lessons (Part openers)
+    have an extra '# Part N: ...' heading line first, so search for the 'Lesson' line specifically
+    rather than assuming it's the first line."""
+    nb = nbformat.read(nb_path, as_version=4)
+    lines = nb.cells[0].source.split("\n")
+    for line in lines:
+        if re.match(r"#\s*Lesson\s+\d+", line):
+            return line.lstrip("#").strip()
+    return lines[0].lstrip("#").strip()
+
+
+def get_lesson_sequence():
+    """All lesson notebooks in course order, as a list of pathlib.Path."""
+    return sorted(NOTEBOOKS_DIR.glob("lesson*.ipynb"))
+
+
+def build_notebook(nb_path: pathlib.Path, sequence=None):
     print(f"Executing {nb_path.name} ...")
     nb = nbformat.read(nb_path, as_version=4)
     ExecutePreprocessor(timeout=120, kernel_name="python3").preprocess(
@@ -79,6 +100,17 @@ def build_notebook(nb_path: pathlib.Path):
     exporter = HTMLExporter(template_name="basic")
     body, _ = exporter.from_notebook_node(nb)
 
+    sequence = sequence if sequence is not None else get_lesson_sequence()
+    idx = sequence.index(nb_path)
+    prev_link = ""
+    if idx > 0:
+        prev_path = sequence[idx - 1]
+        prev_link = f'<a href="{prev_path.stem}.html">&larr; {lesson_title(prev_path)}</a>'
+    next_link = ""
+    if idx < len(sequence) - 1:
+        next_path = sequence[idx + 1]
+        next_link = f'<a href="{next_path.stem}.html">{lesson_title(next_path)} &rarr;</a>'
+
     title = nb_path.stem.replace("_", " ").title()
     page = PAGE_TEMPLATE.format(
         title=title,
@@ -87,6 +119,8 @@ def build_notebook(nb_path: pathlib.Path):
         branch=GITHUB_BRANCH,
         nb_repo_path=NOTEBOOK_REPO_PATH,
         nb_name=nb_path.name,
+        prev_link=prev_link,
+        next_link=next_link,
     )
 
     out_path = LESSONS_DIR / (nb_path.stem + ".html")
@@ -179,7 +213,8 @@ def main():
     LESSONS_DIR.mkdir(exist_ok=True)
     build_pygments_css()
     build_references_page()
-    notebooks = sorted(NOTEBOOKS_DIR.glob("*.ipynb"))
+    sequence = get_lesson_sequence()
+    notebooks = sequence
     if len(sys.argv) > 1:
         needle = sys.argv[1]
         notebooks = [p for p in notebooks if needle in p.stem]
@@ -187,7 +222,7 @@ def main():
         print("No matching notebooks found in notebooks/")
         return
     for nb_path in notebooks:
-        build_notebook(nb_path)
+        build_notebook(nb_path, sequence=sequence)
 
 
 if __name__ == "__main__":
