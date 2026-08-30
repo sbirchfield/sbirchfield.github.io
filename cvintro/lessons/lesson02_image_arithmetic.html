@@ -197,7 +197,7 @@ pixel value, cv2.add (saturated): 255
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=81459956"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Brightening-only-part-of-an-image,-with-a-mask">Brightening only part of an image, with a mask<a class="anchor-link" href="#Brightening-only-part-of-an-image,-with-a-mask">¶</a></h2><p>Often you want to adjust brightness selectively — e.g., lighten a foreground subject without touching the background. Given a binary mask (Lesson 3 will build these algorithmically; here we load one made by hand), only copy the brightened result where the mask is set.</p>
+<h2 id="Brightening-only-part-of-an-image,-with-a-mask">Brightening only part of an image, with a mask<a class="anchor-link" href="#Brightening-only-part-of-an-image,-with-a-mask">¶</a></h2><p>Often you want to adjust brightness selectively — e.g., lighten a foreground subject without touching the background. Given a binary mask (from thresholding or segmentation), only copy the brightened result where the mask is set.</p>
 </div>
 </div>
 </div>
@@ -353,7 +353,7 @@ grass pixel (BGR), before -&gt; after: [72 94 75] -&gt; [72 94 75]
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=c8653ef3"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The difference image is zero everywhere nothing changed, and bright exactly where the circle used to be or now is — except for the overlapping middle region, which is present in both frames.</p>
+<p>The difference image is zero everywhere nothing changed, and bright exactly where the circle used to be or now is — except for the overlapping middle region, where the circle is present in both frames.</p>
 </div>
 </div>
 </div>

@@ -111,6 +111,14 @@
     line-height: 1.5;
 }
 
+/* Inline `code` spans in prose -- excludes code already inside a <pre> block */
+.notebook-container :not(pre) > code {
+    background-color: #f6f8fa;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
 .notebook-container .jp-OutputArea-output img,
 .notebook-container .output_area img {
     max-width: 100%;
