@@ -37,7 +37,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=3f563a4a"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-5:-Image-Moments">Lesson 5: Image Moments<a class="anchor-link" href="#Lesson-5:-Image-Moments">¶</a></h1><p>Once we can isolate a blob (Lesson 4), moments let us summarize its shape with a handful of numbers: its area, centroid, orientation, and even a description that stays the same under translation, scale, and rotation. This is a classic, lightweight alternative to learned features for simple shape matching.</p>
+<h1 id="Lesson-5:-Image-Moments">Lesson 5: Image Moments<a class="anchor-link" href="#Lesson-5:-Image-Moments">¶</a></h1><p>Once we can isolate a blob (Lesson 4), moments let us summarize its shape with a handful of numbers: its area, centroid, orientation, and even a description that stays the same under translation, scale, and rotation. Moments offer a classic, lightweight alternative to learned features (covered later) for simple shape matching.</p>
 </div>
 </div>
 </div>
@@ -59,10 +59,10 @@
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="What-is-a-moment?">What is a moment?<a class="anchor-link" href="#What-is-a-moment?">¶</a></h2><p>For a binary image, the raw moment $M_{ij}$ is defined as</p>
 <p>$$M_{ij} = \sum_{x,y} x^i y^j \, I(x, y)$$</p>
-<p>where $I(x,y)$ is 1 on the shape and 0 elsewhere. A few special cases are already familiar quantities:</p>
+<p>where $I(x,y)$ is 1 inside the shape and 0 elsewhere. A few special cases are already familiar quantities:</p>
 <ul>
 <li>$M_{00}$ = area (pixel count)</li>
-<li>$\bar{x} = M_{10}/M_{00}$, $\bar{y} = M_{01}/M_{00}$ = centroid</li>
+<li>($\bar{x}, \bar{y}) = (M_{10}/M_{00}, M_{01}/M_{00})$ yields the centroid</li>
 </ul>
 <p><code>cv2.moments</code> computes all of these (plus <em>central</em> moments $\mu_{ij}$, which are translation-invariant, and Hu moments, which are translation-, scale-, and rotation-invariant) in one call.</p>
 </div>
@@ -173,11 +173,8 @@ centroid     = (100.0, 100.0)
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'orientation from moments = </span><span class="si">{</span><span class="n">theta_deg</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1"> degrees'</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'angle used to draw the ellipse = </span><span class="si">{</span><span class="n">angle_deg</span><span class="si">}</span><span class="s1"> degrees'</span><span class="p">)</span>
 
-<span class="c1"># The eigenvalues of the (normalized) covariance matrix of central moments also</span>
-<span class="c1"># give the semi-axis lengths of the equivalent ellipse: semi_axis = 2*sqrt(eigenvalue).</span>
-<span class="c1"># Using the true length (rather than an arbitrary one) makes the plotted line end</span>
-<span class="c1"># exactly at the ellipse's tips instead of overshooting past the curved boundary,</span>
-<span class="c1"># which is what previously made it look slightly misaligned near the tip.</span>
+<span class="c1"># The eigenvalues of the (normalized) covariance matrix of central moments</span>
+<span class="c1"># give the axis lengths of the equivalent ellipse: axis = 4*sqrt(eigenvalue).</span>
 <span class="n">cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">m</span><span class="p">[</span><span class="s1">'mu20'</span><span class="p">],</span> <span class="n">m</span><span class="p">[</span><span class="s1">'mu11'</span><span class="p">]],</span> <span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="s1">'mu11'</span><span class="p">],</span> <span class="n">m</span><span class="p">[</span><span class="s1">'mu02'</span><span class="p">]]])</span> <span class="o">/</span> <span class="n">m</span><span class="p">[</span><span class="s1">'m00'</span><span class="p">]</span>
 <span class="n">eigvals</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span>
 <span class="n">semi_major</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">eigvals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
@@ -217,8 +214,8 @@ angle used to draw the ellipse = 30 degrees
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=f1941f34"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Hu-moments:-a-shape-descriptor-invariant-to-pose">Hu moments: a shape descriptor invariant to pose<a class="anchor-link" href="#Hu-moments:-a-shape-descriptor-invariant-to-pose">¶</a></h2><p><code>cv2.HuMoments</code> combines the central moments into 7 values that stay (nearly) the same regardless of the shape's position, size, and rotation. This makes them useful for comparing two shapes without first aligning them.</p>
-<p>To see this, we build the same ellipse three times: at the original pose, translated, and rotated + scaled.</p>
+<h2 id="Hu-moments:-a-shape-descriptor-invariant-to-pose">Hu moments: a shape descriptor invariant to pose<a class="anchor-link" href="#Hu-moments:-a-shape-descriptor-invariant-to-pose">¶</a></h2><p><strong>Hu moments</strong> (<code>cv2.HuMoments</code>) are 7 values calculated from the central moments that stay (nearly) the same regardless of the shape's position, size, and rotation. This makes them useful for comparing two shapes without first aligning them.</p>
+<p>To see this, we build three versions of the ellipse: at the original pose, translated, and rotated + scaled.</p>
 </div>
 </div>
 </div>
@@ -231,12 +228,6 @@ angle used to draw the ellipse = 30 degrees
     <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">canvas_size</span><span class="p">,</span> <span class="n">canvas_size</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
     <span class="n">cv2</span><span class="o">.</span><span class="n">ellipse</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <span class="n">axes_len</span><span class="p">,</span> <span class="n">angle_deg</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">img</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">hu_log</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">moments</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">binaryImage</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">hu</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">HuMoments</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-    <span class="c1"># log-scale since raw Hu moments span many orders of magnitude</span>
-    <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">hu</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">hu</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-30</span><span class="p">)</span>
 
 <span class="n">original</span> <span class="o">=</span> <span class="n">make_ellipse</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="mi">25</span><span class="p">),</span> <span class="mi">30</span><span class="p">)</span>
 <span class="n">translated</span> <span class="o">=</span> <span class="n">make_ellipse</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="mi">140</span><span class="p">),</span> <span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="mi">25</span><span class="p">),</span> <span class="mi">30</span><span class="p">)</span>
@@ -269,22 +260,36 @@ angle used to draw the ellipse = 30 degrees
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=b89ebac4"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now let's compute the Hu moments.</p>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=8459b15a">
 <div class="input">
 <div class="prompt input_prompt">In [6]:</div>
 <div class="inner_cell">
 <div class="input_area">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">hu_original</span> <span class="o">=</span> <span class="n">hu_log</span><span class="p">(</span><span class="n">original</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">hu_log</span><span class="p">(</span><span class="n">im</span><span class="p">):</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">moments</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">binaryImage</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">hu</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">HuMoments</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="c1"># log-scale since raw Hu moments span many orders of magnitude</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">hu</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">hu</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-30</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="s2">"image"</span><span class="si">:</span><span class="s1">&gt;18</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="s2">"L2 distance to original Hu moments"</span><span class="si">:</span><span class="s1">&gt;36</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">img</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span>
+<span class="c1"># Format with a fixed width (":8.3f") to align the values across rows.</span>
+<span class="n">label_width</span><span class="p">,</span> <span class="n">col_width</span><span class="p">,</span> <span class="n">n_hu</span> <span class="o">=</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">' '</span> <span class="o">*</span> <span class="p">(</span><span class="n">label_width</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'Hu moments'</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">col_width</span> <span class="o">*</span> <span class="n">n_hu</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="s2">"image"</span><span class="si">:</span><span class="s1">&gt;</span><span class="si">{</span><span class="n">label_width</span><span class="si">}}</span><span class="s1">  '</span> <span class="o">+</span> <span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s1">&gt;</span><span class="si">{</span><span class="n">col_width</span><span class="si">}}</span><span class="s1">'</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_hu</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span>
+<span class="k">for</span> <span class="n">im</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span>
     <span class="p">(</span><span class="n">original</span><span class="p">,</span> <span class="s1">'original'</span><span class="p">),</span>
     <span class="p">(</span><span class="n">translated</span><span class="p">,</span> <span class="s1">'translated'</span><span class="p">),</span>
     <span class="p">(</span><span class="n">rotated_scaled</span><span class="p">,</span> <span class="s1">'rotated+scaled'</span><span class="p">),</span>
     <span class="p">(</span><span class="n">different_shape</span><span class="p">,</span> <span class="s1">'different shape'</span><span class="p">),</span>
 <span class="p">]:</span>
-    <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">hu_log</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="o">-</span> <span class="n">hu_original</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s1">&gt;18</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">dist</span><span class="si">:</span><span class="s1">&gt;36.3f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">v</span><span class="si">:{</span><span class="n">col_width</span><span class="si">}</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">'</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">hu_log</span><span class="p">(</span><span class="n">im</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s1">&gt;</span><span class="si">{</span><span class="n">label_width</span><span class="si">}}</span><span class="s1">  </span><span class="si">{</span><span class="n">row</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -294,11 +299,12 @@ angle used to draw the ellipse = 30 degrees
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>             image   L2 distance to original Hu moments
-          original                                0.000
-        translated                               31.442
-    rotated+scaled                               31.592
-   different shape                               55.731
+<pre>                                           Hu moments                       
+             image         1       2       3       4       5       6       7
+          original     0.604   1.435   7.949   8.467  16.689   9.252 -17.279
+        translated     0.606   1.442   6.154   6.655  13.068   7.413  13.795
+    rotated+scaled     0.594   1.402   6.362   6.912  13.572   7.712  14.042
+   different shape     0.796   3.551   7.655  10.222 -19.432 -12.203  19.234
 </pre>
 </div>
 </div>
@@ -317,7 +323,7 @@ angle used to draw the ellipse = 30 degrees
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
 <li>Use <code>cv2.findContours</code> to get the outline of a blob from Lesson 4's binary image, then call <code>cv2.moments</code> on the <em>contour</em> instead of the full binary mask. Compare the centroid to the one computed here.</li>
-<li>Draw a shape that is mirror-flipped rather than rotated. Are its Hu moments still close to the original? (Hint: think about what determinant/parity information moments do or don't capture.)</li>
+<li>Draw a shape that is mirror-flipped rather than rotated. Are its Hu moments still close to the original? (Hint: think about what determinant/parity information moments do or do not capture.)</li>
 </ol>
 </div>
 </div>
