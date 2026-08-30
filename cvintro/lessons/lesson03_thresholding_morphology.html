@@ -101,7 +101,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=b4304e41"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Thresholding">Thresholding<a class="anchor-link" href="#Thresholding">¶</a></h2><p><code>cv2.threshold</code> sets every pixel above the cutoff to 255 and every pixel at or below it to 0.</p>
+<h2 id="Thresholding">Thresholding<a class="anchor-link" href="#Thresholding">¶</a></h2><p>Thresholding is nothing more than a per-pixel comparison: every pixel above the cutoff becomes white (255), every pixel at or below it becomes black (0). With NumPy, that's a single boolean comparison plus <code>np.where</code> to pick the output value.</p>
 </div>
 </div>
 </div>
@@ -111,8 +111,7 @@
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">threshold_value</span> <span class="o">=</span> <span class="mi">128</span>
-<span class="n">_</span><span class="p">,</span> <span class="n">binary</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">noisy</span><span class="p">,</span> <span class="n">threshold_value</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">THRESH_BINARY</span><span class="p">)</span>
-
+<span class="n">binary</span> <span class="o">=</span> <span class="p">(</span><span class="n">noisy</span> <span class="o">&gt;</span> <span class="n">threshold_value</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">'gray'</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Thresholded (t=</span><span class="si">{</span><span class="n">threshold_value</span><span class="si">}</span><span class="s1">)'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">'off'</span><span class="p">)</span>
@@ -132,6 +131,37 @@
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=b6d84f64"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="OpenCV's-cv2.threshold">OpenCV's <code>cv2.threshold</code><a class="anchor-link" href="#OpenCV's-cv2.threshold">¶</a></h3><p>OpenCV bundles the same operation into <code>cv2.threshold</code>, which is convenient because it also supports variants beyond simple binary thresholding — inverted output, capping instead of zeroing, and automatic cutoff selection (<code>cv2.THRESH_OTSU</code>) — all through the same function. For plain binary thresholding, it computes exactly the same result as the NumPy version above.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=499efd5b">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">_</span><span class="p">,</span> <span class="n">binary_cv2</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">noisy</span><span class="p">,</span> <span class="n">threshold_value</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">THRESH_BINARY</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'cv2.threshold matches the NumPy version exactly:'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">binary_cv2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>cv2.threshold matches the NumPy version exactly: True
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=f46a5ea1"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -142,13 +172,13 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=dd199cce"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Erosion">Erosion<a class="anchor-link" href="#Erosion">¶</a></h2><p>Erosion slides a small structuring element (kernel) over the image; a pixel stays white only if the <em>entire</em> kernel fits inside the white region. This shrinks white regions and removes small white specks.</p>
+<h2 id="Erosion">Erosion<a class="anchor-link" href="#Erosion">¶</a></h2><p>Erosion slides a small <strong>structuring element</strong> (kernel) over the image; a pixel stays white only if the <em>entire</em> kernel fits inside the white region. This shrinks white regions and removes small white specks.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=60ec2be6">
 <div class="input">
-<div class="prompt input_prompt">In [4]:</div>
+<div class="prompt input_prompt">In [5]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">kernel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
@@ -176,13 +206,13 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=9accd5cc"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Dilation">Dilation<a class="anchor-link" href="#Dilation">¶</a></h2><p>Dilation does the opposite: a pixel becomes white if the kernel overlaps the white region <em>at all</em>. This grows white regions and fills small black holes/specks.</p>
+<h2 id="Dilation">Dilation<a class="anchor-link" href="#Dilation">¶</a></h2><p>Dilation does the opposite: a pixel becomes white if the kernel overlaps <em>any</em> of the white region. This grows white regions and fills small black holes/specks.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=bed22002">
 <div class="input">
-<div class="prompt input_prompt">In [5]:</div>
+<div class="prompt input_prompt">In [6]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">dilated</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">dilate</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -215,7 +245,7 @@
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=7a663bf3">
 <div class="input">
-<div class="prompt input_prompt">In [6]:</div>
+<div class="prompt input_prompt">In [7]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">opened</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">morphologyEx</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">MORPH_OPEN</span><span class="p">,</span> <span class="n">kernel</span><span class="p">)</span>

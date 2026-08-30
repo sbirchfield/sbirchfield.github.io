@@ -149,7 +149,7 @@ REFERENCES_PAGE_TEMPLATE = """<!DOCTYPE html>
     </nav>
     <div class="container">
         <h1>References</h1>
-        <p style="text-align: right;"><span class="landmark-paper">&#9733;</span> marks especially influential, highly-cited papers.</p>
+        <p style="text-align: right;"><span class="landmark-paper">&#9733;</span> marks especially influential, highly-cited papers (see <a href="https://www.papelist.app/" target="_blank" rel="noopener">papelist.app</a> for top-cited papers).</p>
         <ul class="references-list">
 {items}
         </ul>

@@ -377,7 +377,7 @@
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
-<li>Modify the color image above so the square is cyan instead of yellow. Which channel(s) do you need to change?</li>
+<li>Modify the color image <code>imc</code> so the rectangle is cyan instead of yellow. Which channel(s) do you need to change?</li>
 <li>In <code>im_primaries</code>, slice out the <em>bottom-right</em> block (blue) using row and column ranges, and confirm with <code>np.array_equal</code> that it matches a fresh block filled with <code>(0, 0, 255)</code>.</li>
 <li>Load <code>rose.jpg</code> and print <code>im_bgr[0, 0, :]</code> (top-left pixel, BGR order) alongside <code>im_rgb2[0, 0, :]</code> (RGB order). Confirm by hand that the three numbers are the same three numbers, just reordered.</li>
 </ol>
