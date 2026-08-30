@@ -166,6 +166,15 @@ REFERENCES = [
         "landmark": True,
     },
     {
+        "id": "otsu-1979",
+        "authors": "Otsu, N.",
+        "sort_name": "Otsu",
+        "year": 1979,
+        "title": "A Threshold Selection Method from Gray-Level Histograms",
+        "url": "https://ieeexplore.ieee.org/document/4310076",
+        "landmark": True,
+    },
+    {
         "id": "hough-1962",
         "authors": "Hough, P. V. C.",
         "sort_name": "Hough",
