@@ -57,14 +57,14 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=59c7fbc2"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="What-is-a-moment?">What is a moment?<a class="anchor-link" href="#What-is-a-moment?">¶</a></h2><p>For a binary image, the raw moment $M_{ij}$ is defined as</p>
-<p>$$M_{ij} = \sum_{x,y} x^i y^j \, I(x, y)$$</p>
+<h2 id="What-is-a-moment?">What is a moment?<a class="anchor-link" href="#What-is-a-moment?">¶</a></h2><p>For a binary image, the raw moment $m_{pq}$ is defined as</p>
+<p>$$m_{pq} = \sum_{x,y} x^p y^q \, I(x, y)$$</p>
 <p>where $I(x,y)$ is 1 inside the shape and 0 elsewhere. A few special cases are already familiar quantities:</p>
 <ul>
-<li>$M_{00}$ = area (pixel count)</li>
-<li>($\bar{x}, \bar{y}) = (M_{10}/M_{00}, M_{01}/M_{00})$ yields the centroid</li>
+<li>$m_{00}$ = area (pixel count)</li>
+<li>($\bar{x}, \bar{y}) = (m_{10}/m_{00}, m_{01}/m_{00})$ yields the centroid</li>
 </ul>
-<p><code>cv2.moments</code> computes all of these (plus <em>central</em> moments $\mu_{ij}$, which are translation-invariant, and Hu moments, which are translation-, scale-, and rotation-invariant) in one call.</p>
+<p>The <strong>order</strong> of a moment is $p+q$. The zeroth-order moment is $m_{00}$; the first-order moments are $m_{10}$ and $m_{01}$; and the second-order moments are $m_{20}$, $m_{02}$, and $m_{11}$. <code>cv2.moments</code> computes all of these in one call, along with the <em>central</em> moments $\mu_{ij}$, which are translation-invariant; and the <em>Hu moments</em>, which are translation-, scale-, and rotation-invariant.</p>
 </div>
 </div>
 </div>
@@ -157,7 +157,7 @@ centroid     = (100.0, 100.0)
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=69793fce"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Orientation-from-central-moments">Orientation from central moments<a class="anchor-link" href="#Orientation-from-central-moments">¶</a></h2><p>The central moments $\mu_{20}$, $\mu_{02}$, $\mu_{11}$ describe the spread of the shape around its centroid — essentially its covariance matrix. The angle of the major axis (the direction of greatest spread) is</p>
+<h2 id="Orientation-from-central-moments">Orientation from central moments<a class="anchor-link" href="#Orientation-from-central-moments">¶</a></h2><p>The second-order central moments $\mu_{20}$, $\mu_{02}$, $\mu_{11}$ describe the spread of the shape around its centroid — essentially its covariance matrix. The angle of the major axis (the direction of greatest spread) is</p>
 <p>$$\theta = \frac{1}{2}\,\mathrm{atan2}\!\left(2\mu_{11},\; \mu_{20} - \mu_{02}\right)$$</p>
 </div>
 </div>
@@ -215,7 +215,7 @@ angle used to draw the ellipse = 30 degrees
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Hu-moments:-a-shape-descriptor-invariant-to-pose">Hu moments: a shape descriptor invariant to pose<a class="anchor-link" href="#Hu-moments:-a-shape-descriptor-invariant-to-pose">¶</a></h2><p><strong>Hu moments</strong> (<code>cv2.HuMoments</code>) are 7 values calculated from the central moments that stay (nearly) the same regardless of the shape's position, size, and rotation. This makes them useful for comparing two shapes without first aligning them.</p>
-<p>To see this, we build three versions of a blob: at the original pose, translated, and rotated + scaled. The blob is an ellipse with a small circular bump attached off-axis, rather than a plain ellipse — a plain ellipse has mirror symmetry about both its major and minor axes, which makes several of the higher-order Hu moments (indices 3-7) mathematically zero, so any tiny pixel-rasterization noise dominates them and swamps the comparison. Breaking that symmetry gives every Hu moment a genuine, non-trivial value to actually stay invariant.</p>
+<p>To see this, we build three versions of a dog shape: at the original pose, translated, and rotated + scaled. We compare the Hu moments of these versions of the shape with each other, and with a different (cat) shape.</p>
 </div>
 </div>
 </div>
