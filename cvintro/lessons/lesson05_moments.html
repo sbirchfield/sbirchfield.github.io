@@ -68,6 +68,55 @@
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=8f80b216"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Raw-moments,-computed-by-hand">Raw moments, computed by hand<a class="anchor-link" href="#Raw-moments,-computed-by-hand">¶</a></h2><p>The formula above is just a weighted sum over pixel coordinates, so for a binary image it's nothing more than: find every foreground pixel's $(x,y)$ coordinates, then sum $x^py^q$ over them. Here it is on a tiny 3x3 image with 3 foreground pixels, computed directly with NumPy and cross-checked against <code>cv2.moments</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=cde812d2">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+<span class="n">ys</span><span class="p">,</span> <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>       <span class="c1"># (row, col) = (y, x) of every foreground pixel</span>
+
+<span class="n">M00</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>                 <span class="c1"># area: just a count of foreground pixels</span>
+<span class="n">M10</span> <span class="o">=</span> <span class="n">xs</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>                <span class="c1"># sum of x^1 y^0 over foreground pixels</span>
+<span class="n">M01</span> <span class="o">=</span> <span class="n">ys</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>                <span class="c1"># sum of x^0 y^1 over foreground pixels</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">moments</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">binaryImage</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'foreground pixels (x, y): </span><span class="si">{</span><span class="p">[(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="w"> </span><span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="p">))</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nb">zip</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span><span class="w"> </span><span class="n">ys</span><span class="p">)]</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'moments:     m00 = </span><span class="si">{</span><span class="n">M00</span><span class="si">}</span><span class="s1">   m10 = </span><span class="si">{</span><span class="n">M10</span><span class="si">}</span><span class="s1">   m01 = </span><span class="si">{</span><span class="n">M01</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"cv2.moments: m00 = </span><span class="si">{</span><span class="n">m</span><span class="p">[</span><span class="s1">'m00'</span><span class="p">]</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">  m10 = </span><span class="si">{</span><span class="n">m</span><span class="p">[</span><span class="s1">'m10'</span><span class="p">]</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">  m01 = </span><span class="si">{</span><span class="n">m</span><span class="p">[</span><span class="s1">'m01'</span><span class="p">]</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'centroid = (</span><span class="si">{</span><span class="n">M10</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">M00</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">M01</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">M00</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">)'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>foreground pixels (x, y): [(1, 0), (0, 1), (1, 1)]
+moments:     m00 = 3   m10 = 2   m01 = 2
+cv2.moments: m00 = 3  m10 = 2  m01 = 2
+centroid = (0.67, 0.67)
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=b0228f20"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -77,7 +126,7 @@
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=20294e3e">
 <div class="input">
-<div class="prompt input_prompt">In [2]:</div>
+<div class="prompt input_prompt">In [3]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">binary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
@@ -114,7 +163,7 @@
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=37481032">
 <div class="input">
-<div class="prompt input_prompt">In [3]:</div>
+<div class="prompt input_prompt">In [4]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">m</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">moments</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">binaryImage</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -154,17 +203,56 @@ centroid     = (100.0, 100.0)
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=9b2f8f35"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Central-moments">Central moments<a class="anchor-link" href="#Central-moments">¶</a></h2><p>Raw moments $m_{pq}$ depend on where the shape happens to sit in the image — move the shape and every $m_{ij}$ (except $m_{00}$) changes. <strong>Central moments</strong> fix this by measuring around the shape's own centroid $(\bar x, \bar y)$ instead of the image origin:</p>
+<p>$$\mu_{pq} = \sum_{x,y} (x-\bar x)^p\,(y-\bar y)^q\, I(x,y)$$</p>
+<p>Recomputing this sum from scratch would mean re-visiting every pixel again. Instead, there's a shift-of-origin identity — the image-moment analogue of $\mathrm{Var}(X) = E[X^2] - E[X]^2$ — that computes the central moments directly from the raw moments:</p>
+<p>$$\mu_{20} = M_{20} - \bar x\,m_{10}, \qquad \mu_{02} = m_{02} - \bar y\,m_{01}, \qquad \mu_{11} = m_{11} - \bar x\,m_{01}$$</p>
+<p><code>cv2.moments</code> returns both raw (<code>m['m20']</code>, ...) and central (<code>m['mu20']</code>, ...) moments in the same dictionary, so in practice these are never computed by hand — but now you know where <code>mu20</code>, <code>mu11</code>, and <code>mu02</code> actually come from.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=dfd085f8">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">mu20_manual</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s1">'m20'</span><span class="p">]</span> <span class="o">-</span> <span class="n">cx</span> <span class="o">*</span> <span class="n">m</span><span class="p">[</span><span class="s1">'m10'</span><span class="p">]</span>
+<span class="n">mu02_manual</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s1">'m02'</span><span class="p">]</span> <span class="o">-</span> <span class="n">cy</span> <span class="o">*</span> <span class="n">m</span><span class="p">[</span><span class="s1">'m01'</span><span class="p">]</span>
+<span class="n">mu11_manual</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s1">'m11'</span><span class="p">]</span> <span class="o">-</span> <span class="n">cx</span> <span class="o">*</span> <span class="n">m</span><span class="p">[</span><span class="s1">'m01'</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'moments:     mu20 = </span><span class="si">{</span><span class="n">mu20_manual</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">   mu02 = </span><span class="si">{</span><span class="n">mu02_manual</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">   mu11 = </span><span class="si">{</span><span class="n">mu11_manual</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"cv2.moments: mu20 = </span><span class="si">{</span><span class="n">m</span><span class="p">[</span><span class="s1">'mu20'</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">   mu02 = </span><span class="si">{</span><span class="n">m</span><span class="p">[</span><span class="s1">'mu02'</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">   mu11 = </span><span class="si">{</span><span class="n">m</span><span class="p">[</span><span class="s1">'mu11'</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>moments:     mu20 = 5512772.7   mu02 = 2449153.0   mu11 = 2651336.1
+cv2.moments: mu20 = 5512772.7   mu02 = 2449153.0   mu11 = 2651336.1
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=69793fce"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Orientation-from-central-moments">Orientation from central moments<a class="anchor-link" href="#Orientation-from-central-moments">¶</a></h2><p>The second-order central moments $\mu_{20}$, $\mu_{02}$, $\mu_{11}$ describe the spread of the shape around its centroid — essentially its covariance matrix. The angle of the major axis (the direction of greatest spread) is</p>
+<h2 id="Orientation-from-central-moments">Orientation from central moments<a class="anchor-link" href="#Orientation-from-central-moments">¶</a></h2><p>The central moments $\mu_{20}$, $\mu_{02}$, $\mu_{11}$ describe the spread of the shape around its centroid — essentially its covariance matrix (which we revisit in Lesson 6). The angle of the major axis (the direction of greatest spread) is</p>
 <p>$$\theta = \frac{1}{2}\,\mathrm{atan2}\!\left(2\mu_{11},\; \mu_{20} - \mu_{02}\right)$$</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=965511a9">
 <div class="input">
-<div class="prompt input_prompt">In [4]:</div>
+<div class="prompt input_prompt">In [6]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">theta</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span><span class="p">[</span><span class="s1">'mu11'</span><span class="p">],</span> <span class="n">m</span><span class="p">[</span><span class="s1">'mu20'</span><span class="p">]</span> <span class="o">-</span> <span class="n">m</span><span class="p">[</span><span class="s1">'mu02'</span><span class="p">])</span>
@@ -221,7 +309,7 @@ angle used to draw the ellipse = 30 degrees
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=d4e59c14">
 <div class="input">
-<div class="prompt input_prompt">In [5]:</div>
+<div class="prompt input_prompt">In [7]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">warp</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">mat</span><span class="p">):</span>
@@ -275,7 +363,7 @@ angle used to draw the ellipse = 30 degrees
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=8459b15a">
 <div class="input">
-<div class="prompt input_prompt">In [6]:</div>
+<div class="prompt input_prompt">In [8]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">hu_log</span><span class="p">(</span><span class="n">im</span><span class="p">):</span>
