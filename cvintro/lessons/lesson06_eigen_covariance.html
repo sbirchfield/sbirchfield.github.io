@@ -122,7 +122,7 @@ eigenvectors (columns):
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="From-central-moments-to-a-covariance-matrix">From central moments to a covariance matrix<a class="anchor-link" href="#From-central-moments-to-a-covariance-matrix">¶</a></h2><p>Treat a blob's pixels as samples from a 2D distribution. Its covariance matrix, in terms of the central moments $\mu_{ij}$ and area $\mu_{00}=m_{00}$, is</p>
-<p>$$\Sigma = \begin{bmatrix}\mu_{20}/m_{00} &amp; \mu_{11}/m_{00} \\ \mu_{11}/m_{00} &amp; \mu_{02}/m_{00}\end{bmatrix}$$</p>
+<p>$$\Sigma = \frac{1}{m_{00}}\begin{bmatrix}\mu_{20} &amp; \mu_{11} \\ \mu_{11} &amp; \mu_{02}\end{bmatrix}$$</p>
 <p>This is exactly the same formula used for the covariance matrix of a scatter of points $(x,y)$, just weighted by pixel membership instead of by sample index. Its eigenvectors point along the directions of greatest and least spread, and its eigenvalues measure how much spread there is along each.</p>
 </div>
 </div>
@@ -262,6 +262,12 @@ eigenvectors (columns):
     <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="se">\n</span><span class="s1">a=</span><span class="si">{</span><span class="n">a</span><span class="si">:</span><span class="s1">.0f</span><span class="si">}</span><span class="s1">, b=</span><span class="si">{</span><span class="n">b</span><span class="si">:</span><span class="s1">.0f</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># img = cv2.imread('../img/glasses_outline.png', cv2.IMREAD_GRAYSCALE)</span>
+<span class="c1"># fig, ax = plt.subplots(figsize=(4, 4))</span>
+<span class="c1"># center, (a, b) = draw_axes(ax, img)</span>
+<span class="c1"># ax.set_title('Major (thick) and minor (thin) axes from eigenvectors')</span>
+<span class="c1"># plt.show()</span>
 </pre></div>
 </div>
 </div>
