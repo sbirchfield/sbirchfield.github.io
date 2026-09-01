@@ -34,10 +34,10 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=a0309863"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=6e1704c8"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-56:-Feed-Forward-Camera-Pose-Estimation">Lesson 56: Feed-Forward Camera Pose Estimation<a class="anchor-link" href="#Lesson-56:-Feed-Forward-Camera-Pose-Estimation">¶</a></h1><p>Lesson 23's RANSAC and Lesson 27's structure from motion recover camera geometry through an iterative pipeline: detect features, match them, run RANSAC to reject outliers, solve for the essential matrix, decompose it into rotation and translation. Each stage is a separate, hand-designed algorithm. <strong>VGGT</strong> (Visual Geometry Grounded Transformer, <a href="../references.html#wang-2024-vggt">Wang et al., 2025</a>) replaces the entire pipeline with a single feed-forward network: feed it correspondences (or even raw images) from multiple views, and it directly regresses camera poses in one forward pass, with no explicit RANSAC step anywhere. This lesson builds a small version of that idea and compares it against the classical pipeline it replaces — including exactly where each one wins.</p>
+<h1 id="Lesson-56:-Feed-Forward-Camera-Pose-Estimation">Lesson 56: Feed-Forward Camera Pose Estimation<a class="anchor-link" href="#Lesson-56:-Feed-Forward-Camera-Pose-Estimation">¶</a></h1><p>Lesson 22's RANSAC and Lesson 27's structure from motion recover camera geometry through an iterative pipeline: detect features, match them, run RANSAC to reject outliers, solve for the essential matrix, decompose it into rotation and translation. Each stage is a separate, hand-designed algorithm. <strong>VGGT</strong> (Visual Geometry Grounded Transformer, <a href="../references.html#wang-2024-vggt">Wang et al., 2025</a>) replaces the entire pipeline with a single feed-forward network: feed it correspondences (or even raw images) from multiple views, and it directly regresses camera poses in one forward pass, with no explicit RANSAC step anywhere. This lesson builds a small version of that idea and compares it against the classical pipeline it replaces — including exactly where each one wins.</p>
 </div>
 </div>
 </div>
@@ -60,7 +60,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=677dd18d"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Synthetic-two-view-correspondences,-with-outliers">Synthetic two-view correspondences, with outliers<a class="anchor-link" href="#Synthetic-two-view-correspondences,-with-outliers">¶</a></h2><p>A random 3D point cloud, projected into two camera views related by a known random rotation and translation <em>direction</em> (Lesson 21's pinhole projection). Translation <em>direction</em> is the most a calibrated two-view pair can ever recover — absolute scale is fundamentally unobservable from two views alone (the same monocular scale ambiguity from Lesson 53, in a different guise). A controllable fraction of the correspondences are replaced with random mismatches, simulating the false matches Lesson 23's RANSAC was built to survive.</p>
+<h2 id="Synthetic-two-view-correspondences,-with-outliers">Synthetic two-view correspondences, with outliers<a class="anchor-link" href="#Synthetic-two-view-correspondences,-with-outliers">¶</a></h2><p>A random 3D point cloud, projected into two camera views related by a known random rotation and translation <em>direction</em> (Lesson 21's pinhole projection). Translation <em>direction</em> is the most a calibrated two-view pair can ever recover — absolute scale is fundamentally unobservable from two views alone (the same monocular scale ambiguity from Lesson 53, in a different guise). A controllable fraction of the correspondences are replaced with random mismatches, simulating the false matches Lesson 22's RANSAC was built to survive.</p>
 </div>
 </div>
 </div>
@@ -118,7 +118,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=341abd85"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-classical-pipeline:-essential-matrix-+-RANSAC">The classical pipeline: essential matrix + RANSAC<a class="anchor-link" href="#The-classical-pipeline:-essential-matrix-+-RANSAC">¶</a></h2><p><code>cv2.findEssentialMat</code> with <code>RANSAC</code> (Lesson 23) followed by <code>cv2.recoverPose</code> (Lesson 25) — the standard textbook approach to two-view relative pose, and the exact pipeline VGGT-style networks are built to replace.</p>
+<h2 id="The-classical-pipeline:-essential-matrix-+-RANSAC">The classical pipeline: essential matrix + RANSAC<a class="anchor-link" href="#The-classical-pipeline:-essential-matrix-+-RANSAC">¶</a></h2><p><code>cv2.findEssentialMat</code> with <code>RANSAC</code> (Lesson 22) followed by <code>cv2.recoverPose</code> (Lesson 25) — the standard textbook approach to two-view relative pose, and the exact pipeline VGGT-style networks are built to replace.</p>
 </div>
 </div>
 </div>

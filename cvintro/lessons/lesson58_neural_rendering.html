@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=6204a9a3"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=b68c98f2"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-58:-Neural-Rendering">Lesson 58: Neural Rendering<a class="anchor-link" href="#Lesson-58:-Neural-Rendering">¶</a></h1><p>Lesson 27's structure from motion recovers a sparse 3D point cloud from multiple images. <strong>Neural rendering</strong> — most famously <strong>NeRF</strong> (<a href="../references.html#mildenhall-2020-nerf">Mildenhall et al., 2020</a>) — asks for something richer: a <em>continuous</em> representation of an entire 3D scene, dense enough to render a photorealistic image from any camera viewpoint, including ones never observed during training. The representation isn't a mesh or a point cloud at all; it's the weights of a small neural network. This lesson builds one from scratch: a coordinate network trained purely by comparing rendered pixels to real ones, with no 3D supervision anywhere in the loss.</p>
@@ -59,7 +59,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=a57d683c"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Ground-truth:-a-classical-ray-tracer-for-a-synthetic-scene">Ground truth: a classical ray-tracer for a synthetic scene<a class="anchor-link" href="#Ground-truth:-a-classical-ray-tracer-for-a-synthetic-scene">¶</a></h2><p>A single shaded sphere, photographed from 8 camera positions arranged in a ring around it (Lesson 21's pinhole camera model, Lesson 22's image formation). Each pixel's color comes from a classical, non-learned ray-sphere intersection with simple directional shading — this is <em>only</em> used to generate training data and a ground-truth held-out view to grade against; the network itself never sees the sphere's true position, radius, or color.</p>
+<h2 id="Ground-truth:-a-classical-ray-tracer-for-a-synthetic-scene">Ground truth: a classical ray-tracer for a synthetic scene<a class="anchor-link" href="#Ground-truth:-a-classical-ray-tracer-for-a-synthetic-scene">¶</a></h2><p>A single shaded sphere, photographed from 8 camera positions arranged in a ring around it (Lesson 21's pinhole camera model, Lesson 24's image formation). Each pixel's color comes from a classical, non-learned ray-sphere intersection with simple directional shading — this is <em>only</em> used to generate training data and a ground-truth held-out view to grade against; the network itself never sees the sphere's true position, radius, or color.</p>
 </div>
 </div>
 </div>

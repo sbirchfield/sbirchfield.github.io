@@ -133,3 +133,21 @@
     border-left: 3px solid #3498db;
     padding: 8px 12px;
 }
+
+.notebook-container table {
+    border-collapse: collapse;
+    margin: 16px 0;
+    width: 100%;
+}
+
+.notebook-container th,
+.notebook-container td {
+    padding: 10px 18px;
+    border: 1px solid #e1e4e8;
+    text-align: left;
+    line-height: 1.8;
+}
+
+.notebook-container th {
+    background-color: #f6f8fa;
+}

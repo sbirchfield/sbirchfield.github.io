@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson23 Model Fitting Ransac - Introduction to Computer Vision</title>
+    <title>Lesson22 Model Fitting Ransac - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson23_model_fitting_ransac.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson22_model_fitting_ransac.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson23_model_fitting_ransac.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson22_model_fitting_ransac.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=add51d1a"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-23:-Model-Fitting,-Robust-Estimation,-and-RANSAC">Lesson 23: Model Fitting, Robust Estimation, and RANSAC<a class="anchor-link" href="#Lesson-23:-Model-Fitting,-Robust-Estimation,-and-RANSAC">¶</a></h1><p>Lesson 21 fit a homography from point correspondences, and Lesson 18's feature matching is exactly where those correspondences come from — but feature matching is never perfect: some matches are simply wrong. This lesson confronts that directly: ordinary least-squares fitting is catastrophically fragile to even a few bad points, and <strong>RANSAC</strong> is the standard fix, quietly running underneath the <code>cv2.RANSAC</code> flag used (without explanation) back in Lesson 21 — and again in the next lesson's essential-matrix estimation.</p>
+<h1 id="Lesson-22:-Model-Fitting,-Robust-Estimation,-and-RANSAC">Lesson 22: Model Fitting, Robust Estimation, and RANSAC<a class="anchor-link" href="#Lesson-22:-Model-Fitting,-Robust-Estimation,-and-RANSAC">¶</a></h1><p>Lesson 21 fit a homography from point correspondences, and Lesson 18's feature matching is exactly where those correspondences come from — but feature matching is never perfect: some matches are simply wrong. This lesson confronts that directly: ordinary least-squares fitting is catastrophically fragile to even a few bad points, and <strong>RANSAC</strong> is the standard fix, quietly running underneath the <code>cv2.RANSAC</code> flag used (without explanation) in Lesson 21 — and again in the next lesson's essential-matrix estimation.</p>
 </div>
 </div>
 </div>
@@ -317,8 +317,8 @@ mean reprojection error on the TRUE inliers:
 </div>
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson22_image_formation.html">&larr; Lesson 22: Image Formation</a></div>
-            <div class="lesson-nav-next"><a href="lesson24_stitching_mosaicking.html">Lesson 24: Image Stitching and Mosaicking &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson21_projective_geometry.html">&larr; Lesson 21: Projective Geometry</a></div>
+            <div class="lesson-nav-next"><a href="lesson23_stitching_mosaicking.html">Lesson 23: Image Stitching and Mosaicking &rarr;</a></div>
         </div>
     </div>
 </body>

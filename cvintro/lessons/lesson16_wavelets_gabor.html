@@ -99,7 +99,7 @@ detail (cD):        [-1.41 -4.24 -1.41 -1.41]
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=e9dc0c5b"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="From-Haar-to-Daubechies:-smoother-wavelets">From Haar to Daubechies: smoother wavelets<a class="anchor-link" href="#From-Haar-to-Daubechies:-smoother-wavelets">¶</a></h2><p>The Haar wavelet is discontinuous (a hard step), which gives it poor frequency localization — its own frequency content is spread out, the opposite of what we wanted. <strong>Daubechies wavelets</strong> (<a href="../references.html#daubechies-1988">Ingrid Daubechies, 1988</a>) use longer, smoother filters with more <em>vanishing moments</em>, trading a wider spatial support for much better frequency behavior. <code>db2</code> (sometimes called "D4" for its 4 filter taps) is the next step up in smoothness from Haar.</p>
+<h2 id="From-Haar-to-Daubechies:-smoother-wavelets">From Haar to Daubechies: smoother wavelets<a class="anchor-link" href="#From-Haar-to-Daubechies:-smoother-wavelets">¶</a></h2><p>The Haar wavelet is discontinuous (a hard step), which gives it poor frequency localization — its own frequency content is spread out, the opposite of what we wanted. <strong>Daubechies wavelets</strong> (<a href="../references.html#daubechies-1988">Daubechies, 1988</a>) use longer, smoother filters with more <em>vanishing moments</em>, trading a wider spatial support for much better frequency behavior. <code>db2</code> (sometimes called "D4" for its 4 filter taps) is the next step up in smoothness from Haar.</p>
 </div>
 </div>
 </div>
@@ -380,13 +380,7 @@ perfect reconstruction? True
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>  filter tuned for</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>      0     45     90    135   &lt;- bar orientation
+<pre>  filter tuned for      0     45     90    135   &lt;- bar orientation
                  0   2580    612    343    612
                 45    495   3277    495    428
                 90    343    612   2580    612

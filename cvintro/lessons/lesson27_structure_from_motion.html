@@ -37,7 +37,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=725b135c"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-27:-Structure-from-Motion">Lesson 27: Structure from Motion<a class="anchor-link" href="#Lesson-27:-Structure-from-Motion">¶</a></h1><p>This lesson is a capstone: it assembles feature matching (Lesson 18), robust estimation (Lesson 23), the essential matrix and pose recovery (Lesson 25), and calibration (Lesson 26) into a complete pipeline that takes 2D image correspondences from two views and recovers <strong>both</strong> the cameras' relative motion <strong>and</strong> the 3D positions of the points that were being viewed — <strong>S</strong>tructure <strong>f</strong>rom <strong>M</strong>otion. The one genuinely new ingredient is <strong>triangulation</strong>: turning a matched 2D point pair, plus known camera poses, into a 3D point.</p>
+<h1 id="Lesson-27:-Structure-from-Motion">Lesson 27: Structure from Motion<a class="anchor-link" href="#Lesson-27:-Structure-from-Motion">¶</a></h1><p>This lesson is a capstone: it assembles feature matching (Lesson 18), robust estimation (Lesson 22), the essential matrix and pose recovery (Lesson 25), and calibration (Lesson 26) into a complete pipeline that takes 2D image correspondences from two views and recovers <strong>both</strong> the cameras' relative motion <strong>and</strong> the 3D positions of the points that were being viewed — <strong>S</strong>tructure <strong>f</strong>rom <strong>M</strong>otion. The one genuinely new ingredient is <strong>triangulation</strong>: turning a matched 2D point pair, plus known camera poses, into a 3D point.</p>
 </div>
 </div>
 </div>
@@ -58,9 +58,9 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=9bc80b87"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-pipeline,-at-a-glance">The pipeline, at a glance<a class="anchor-link" href="#The-pipeline,-at-a-glance">¶</a></h2><ol>
+<h2 id="The-classic-pipeline,-at-a-glance">The classic pipeline, at a glance<a class="anchor-link" href="#The-classic-pipeline,-at-a-glance">¶</a></h2><ol>
 <li><strong>Match features</strong> between two images (Lesson 18: SIFT + ratio test).</li>
-<li><strong>Estimate the essential matrix</strong> $E$ from those correspondences, robustly (Lesson 23: RANSAC), using known intrinsics $K$ (Lesson 26: calibration).</li>
+<li><strong>Estimate the essential matrix</strong> $E$ from those correspondences, robustly (Lesson 22: RANSAC), using known intrinsics $K$ (Lesson 26: calibration).</li>
 <li><strong>Recover relative pose</strong> $(R, t)$ from $E$ (Lesson 25: <code>cv2.recoverPose</code>) — up to an unknown scale on $t$.</li>
 <li><strong>Triangulate</strong>: for every matched pair, intersect the two corresponding rays in 3D to recover a 3D point — new in this lesson.</li>
 </ol>
@@ -102,7 +102,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=313721d7"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-1-2:-robust-essential-matrix-and-pose-recovery">Step 1-2: robust essential matrix and pose recovery<a class="anchor-link" href="#Step-1-2:-robust-essential-matrix-and-pose-recovery">¶</a></h2><p>Standing in for real (imperfect) feature matches from Lesson 18, we feed the correspondences through the same robust pipeline built in Lessons 23 and 25.</p>
+<h2 id="Step-1-2:-robust-essential-matrix-and-pose-recovery">Step 1-2: robust essential matrix and pose recovery<a class="anchor-link" href="#Step-1-2:-robust-essential-matrix-and-pose-recovery">¶</a></h2><p>Standing in for real (imperfect) feature matches from Lesson 18, we feed the correspondences through the same robust pipeline built in Lessons 22 and 25.</p>
 </div>
 </div>
 </div>

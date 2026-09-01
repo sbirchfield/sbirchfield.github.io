@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson24 Stitching Mosaicking - Introduction to Computer Vision</title>
+    <title>Lesson23 Stitching Mosaicking - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson24_stitching_mosaicking.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson23_stitching_mosaicking.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson24_stitching_mosaicking.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson23_stitching_mosaicking.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=e4d8059b"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-24:-Image-Stitching-and-Mosaicking">Lesson 24: Image Stitching and Mosaicking<a class="anchor-link" href="#Lesson-24:-Image-Stitching-and-Mosaicking">¶</a></h1><p>This lesson is a capstone for the projective-geometry block: it assembles feature detection and matching (Lesson 18), homography estimation (Lesson 21), and robust fitting (Lesson 23) into a complete pipeline that stitches two overlapping photos into a single seamless panorama.</p>
+<h1 id="Lesson-23:-Image-Stitching-and-Mosaicking">Lesson 23: Image Stitching and Mosaicking<a class="anchor-link" href="#Lesson-23:-Image-Stitching-and-Mosaicking">¶</a></h1><p>This lesson is a capstone for the projective-geometry block: it assembles feature detection and matching (Lesson 18), homography estimation (Lesson 21), and robust fitting (Lesson 22) into a complete pipeline that stitches two overlapping photos into a single seamless panorama.</p>
 </div>
 </div>
 </div>
@@ -59,7 +59,7 @@
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="The-pipeline,-at-a-glance">The pipeline, at a glance<a class="anchor-link" href="#The-pipeline,-at-a-glance">¶</a></h2><ol>
 <li><strong>Detect and match features</strong> between the two photos (Lesson 18: SIFT + ratio test).</li>
-<li><strong>Estimate a homography</strong> relating one image's plane to the other's, robustly (Lesson 21's homography, Lesson 23's RANSAC).</li>
+<li><strong>Estimate a homography</strong> relating one image's plane to the other's, robustly (Lesson 21's homography, Lesson 22's RANSAC).</li>
 <li><strong>Warp</strong> one image into the other's coordinate frame (Lesson 9: <code>cv2.warpPerspective</code>).</li>
 <li><strong>Composite and blend</strong> the two images onto one canvas, feathering across the overlap so the seam is invisible.</li>
 </ol>
@@ -386,8 +386,8 @@ max absolute pixel error vs. ground truth:  44
 </div>
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson23_model_fitting_ransac.html">&larr; Lesson 23: Model Fitting, Robust Estimation, and RANSAC</a></div>
-            <div class="lesson-nav-next"><a href="lesson25_epipolar_geometry.html">Lesson 25: Epipolar Geometry &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson22_model_fitting_ransac.html">&larr; Lesson 22: Model Fitting, Robust Estimation, and RANSAC</a></div>
+            <div class="lesson-nav-next"><a href="lesson24_image_formation.html">Lesson 24: Image Formation &rarr;</a></div>
         </div>
     </div>
 </body>

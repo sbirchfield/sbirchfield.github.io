@@ -63,9 +63,50 @@
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=5de425cb">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=f99c9548"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Why-this-formula-is-outdated-(even-though-widely-used,-and-still-useful)">Why this formula is outdated (even though widely used, and still useful)<a class="anchor-link" href="#Why-this-formula-is-outdated-(even-though-widely-used,-and-still-useful)">¶</a></h3><p>Two things are hiding in that formula that are worth knowing about:</p>
+<ol>
+<li><strong>Old primaries.</strong> The weights $0.299, 0.587, 0.114$ come from the 1953 NTSC standard (Rec. 601), derived from the specific red/green/blue phosphors used in early color CRT televisions. Modern displays — and the sRGB/Rec. 709 standard nearly everything uses today — have different, more saturated primaries, so the colorimetrically correct weights for a modern screen are actually $Y = 0.2126R + 0.7152G + 0.0722B$ (Rec. 709): noticeably <em>more</em> green-weighted and <em>less</em> red-weighted. <code>cv2.cvtColor(..., COLOR_BGR2GRAY)</code> still uses the old Rec. 601 weights, mainly for backward compatibility with decades of existing code.</li>
+<li><strong>Assumes linear light.</strong> The weighted-sum formula is only true luminance when $R$, $G$, $B$ are <em>linear</em> light values. But as Lesson 24 covered, stored pixel values are gamma-<em>encoded</em>, not linear. <code>cv2.cvtColor</code> applies the weights directly to the raw encoded 8-bit values, without decoding gamma first — fast, and close enough for most computer-vision purposes, but not the physically correct luminance a display-calibration or photometry application would need.</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=90cae10f">
 <div class="input">
 <div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">weights_601</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.114</span><span class="p">,</span> <span class="mf">0.587</span><span class="p">,</span> <span class="mf">0.299</span><span class="p">])</span>   <span class="c1"># BGR order, what cv2 actually uses</span>
+<span class="n">weights_709</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0722</span><span class="p">,</span> <span class="mf">0.7152</span><span class="p">,</span> <span class="mf">0.2126</span><span class="p">])</span>  <span class="c1"># BGR order, modern sRGB primaries</span>
+
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">bgr</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">'pure red'</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)),</span> <span class="p">(</span><span class="s1">'pure green'</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">))]:</span>
+    <span class="n">bgr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bgr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">y_601</span> <span class="o">=</span> <span class="n">bgr</span> <span class="o">@</span> <span class="n">weights_601</span>
+    <span class="n">y_709</span> <span class="o">=</span> <span class="n">bgr</span> <span class="o">@</span> <span class="n">weights_709</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s1">&gt;10</span><span class="si">}</span><span class="s1">: Rec. 601 (cv2) Y = </span><span class="si">{</span><span class="n">y_601</span><span class="si">:</span><span class="s1">6.1f</span><span class="si">}</span><span class="s1">    Rec. 709 (modern) Y = </span><span class="si">{</span><span class="n">y_709</span><span class="si">:</span><span class="s1">6.1f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>  pure red: Rec. 601 (cv2) Y =   76.2    Rec. 709 (modern) Y =   54.2
+pure green: Rec. 601 (cv2) Y =  149.7    Rec. 709 (modern) Y =  182.4
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=5de425cb">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">pure_green</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>   <span class="c1"># BGR</span>
@@ -108,7 +149,7 @@
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=0dcc8ea9">
 <div class="input">
-<div class="prompt input_prompt">In [3]:</div>
+<div class="prompt input_prompt">In [4]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -154,7 +195,7 @@
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=761ecdf6">
 <div class="input">
-<div class="prompt input_prompt">In [4]:</div>
+<div class="prompt input_prompt">In [5]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">size</span> <span class="o">=</span> <span class="mi">200</span>
@@ -229,7 +270,7 @@ IoU vs. true disk, fixed RGB range:   0.710
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=79c28237">
 <div class="input">
-<div class="prompt input_prompt">In [5]:</div>
+<div class="prompt input_prompt">In [6]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">textured</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
@@ -301,7 +342,7 @@ mean abs error, luma degraded 8x:   10.15
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=a05f4a2a">
 <div class="input">
-<div class="prompt input_prompt">In [6]:</div>
+<div class="prompt input_prompt">In [7]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">target_rgb_distance</span> <span class="o">=</span> <span class="mf">30.0</span>
