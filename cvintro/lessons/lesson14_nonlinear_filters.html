@@ -37,7 +37,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=8fbc8b08"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-14:-Nonlinear-Filters">Lesson 14: Nonlinear Filters<a class="anchor-link" href="#Lesson-14:-Nonlinear-Filters">¶</a></h1><p>Every filter so far (box, Gaussian, Sobel, Laplacian, ...) has been a convolution: a fixed, linear combination of neighboring pixel values. Linear filters have a hard limit — they can't reason about which neighboring pixels are "outliers" or which are "on the other side of an edge." This lesson looks at filters that break that linearity: <strong>median filtering</strong>, grayscale <strong>erosion/dilation as min/max filters</strong>, and the edge-preserving <strong>bilateral filter</strong>.</p>
+<h1 id="Lesson-14:-Nonlinear-Filters">Lesson 14: Nonlinear Filters<a class="anchor-link" href="#Lesson-14:-Nonlinear-Filters">¶</a></h1><p>Every filter so far (box, Gaussian, Sobel, Laplacian, ...) has been a convolution: a fixed, linear combination of neighboring pixel values. But linear filters are limited in what they can do — they can't reason about which neighboring pixels are "outliers" or which are "on the other side of an edge." This lesson looks at filters that break that linearity: <strong>median filtering</strong>, grayscale <strong>erosion/dilation as min/max filters</strong>, and the edge-preserving <strong>bilateral filter</strong>.</p>
 </div>
 </div>
 </div>
@@ -57,7 +57,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=7a8c7e8c"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Median-filtering:-robust-to-outliers">Median filtering: robust to outliers<a class="anchor-link" href="#Median-filtering:-robust-to-outliers">¶</a></h2><p>A median filter replaces each pixel with the <strong>median</strong> (not the mean) of its neighborhood. A single wildly wrong pixel value barely moves a median, whereas it drags a mean toward itself — so median filtering is especially effective against <strong>salt-and-pepper noise</strong> (isolated pixels randomly slammed to black or white), which linear smoothing handles poorly.</p>
+<h2 id="Median-filtering:-robust-to-outliers">Median filtering: robust to outliers<a class="anchor-link" href="#Median-filtering:-robust-to-outliers">¶</a></h2><p>A median filter replaces each pixel with the <strong>median</strong> (not the mean) of its neighborhood. Whereas a single wildly wrong pixel value (outlier) can drastically affect the mean, it barely moves a median, if at all — so median filtering is especially effective against <strong>salt-and-pepper noise</strong> (isolated pixels randomly slammed to black or white), which linear smoothing handles poorly.</p>
 </div>
 </div>
 </div>
@@ -124,7 +124,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=258936fc"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Min-and-max-filters:-grayscale-erosion-and-dilation">Min and max filters: grayscale erosion and dilation<a class="anchor-link" href="#Min-and-max-filters:-grayscale-erosion-and-dilation">¶</a></h2><p>Lesson 3 introduced erosion and dilation on <em>binary</em> images. On a <strong>grayscale</strong> image, they generalize naturally: erosion replaces each pixel with the <strong>minimum</strong> value in its neighborhood, and dilation with the <strong>maximum</strong>. Both are nonlinear (a min or max is not a weighted sum) and both are edge-preserving in a different way than blurring — they shift edges rather than blurring them.</p>
+<h2 id="Min-and-max-filters:-grayscale-erosion-and-dilation">Min and max filters: grayscale erosion and dilation<a class="anchor-link" href="#Min-and-max-filters:-grayscale-erosion-and-dilation">¶</a></h2><p>Lesson 3 introduced erosion and dilation on <em>binary</em> images. On a <strong>grayscale</strong> image, they generalize naturally: erosion replaces each pixel with the <strong>minimum</strong> value in its neighborhood, and dilation with the <strong>maximum</strong>. Both are nonlinear (not a weighted sum), and both are edge-preserving in a different way than blurring — they shift edges rather than blurring them.</p>
 </div>
 </div>
 </div>

@@ -99,7 +99,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=30f25db3"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-Laplacian:-a-2D-second-derivative">The Laplacian: a 2D second derivative<a class="anchor-link" href="#The-Laplacian:-a-2D-second-derivative">¶</a></h2><p>The Laplacian sums the unmixed second partial derivatives:</p>
+<h2 id="The-Laplacian:-a-2D-second-derivative">The Laplacian: a 2D second derivative<a class="anchor-link" href="#The-Laplacian:-a-2D-second-derivative">¶</a></h2><p>The Laplacian sums the unmixed second partial derivatives of a 2D image:</p>
 <p>$$\nabla^2 I = \frac{\partial^2 I}{\partial x^2} + \frac{\partial^2 I}{\partial y^2}$$</p>
 <p>Unlike the gradient, it's a single scalar at each pixel (no direction) — it just measures how much a pixel differs from the average of its neighbors. Two common discrete kernels:</p>
 <p>$$K_4 = \begin{bmatrix}0&amp;1&amp;0\\1&amp;-4&amp;1\\0&amp;1&amp;0\end{bmatrix} \qquad K_8 = \begin{bmatrix}1&amp;1&amp;1\\1&amp;-8&amp;1\\1&amp;1&amp;1\end{bmatrix}$$</p>
