@@ -211,6 +211,15 @@ REFERENCES = [
         "landmark": False,
     },
     {
+        "id": "hubel-wiesel-1959",
+        "authors": "Hubel, D. H., & Wiesel, T. N.",
+        "sort_name": "Hubel",
+        "year": 1959,
+        "title": "Receptive Fields of Single Neurones in the Cat's Striate Cortex",
+        "url": "https://physoc.onlinelibrary.wiley.com/doi/10.1113/jphysiol.1959.sp006308",
+        "landmark": False,
+    },
+    {
         "id": "marcelja-1980",
         "authors": "Marcelja, S.",
         "sort_name": "Marcelja",
