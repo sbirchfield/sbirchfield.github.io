@@ -151,3 +151,9 @@
 .notebook-container th {
     background-color: #f6f8fa;
 }
+
+.image-attribution {
+    font-size: 0.8em;
+    color: #888;
+    text-align: right;
+}
