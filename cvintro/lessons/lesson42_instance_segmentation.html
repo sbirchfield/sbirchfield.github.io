@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=3224ab54"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=59ae625d"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-42:-Instance-Segmentation">Lesson 42: Instance Segmentation<a class="anchor-link" href="#Lesson-42:-Instance-Segmentation">¶</a></h1><p>Semantic segmentation (Lesson 41) answers "which pixels are circle pixels?" It has no notion of <em>how many</em> circles there are — two touching circles are just one connected blob of "circle" pixels. <strong>Instance segmentation</strong> answers the harder question: which pixels belong to <em>this specific</em> object, as opposed to that other object of the same class. This lesson shows the failure concretely, then fixes it with an idea that traces straight back to Lesson 12's Hough transform: instead of only classifying pixels, have the network also predict, for every foreground pixel, a vote for where its object's center is — then cluster the votes to recover individual instances, the same accumulator-and-peak-finding pattern used for lines and circles, now finding object centers instead.</p>

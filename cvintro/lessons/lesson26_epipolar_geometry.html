@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson25 Epipolar Geometry - Introduction to Computer Vision</title>
+    <title>Lesson26 Epipolar Geometry - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson25_epipolar_geometry.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson26_epipolar_geometry.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson25_epipolar_geometry.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson26_epipolar_geometry.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=d21c0372"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-25:-Epipolar-Geometry">Lesson 25: Epipolar Geometry<a class="anchor-link" href="#Lesson-25:-Epipolar-Geometry">¶</a></h1><p>Lesson 20's stereo matching assumed a <em>rectified</em> pair, where corresponding points always fall on the same row — a special case. This lesson covers the general two-view relationship between <strong>any</strong> pair of images of a static scene, calibrated or not: the <strong>fundamental matrix</strong> and <strong>essential matrix</strong>, which say that a point's match in the other image isn't just <em>somewhere</em> — it's constrained to lie on a single line.</p>
+<h1 id="Lesson-26:-Epipolar-Geometry">Lesson 26: Epipolar Geometry<a class="anchor-link" href="#Lesson-26:-Epipolar-Geometry">¶</a></h1><p>Lesson 21's stereo matching assumed a <em>rectified</em> pair, where corresponding points always fall on the same row — a special case. This lesson covers the general two-view relationship between <strong>any</strong> pair of images of a static scene, calibrated or not: the <strong>fundamental matrix</strong> and <strong>essential matrix</strong>, which say that a point's match in the other image isn't just <em>somewhere</em> — it's constrained to lie on a particular line.</p>
 </div>
 </div>
 </div>
@@ -59,7 +59,7 @@
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="The-epipolar-constraint">The epipolar constraint<a class="anchor-link" href="#The-epipolar-constraint">¶</a></h2><p>For a point $x_1$ in image 1 and its true match $x_2$ in image 2 (both in homogeneous pixel coordinates), there's a $3\times3$ matrix $F$ — the <strong>fundamental matrix</strong> — such that</p>
 <p>$$x_2^\top F x_1 = 0$$</p>
-<p>for <em>every</em> corresponding pair, regardless of scene geometry. $F$ depends only on the two cameras' relative pose and (uncalibrated) intrinsics. Rearranged, $l_2 = F x_1$ is the <strong>epipolar line</strong> in image 2: the 1D line along which $x_1$'s match is <em>guaranteed</em> to lie. This is exactly the mechanism that made Lesson 20's row-restricted search valid — rectification is nothing more than choosing $F$ to be a pure horizontal-line generator.</p>
+<p>for <em>every</em> corresponding pair, regardless of scene geometry. $F$ depends only on the two cameras' relative pose and (uncalibrated) intrinsics. Rearranged, $l_2 = F x_1$ is the <strong>epipolar line</strong> in image 2: the 1D line along which $x_1$'s match is <em>guaranteed</em> to lie. This is exactly the mechanism that made Lesson 21's row-restricted search valid — rectification is nothing more than choosing $F$ to be a pure horizontal-line generator.</p>
 </div>
 </div>
 </div>
@@ -104,7 +104,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=a6fdf675"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-8-point-algorithm">The 8-point algorithm<a class="anchor-link" href="#The-8-point-algorithm">¶</a></h2><p>Each correspondence gives one linear equation in the 9 unknown entries of $F$ (expanding $x_2^\top F x_1 = 0$). With 8 or more correspondences, this becomes a homogeneous least-squares problem solvable by SVD — the same kind of DLT machinery used for the homography fit in Lesson 21, just with a different constraint equation and an extra step to enforce that $F$ has rank 2 (since $F$ is singular by construction — a fundamental matrix always has a zero eigenvalue).</p>
+<h2 id="The-8-point-algorithm">The 8-point algorithm<a class="anchor-link" href="#The-8-point-algorithm">¶</a></h2><p>Each correspondence gives one linear equation in the 9 unknown entries of $F$ (expanding $x_2^\top F x_1 = 0$). With 8 or more correspondences, this becomes a homogeneous least-squares problem solvable by SVD — the same kind of DLT machinery used for the homography fit in Lesson 22, just with a different constraint equation and an extra step to enforce that $F$ has rank 2 (since $F$ is singular by construction — a fundamental matrix always has a zero eigenvalue).</p>
 </div>
 </div>
 </div>
@@ -265,7 +265,7 @@ mean |x2^T F x1|, cv2 F:  1.09e-07
 <h2 id="From-fundamental-to-essential:-adding-calibration">From fundamental to essential: adding calibration<a class="anchor-link" href="#From-fundamental-to-essential:-adding-calibration">¶</a></h2><p>The fundamental matrix works in raw pixel coordinates and folds in the (unknown) camera intrinsics. If we <em>do</em> know the intrinsics $K$ (from camera calibration), we can remove them and work in normalized coordinates, giving the <strong>essential matrix</strong>:</p>
 <p>$$E = K_2^\top F K_1 \qquad \text{(same } K \text{ for both, if it's the same camera)}$$</p>
 <p>Unlike $F$ (7 degrees of freedom), $E$ has only 5 — it's built entirely from a relative rotation $R$ and translation direction $t$ between the two cameras: $E = [t]_\times R$. This means $E$ can be <em>decomposed</em> back into $R$ and $t$, which is how you recover camera motion from image correspondences alone.</p>
-<p>We estimate $E$ robustly with <code>cv2.findEssentialMat(..., method=cv2.RANSAC, ...)</code>, exactly the kind of outlier-rejecting fit built from scratch in Lesson 22.</p>
+<p>We estimate $E$ robustly with <code>cv2.findEssentialMat(..., method=cv2.RANSAC, ...)</code>, exactly the kind of outlier-rejecting fit built from scratch in Lesson 23.</p>
 </div>
 </div>
 </div>
@@ -351,7 +351,7 @@ recovered translation direction:  [ 0.9806 -0.      0.1961]
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=2dae4088"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The rotation is recovered essentially exactly, and the translation direction matches up to the expected sign/scale — from feature correspondences alone (Lesson 18), with no other information, we've recovered how the second camera is rotated and (up to scale) positioned relative to the first. This is the starting point for structure-from-motion and visual SLAM.</p>
+<p>The rotation is recovered essentially exactly, and the translation direction matches up to the expected sign/scale — from feature correspondences alone (Lesson 19), with no other information, we've recovered how the second camera is rotated and (up to scale) positioned relative to the first. This is the starting point for structure-from-motion and visual SLAM.</p>
 </div>
 </div>
 </div>
@@ -361,15 +361,15 @@ recovered translation direction:  [ 0.9806 -0.      0.1961]
 <h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
 <li>Add pixel noise (e.g. std 0.5) to <code>x1</code> and <code>x2</code> before running the 8-point algorithm. How much does the mean epipolar residual grow, and does normalizing coordinates (as <code>eight_point_algorithm</code> does) actually matter here — try skipping the normalization step and compare.</li>
 <li>The epipole in image 2 is the projection of camera 1's center, and satisfies $F e_1 = 0$ for the epipole $e_1$ in image 1 (and $F^\top e_2 = 0$ for the epipole $e_2$ in image 2). Compute both epipoles as the null space of $F$ (via SVD) and check whether they fall inside or outside the visible image region for this camera configuration.</li>
-<li>Increase the rotation angle between the two cameras to 60 degrees and rerun the pose recovery. Does <code>cv2.recoverPose</code> still find the correct rotation? At what point would you expect correspondence matching itself (Lesson 18) to become the bottleneck rather than the geometry?</li>
+<li>Increase the rotation angle between the two cameras to 60 degrees and rerun the pose recovery. Does <code>cv2.recoverPose</code> still find the correct rotation? At what point would you expect correspondence matching itself (Lesson 19) to become the bottleneck rather than the geometry?</li>
 </ol>
 </div>
 </div>
 </div>
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson24_image_formation.html">&larr; Lesson 24: Image Formation</a></div>
-            <div class="lesson-nav-next"><a href="lesson26_camera_calibration.html">Lesson 26: Camera Calibration &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson25_image_formation.html">&larr; Lesson 25: Image Formation</a></div>
+            <div class="lesson-nav-next"><a href="lesson27_camera_calibration.html">Lesson 27: Camera Calibration &rarr;</a></div>
         </div>
     </div>
 </body>

@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=41f3bab0"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=45c7c742"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-36:-Transfer-Learning">Lesson 36: Transfer Learning<a class="anchor-link" href="#Lesson-36:-Transfer-Learning">¶</a></h1><p>Training a good CNN from scratch (Lessons 33-34) took hundreds of labeled examples even for a toy task. Real target tasks are often data-starved: a handful of labeled medical scans, a new product category with 20 photos. <strong>Transfer learning</strong> sidesteps this by reusing a network already trained on a <em>different</em>, data-rich task, on the theory that early-layer features (edges, blobs, simple textures — Lesson 33's Sobel-like first-layer filters) are useful for almost any visual task, not just the one they were originally trained on.</p>
@@ -230,7 +230,7 @@
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>            strategy    mean test acc      std
-        from scratch           79.5%    10.8%
+        from scratch           76.5%    12.2%
      frozen backbone           86.0%     9.0%
           fine-tuned           83.6%     6.4%
 

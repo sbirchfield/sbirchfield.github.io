@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson21 Projective Geometry - Introduction to Computer Vision</title>
+    <title>Lesson22 Projective Geometry - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson21_projective_geometry.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson22_projective_geometry.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson21_projective_geometry.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson22_projective_geometry.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=9aa037fa"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-21:-Projective-Geometry">Lesson 21: Projective Geometry<a class="anchor-link" href="#Lesson-21:-Projective-Geometry">¶</a></h1><p>Lesson 8 built a hierarchy of 2D transforms — Euclidean, similarity, affine — and noted that all three preserve parallel lines. This lesson covers the next, most general step: the <strong>projective transform (homography)</strong>, which models what a camera actually does when it looks at a flat surface from an angle, and which does <em>not</em> preserve parallelism. That's not a bug — it's exactly the phenomenon of a vanishing point, and it's the tool behind perspective correction and image stitching.</p>
+<h1 id="Lesson-22:-Projective-Geometry">Lesson 22: Projective Geometry<a class="anchor-link" href="#Lesson-22:-Projective-Geometry">¶</a></h1><p>Lesson 8 built a hierarchy of 2D transforms — Euclidean, similarity, affine — and noted that all three preserve parallel lines. This lesson covers the next, most general step: the <strong>projective transform (homography)</strong>, which models what a camera actually does when it looks at a flat surface from an angle, and which does <em>not</em> preserve parallelism. That's not a bug — it's exactly the phenomenon of a vanishing point, and it's the tool behind perspective correction and image stitching.</p>
 </div>
 </div>
 </div>
@@ -270,7 +270,7 @@ vanishing point (H @ infinity trick): [666.66666667  66.66666667]
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=22bc3037"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Solving-for-a-homography-from-many-correspondences">Solving for a homography from many correspondences<a class="anchor-link" href="#Solving-for-a-homography-from-many-correspondences">¶</a></h2><p>4 correspondences exactly determine a homography's 8 degrees of freedom, with no slack for error. With <em>more</em> than 4 (typically from automatic feature matching, Lesson 18), the problem becomes an overdetermined least-squares fit — the Direct Linear Transform (DLT) algorithm that <code>cv2.findHomography</code> implements, optionally wrapped in RANSAC to reject bad correspondences (mismatched features) as outliers.</p>
+<h2 id="Solving-for-a-homography-from-many-correspondences">Solving for a homography from many correspondences<a class="anchor-link" href="#Solving-for-a-homography-from-many-correspondences">¶</a></h2><p>4 correspondences exactly determine a homography's 8 degrees of freedom, with no slack for error. With <em>more</em> than 4 (typically from automatic feature matching, Lesson 19), the problem becomes an overdetermined least-squares fit — the Direct Linear Transform (DLT) algorithm that <code>cv2.findHomography</code> implements, optionally wrapped in RANSAC to reject bad correspondences (mismatched features) as outliers.</p>
 </div>
 </div>
 </div>
@@ -317,7 +317,7 @@ inliers: 30 / 30
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=a3d0e6b7"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>With clean correspondences, <code>findHomography</code> recovers <code>H_true</code> almost exactly — this is exactly the last step of a typical image-stitching pipeline: detect and match SIFT features between two overlapping photos (Lesson 18), then solve for the homography that aligns one onto the other.</p>
+<p>With clean correspondences, <code>findHomography</code> recovers <code>H_true</code> almost exactly — this is exactly the last step of a typical image-stitching pipeline: detect and match SIFT features between two overlapping photos (Lesson 19), then solve for the homography that aligns one onto the other.</p>
 </div>
 </div>
 </div>
@@ -334,8 +334,8 @@ inliers: 30 / 30
 </div>
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson20_stereo_matching.html">&larr; Lesson 20: Stereo Matching</a></div>
-            <div class="lesson-nav-next"><a href="lesson22_model_fitting_ransac.html">Lesson 22: Model Fitting, Robust Estimation, and RANSAC &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson21_stereo_matching.html">&larr; Lesson 21: Stereo Matching</a></div>
+            <div class="lesson-nav-next"><a href="lesson23_model_fitting_ransac.html">Lesson 23: Model Fitting, Robust Estimation, and RANSAC &rarr;</a></div>
         </div>
     </div>
 </body>

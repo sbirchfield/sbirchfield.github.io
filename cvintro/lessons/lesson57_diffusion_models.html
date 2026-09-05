@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=ffdb0193"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=5c196df0"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-57:-Generative-and-Diffusion-Models">Lesson 57: Generative and Diffusion Models<a class="anchor-link" href="#Lesson-57:-Generative-and-Diffusion-Models">¶</a></h1><p>Every network so far has mapped an image to something smaller: a label, a box, a mask, an embedding. <strong>Diffusion models</strong> (<a href="../references.html#sohl-dickstein-2015">Sohl-Dickstein et al., 2015</a>; <a href="../references.html#ho-2020-ddpm">Ho et al., 2020</a>) run the idea in reverse: learn to map pure noise to a realistic image. The core trick is deceptively simple — train a network to undo one small step of noise-corruption at a time, then chain many such steps together, starting from noise and ending at something that looks like the training data.</p>
@@ -336,7 +336,7 @@ mean # connected foreground blobs, pure random noise:    4.5
 <p>Generated samples land much closer to real images' single-blob structure than pure noise does — the reverse process has learned to reassemble coherent, connected shapes from nothing, not just to locally smooth random pixels.</p>
 <h2 id="From-this-toy-model-to-Stable-Diffusion">From this toy model to Stable Diffusion<a class="anchor-link" href="#From-this-toy-model-to-Stable-Diffusion">¶</a></h2><p>Three changes separate this lesson's model from a real text-to-image system like Stable Diffusion:</p>
 <ul>
-<li><strong>Conditioning</strong>: feed a text embedding (Lesson 49's CLIP text encoder, or a dedicated language model) into the denoising network at every step — e.g. via cross-attention (Lesson 44), the same query/key/value mechanism used throughout Part 3, just with the <em>queries</em> coming from image features and the <em>keys/values</em> from the text embedding. This is what turns "generate a plausible image" into "generate an image matching this prompt."</li>
+<li><strong>Conditioning</strong>: feed a text embedding (Lesson 49's CLIP text encoder, or a dedicated language model) into the denoising network at every step — e.g. via cross-attention (Lesson 44), the same query/key/value mechanism used throughout Part 4, just with the <em>queries</em> coming from image features and the <em>keys/values</em> from the text embedding. This is what turns "generate a plausible image" into "generate an image matching this prompt."</li>
 <li><strong>Classifier-free guidance</strong>: train the network both with and without the text conditioning (randomly dropping it during training), then at sampling time extrapolate <em>away</em> from the unconditional prediction toward the conditional one — this single trick is responsible for a large fraction of the prompt-adherence quality jump in modern text-to-image models.</li>
 <li><strong>Latent diffusion</strong>: run the entire diffusion process in a compressed latent space (a pretrained autoencoder's bottleneck, not raw pixels) rather than on full-resolution images — the reason Stable Diffusion can generate a 512x512 image in a reasonable number of steps on a single GPU, instead of the pixel-space diffusion this lesson used.</li>
 </ul>

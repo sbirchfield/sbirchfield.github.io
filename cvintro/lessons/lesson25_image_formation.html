@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson24 Image Formation - Introduction to Computer Vision</title>
+    <title>Lesson25 Image Formation - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson24_image_formation.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson25_image_formation.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson24_image_formation.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson25_image_formation.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=61d027b0"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-24:-Image-Formation">Lesson 24: Image Formation<a class="anchor-link" href="#Lesson-24:-Image-Formation">¶</a></h1><p>Up to now we have been processing images without thinking about where they come from. This lesson unpacks that mystery by considering: <strong>geometry</strong> (how the projection matrix is derived from a pinhole camera model), <strong>optics</strong> (what a real lens does that a pinhole camera fails to model — focus and blur), and <strong>sensing/color</strong> (how a real sensor captures only one color per pixel and needs to reconstruct the rest, along with the two classic pitfalls — gamma and white balance — that trip up naive image processing).</p>
+<h1 id="Lesson-25:-Image-Formation">Lesson 25: Image Formation<a class="anchor-link" href="#Lesson-25:-Image-Formation">¶</a></h1><p>Up to now we have been processing images without thinking about where they come from. This lesson unpacks that mystery by considering: <strong>geometry</strong> (how the projection matrix is derived from a pinhole camera model), <strong>optics</strong> (what a real lens does that a pinhole camera fails to model — focus and blur), and <strong>sensing/color</strong> (how a real sensor captures only one color per pixel and needs to reconstruct the rest, along with the two classic pitfalls — gamma and white balance — that trip up naive image processing).</p>
 </div>
 </div>
 </div>
@@ -61,7 +61,7 @@
 <p>$$x = f\frac{X}{Z}, \qquad y = f\frac{Y}{Z}$$</p>
 <p>where $f$ is the distance from the pinhole to the image plane. Converting to pixel units (accounting for pixel size and where the origin is) folds in the <strong>intrinsics</strong> $K$; accounting for the camera's position and orientation relative to the world folds in the <strong>extrinsics</strong> $[R | t]$. Put together, in homogeneous coordinates:</p>
 <p>$$\underbrace{\begin{bmatrix}u\\v\\1\end{bmatrix}}_{\text{pixel}} \;\propto\; \underbrace{\begin{bmatrix}f_x&amp;0&amp;c_x\\0&amp;f_y&amp;c_y\\0&amp;0&amp;1\end{bmatrix}}_{K}\underbrace{\begin{bmatrix}R &amp; t\end{bmatrix}}_{\text{extrinsics}}\begin{bmatrix}X\\Y\\Z\\1\end{bmatrix}_{\text{world}}$$</p>
-<p>This is exactly the $P = K [R | t]$ that Lessons 25-27 (Epipolar Geometry, Camera Calibration, and Structure from Motion) will use freely. Every symbol can be traced back to a physical cause: $f_x, f_y$ to focal length and pixel size, $(c_x, c_y)$ to where the optical axis hits the sensor, $R, t$ to the camera's pose.</p>
+<p>This is exactly the $P = K [R | t]$ that Lessons 26-28 (Epipolar Geometry, Camera Calibration, and Structure from Motion) will use freely. Every symbol can be traced back to a physical cause: $f_x, f_y$ to focal length and pixel size, $(c_x, c_y)$ to where the optical axis hits the sensor, $R, t$ to the camera's pose.</p>
 </div>
 </div>
 </div>
@@ -620,8 +620,8 @@ mean abs pixel error after correction:  7.43
 </div>
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson23_stitching_mosaicking.html">&larr; Lesson 23: Image Stitching and Mosaicking</a></div>
-            <div class="lesson-nav-next"><a href="lesson25_epipolar_geometry.html">Lesson 25: Epipolar Geometry &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson24_stitching_mosaicking.html">&larr; Lesson 24: Image Stitching and Mosaicking</a></div>
+            <div class="lesson-nav-next"><a href="lesson26_epipolar_geometry.html">Lesson 26: Epipolar Geometry &rarr;</a></div>
         </div>
     </div>
 </body>

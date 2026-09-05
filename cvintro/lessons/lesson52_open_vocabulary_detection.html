@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=d4f5fc9b"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=039b08e6"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-52:-Open-Vocabulary-Detection">Lesson 52: Open-Vocabulary Detection<a class="anchor-link" href="#Lesson-52:-Open-Vocabulary-Detection">¶</a></h1><p>Lesson 40's detector predicts one of a small, fixed set of classes baked in at training time — exactly Lesson 37's classification limitation, just applied to boxes instead of whole images. <strong>Open-vocabulary detection</strong> (Grounding DINO, OWL-ViT) removes that limit by splitting detection into two separable skills: <em>finding</em> objects (a class-agnostic skill, surprisingly transferable across object categories) and <em>naming</em> them (delegated to a CLIP-style text-embedding match, Lesson 49, which can recognize any category describable in words). This lesson builds both halves and tests the combination on a category the detector's box regressor never received a single labeled box for.</p>

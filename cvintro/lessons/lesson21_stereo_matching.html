@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson20 Stereo Matching - Introduction to Computer Vision</title>
+    <title>Lesson21 Stereo Matching - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson20_stereo_matching.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson21_stereo_matching.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson20_stereo_matching.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson21_stereo_matching.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=d0f27f66"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-20:-Stereo-Matching">Lesson 20: Stereo Matching<a class="anchor-link" href="#Lesson-20:-Stereo-Matching">¶</a></h1><p>Two cameras viewing the same scene from slightly different positions see the same 3D points shifted by different amounts depending on depth — nearby points shift more, distant points shift less. <strong>Stereo matching</strong> finds these shifts (the <strong>disparity</strong>) at every pixel, which triangulation then converts into depth. The matching step itself is close cousin to two things we've already built: block matching (SSD, the sum-of-squared-differences idea) and 1D optical flow (Lesson 19), just restricted to a single row instead of two dimensions.</p>
+<h1 id="Lesson-21:-Stereo-Matching">Lesson 21: Stereo Matching<a class="anchor-link" href="#Lesson-21:-Stereo-Matching">¶</a></h1><p>Two cameras viewing the same scene from slightly different positions see the same 3D points shifted by different amounts depending on depth — nearby points shift more, distant points shift less. <strong>Stereo matching</strong> finds these shifts (the <strong>disparity</strong>) at every pixel, which triangulation then converts into depth. The matching step itself is close cousin to two things we've already built: block matching (SSD, the sum-of-squared-differences idea) and 1D optical flow (Lesson 20), just restricted to a single row instead of two dimensions.</p>
 </div>
 </div>
 </div>
@@ -320,7 +320,7 @@
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
-<li>Replace the random-texture <code>left</code> image with a flat gray region for the background (keeping the two rectangles textured). Run <code>cv2.StereoBM</code> again and describe what happens to the disparity estimate over the flat area — this is the aperture problem from Lesson 19, now in a stereo-matching context.</li>
+<li>Replace the random-texture <code>left</code> image with a flat gray region for the background (keeping the two rectangles textured). Run <code>cv2.StereoBM</code> again and describe what happens to the disparity estimate over the flat area — this is the aperture problem from Lesson 20, now in a stereo-matching context.</li>
 <li>Try <code>cv2.StereoSGBM_create</code> (semi-global block matching, which enforces smoothness across neighboring disparities rather than matching each pixel completely independently) in place of <code>StereoBM</code>. Compare the amount of speckle noise in flat/background regions between the two methods.</li>
 <li>Increase <code>baseline_m</code> in the depth conversion. How does the estimated depth map change, and why would a wider-baseline stereo rig give more precise depth estimates for distant objects (at the cost of a larger minimum-distance blind spot, due to disparity ranges and occlusion, near the cameras)?</li>
 </ol>
@@ -329,8 +329,8 @@
 </div>
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson19_optical_flow.html">&larr; Lesson 19: Optical Flow and Motion Estimation</a></div>
-            <div class="lesson-nav-next"><a href="lesson21_projective_geometry.html">Lesson 21: Projective Geometry &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson20_optical_flow.html">&larr; Lesson 20: Optical Flow and Motion Estimation</a></div>
+            <div class="lesson-nav-next"><a href="lesson22_projective_geometry.html">Lesson 22: Projective Geometry &rarr;</a></div>
         </div>
     </div>
 </body>

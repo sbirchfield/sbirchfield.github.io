@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson19 Optical Flow - Introduction to Computer Vision</title>
+    <title>Lesson20 Optical Flow - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson19_optical_flow.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson20_optical_flow.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson19_optical_flow.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson20_optical_flow.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=ff2d4924"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-19:-Optical-Flow-and-Motion-Estimation">Lesson 19: Optical Flow and Motion Estimation<a class="anchor-link" href="#Lesson-19:-Optical-Flow-and-Motion-Estimation">¶</a></h1><p>Optical flow estimates apparent motion between two frames of a video: for each pixel (or a chosen set of points), a 2D vector $(u, v)$ describing where it moved to. This lesson derives the classic <strong>Lucas-Kanade</strong> method from the same structure tensor used for corner detection in Lesson 18, confronts the fundamental <strong>aperture problem</strong>, and finishes with dense flow via the <strong>Farneback</strong> method.</p>
+<h1 id="Lesson-20:-Optical-Flow-and-Motion-Estimation">Lesson 20: Optical Flow and Motion Estimation<a class="anchor-link" href="#Lesson-20:-Optical-Flow-and-Motion-Estimation">¶</a></h1><p>Optical flow estimates apparent motion between two frames of a video: for each pixel (or a chosen set of points), a 2D vector $(u, v)$ describing where it moved to. This lesson derives the classic <strong>Lucas-Kanade</strong> method from the same structure tensor used for corner detection in Lesson 19, confronts the fundamental <strong>aperture problem</strong>, and finishes with dense flow via the <strong>Farneback</strong> method.</p>
 </div>
 </div>
 </div>
@@ -134,7 +134,7 @@
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Lucas-Kanade:-solving-the-aperture-problem-with-a-window">Lucas-Kanade: solving the aperture problem with a window<a class="anchor-link" href="#Lucas-Kanade:-solving-the-aperture-problem-with-a-window">¶</a></h2><p><a href="../references.html#lucas-kanade-1981">Lucas and Kanade's fix (1981)</a>: assume the flow $(u,v)$ is <strong>constant over a small window</strong>, then combine the flow constraint equation from every pixel in that window into an overdetermined least-squares system:</p>
 <p>$$\underbrace{\begin{bmatrix}\sum I_x^2 &amp; \sum I_xI_y \\ \sum I_xI_y &amp; \sum I_y^2\end{bmatrix}}_{M}\begin{bmatrix}u\\v\end{bmatrix} = -\begin{bmatrix}\sum I_xI_t\\ \sum I_yI_t\end{bmatrix}$$</p>
-<p>$M$ is exactly the structure tensor from Lesson 18! This is not a coincidence: solving this system requires $M$ to be invertible, i.e. to have two large eigenvalues — precisely the Shi-Tomasi "good feature to track" condition. A flat region ($M$ near zero) or an edge (one small eigenvalue — the aperture problem again) gives an ill-conditioned or singular system; a corner gives a well-conditioned one. <strong>Corners are trackable for exactly the same reason they're good corners.</strong></p>
+<p>$M$ is exactly the structure tensor from Lesson 19! This is not a coincidence: solving this system requires $M$ to be invertible, i.e. to have two large eigenvalues — precisely the Shi-Tomasi "good feature to track" condition. A flat region ($M$ near zero) or an edge (one small eigenvalue — the aperture problem again) gives an ill-conditioned or singular system; a corner gives a well-conditioned one. <strong>Corners are trackable for exactly the same reason they're good corners.</strong></p>
 </div>
 </div>
 </div>
@@ -325,13 +325,7 @@ cv2.calcOpticalFlowPyrLK estimate:    (4.000, 3.000)  &lt;- accurate
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>true motion: (5.0, -3.0)</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
+<pre>true motion: (5.0, -3.0)
 mean flow, ALL pixels:      (2.25, -1.35)  &lt;- biased low
 mean flow, TEXTURED pixels: (5.00, -3.00)  &lt;- accurate
 </pre>
@@ -404,8 +398,8 @@ mean flow, TEXTURED pixels: (5.00, -3.00)  &lt;- accurate
 </div>
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson18_feature_detection_matching.html">&larr; Lesson 18: Feature Detection and Matching</a></div>
-            <div class="lesson-nav-next"><a href="lesson20_stereo_matching.html">Lesson 20: Stereo Matching &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson19_feature_detection_matching.html">&larr; Lesson 19: Feature Detection and Matching</a></div>
+            <div class="lesson-nav-next"><a href="lesson21_stereo_matching.html">Lesson 21: Stereo Matching &rarr;</a></div>
         </div>
     </div>
 </body>

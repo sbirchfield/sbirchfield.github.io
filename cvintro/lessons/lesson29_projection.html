@@ -37,7 +37,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=2b940af6"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-29:-Projection-%E2%80%94-The-Central-Idea">Lesson 29: Projection — The Central Idea<a class="anchor-link" href="#Lesson-29:-Projection-%E2%80%94-The-Central-Idea">¶</a></h1><p>This begins Part 2 of the course: deep learning for computer vision. Before writing a single neural network, it's worth naming the idea that quietly ran through most of Part 1, and that will run through everything from here on: <strong>projection</strong> — mapping points from one space into another, usually a simpler one, by a linear combination of their coordinates. Nearly every technique so far has secretly been a projection. Neural networks turn out to be nothing more than <em>learned</em>, <em>composed</em> projections.</p>
+<h1 id="Lesson-29:-Projection-%E2%80%94-The-Central-Idea">Lesson 29: Projection — The Central Idea<a class="anchor-link" href="#Lesson-29:-Projection-%E2%80%94-The-Central-Idea">¶</a></h1><p>This begins Part 3 of the course: deep learning for computer vision. Before writing a single neural network, it's worth naming the idea that quietly ran through most of Parts 1 and 2, and that will run through everything from here on: <strong>projection</strong> — mapping points from one space into another, usually a simpler one, by a linear combination of their coordinates. Nearly every technique so far has secretly been a projection. Neural networks turn out to be nothing more than <em>learned</em>, <em>composed</em> projections.</p>
 </div>
 </div>
 </div>
@@ -102,7 +102,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=86b6f6cb"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Camera projection (Lessons 21, 24).</strong> $P = K[R|t]$ maps a 3D world point to a 2D pixel. Every row of that matrix, before the final homogeneous divide, is itself a linear projection: a dot product between the point's coordinates and a fixed direction, plus an offset.</p>
+<p><strong>Camera projection (Lessons 22, 25).</strong> $P = K[R|t]$ maps a 3D world point to a 2D pixel. Every row of that matrix, before the final homogeneous divide, is itself a linear projection: a dot product between the point's coordinates and a fixed direction, plus an offset.</p>
 </div>
 </div>
 </div>
@@ -284,7 +284,7 @@ classification accuracy: 100.0%
 </div>
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson28_color_spaces.html">&larr; Lesson 28: Color Spaces</a></div>
+            <div class="lesson-nav-prev"><a href="lesson28_structure_from_motion.html">&larr; Lesson 28: Structure from Motion</a></div>
             <div class="lesson-nav-next"><a href="lesson30_neural_network_fundamentals.html">Lesson 30: Neural Network Fundamentals &mdash; Learning the Projection &rarr;</a></div>
         </div>
     </div>

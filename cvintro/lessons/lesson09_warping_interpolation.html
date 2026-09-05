@@ -225,7 +225,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=5d317d6f"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Bilinear-interpolation">Bilinear interpolation<a class="anchor-link" href="#Bilinear-interpolation">¶</a></h3><p>Instead of snapping to the single nearest pixel, <strong>bilinear interpolation</strong> blends the 4 neighboring pixels, weighted by how close it is to each one. Let $(x_0,y_0)$ be the integer pixel just below-left of $(x,y)$, and $d_x = x-x_0$, $d_y=y-y_0$, where $0 \le d_x, dy &lt; 1$ are fractional coordinates:</p>
+<h3 id="Bilinear-interpolation">Bilinear interpolation<a class="anchor-link" href="#Bilinear-interpolation">¶</a></h3><p>Instead of snapping to the single nearest pixel, <strong>bilinear interpolation</strong> blends the 4 neighboring pixels, weighted by how close it is to each one. Let $(x_0,y_0)$ be the integer pixel just below-left of $(x,y)$, and let $d_x = x-x_0$, $d_y=y-y_0$, where $0 \le d_x, dy &lt; 1$ are fractional coordinates.  Then the interpolated value is:</p>
 <p>$$I(x,y) \approx (1-d_x)(1-d_y)\,I(x_0,y_0) + d_x(1-d_y)\,I(x_1,y_0) + (1-d_x)\,d_y\,I(x_0,y_1) + d_x\,d_y\,I(x_1,y_1)$$</p>
 <p>where $x_1=x_0+1$, $y_1=y_0+1$. This is just two 1D linear interpolations (along $x$, then along $y$) composed — hence <em>bi</em>linear.</p>
 </div>

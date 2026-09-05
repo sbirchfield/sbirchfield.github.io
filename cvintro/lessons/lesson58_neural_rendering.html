@@ -34,10 +34,10 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=b68c98f2"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=b6207140"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-58:-Neural-Rendering">Lesson 58: Neural Rendering<a class="anchor-link" href="#Lesson-58:-Neural-Rendering">¶</a></h1><p>Lesson 27's structure from motion recovers a sparse 3D point cloud from multiple images. <strong>Neural rendering</strong> — most famously <strong>NeRF</strong> (<a href="../references.html#mildenhall-2020-nerf">Mildenhall et al., 2020</a>) — asks for something richer: a <em>continuous</em> representation of an entire 3D scene, dense enough to render a photorealistic image from any camera viewpoint, including ones never observed during training. The representation isn't a mesh or a point cloud at all; it's the weights of a small neural network. This lesson builds one from scratch: a coordinate network trained purely by comparing rendered pixels to real ones, with no 3D supervision anywhere in the loss.</p>
+<h1 id="Lesson-58:-Neural-Rendering">Lesson 58: Neural Rendering<a class="anchor-link" href="#Lesson-58:-Neural-Rendering">¶</a></h1><p>Lesson 28's structure from motion recovers a sparse 3D point cloud from multiple images. <strong>Neural rendering</strong> — most famously <strong>NeRF</strong> (<a href="../references.html#mildenhall-2020-nerf">Mildenhall et al., 2020</a>) — asks for something richer: a <em>continuous</em> representation of an entire 3D scene, dense enough to render a photorealistic image from any camera viewpoint, including ones never observed during training. The representation isn't a mesh or a point cloud at all; it's the weights of a small neural network. This lesson builds one from scratch: a coordinate network trained purely by comparing rendered pixels to real ones, with no 3D supervision anywhere in the loss.</p>
 </div>
 </div>
 </div>
@@ -59,7 +59,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=a57d683c"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Ground-truth:-a-classical-ray-tracer-for-a-synthetic-scene">Ground truth: a classical ray-tracer for a synthetic scene<a class="anchor-link" href="#Ground-truth:-a-classical-ray-tracer-for-a-synthetic-scene">¶</a></h2><p>A single shaded sphere, photographed from 8 camera positions arranged in a ring around it (Lesson 21's pinhole camera model, Lesson 24's image formation). Each pixel's color comes from a classical, non-learned ray-sphere intersection with simple directional shading — this is <em>only</em> used to generate training data and a ground-truth held-out view to grade against; the network itself never sees the sphere's true position, radius, or color.</p>
+<h2 id="Ground-truth:-a-classical-ray-tracer-for-a-synthetic-scene">Ground truth: a classical ray-tracer for a synthetic scene<a class="anchor-link" href="#Ground-truth:-a-classical-ray-tracer-for-a-synthetic-scene">¶</a></h2><p>A single shaded sphere, photographed from 8 camera positions arranged in a ring around it (Lesson 22's pinhole camera model, Lesson 25's image formation). Each pixel's color comes from a classical, non-learned ray-sphere intersection with simple directional shading — this is <em>only</em> used to generate training data and a ground-truth held-out view to grade against; the network itself never sees the sphere's true position, radius, or color.</p>
 </div>
 </div>
 </div>
@@ -315,7 +315,7 @@ baseline (mean training color everywhere) MSE: 0.0453
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=dc5b1b5c"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Closing-the-course">Closing the course<a class="anchor-link" href="#Closing-the-course">¶</a></h2><p>This lesson closes Part 3, and with it the course: from raw pixels and convolution (Part 1) through learned features, attention, and self-supervision at scale (Part 2, Part 3), neural rendering is a fitting endpoint because it ties the whole arc together in one place — Part 1's projective geometry and image formation, Part 2's convolutional feature learning, and Part 3's habit of replacing a hand-designed algorithm with a differentiable one trained purely against pixels, all combined to reconstruct a 3D scene from nothing but 2D photographs and the constraint that they must be mutually consistent.</p>
+<h2 id="Closing-the-course">Closing the course<a class="anchor-link" href="#Closing-the-course">¶</a></h2><p>This lesson closes Part 4, and with it the course: from raw pixels and convolution (Part 1) through classical 3D geometry (Part 2), learned convolutional features (Part 3), and attention and self-supervision at scale (Part 4), neural rendering is a fitting endpoint because it ties the whole arc together in one place — Part 2's projective geometry and image formation, Part 3's convolutional feature learning, and Part 4's habit of replacing a hand-designed algorithm with a differentiable one trained purely against pixels, all combined to reconstruct a 3D scene from nothing but 2D photographs and the constraint that they must be mutually consistent.</p>
 </div>
 </div>
 </div>

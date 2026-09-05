@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson18 Feature Detection Matching - Introduction to Computer Vision</title>
+    <title>Lesson19 Feature Detection Matching - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson18_feature_detection_matching.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson19_feature_detection_matching.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson18_feature_detection_matching.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson19_feature_detection_matching.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=2cd7620a"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-18:-Feature-Detection-and-Matching">Lesson 18: Feature Detection and Matching<a class="anchor-link" href="#Lesson-18:-Feature-Detection-and-Matching">¶</a></h1><p>Two images of the same scene rarely put the same content at the same pixel locations — rotation, scale, and viewpoint changes shift everything around. This lesson builds toward feature-based matching, which survives exactly those changes: first <strong>corner detectors</strong> (Harris, Shi-Tomasi) that find distinctive, repeatable points, then <strong>SIFT</strong>, which adds scale-invariance and a descriptor that can be matched between two different-looking images of the same scene.</p>
+<h1 id="Lesson-19:-Feature-Detection-and-Matching">Lesson 19: Feature Detection and Matching<a class="anchor-link" href="#Lesson-19:-Feature-Detection-and-Matching">¶</a></h1><p>Two images of the same scene rarely put the same content at the same pixel locations — rotation, scale, and viewpoint changes shift everything around. This lesson builds toward feature-based matching, which survives exactly those changes: first <strong>corner detectors</strong> (Harris, Shi-Tomasi) that find distinctive, repeatable points, then <strong>SIFT</strong>, which adds scale-invariance and a descriptor that can be matched between two different-looking images of the same scene.</p>
 </div>
 </div>
 </div>
@@ -262,13 +262,7 @@
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>found 723 keypoints, each with a 128-dim descriptor</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
+<pre>found 723 keypoints, each with a 128-dim descriptor
 </pre>
 </div>
 </div>
@@ -400,8 +394,8 @@ good matches after Lowe ratio test: 191 / 723 candidate pairs
 </div>
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson17_compression.html">&larr; Lesson 17: Image Compression &mdash; Lossless and Lossy</a></div>
-            <div class="lesson-nav-next"><a href="lesson19_optical_flow.html">Lesson 19: Optical Flow and Motion Estimation &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson18_color_spaces.html">&larr; Lesson 18: Color Spaces</a></div>
+            <div class="lesson-nav-next"><a href="lesson20_optical_flow.html">Lesson 20: Optical Flow and Motion Estimation &rarr;</a></div>
         </div>
     </div>
 </body>

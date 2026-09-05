@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson28 Color Spaces - Introduction to Computer Vision</title>
+    <title>Lesson18 Color Spaces - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson28_color_spaces.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson18_color_spaces.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson28_color_spaces.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson18_color_spaces.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=21d723ae"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-28:-Color-Spaces">Lesson 28: Color Spaces<a class="anchor-link" href="#Lesson-28:-Color-Spaces">¶</a></h1><p>Nearly every earlier lesson converted color images to grayscale and moved on. This lesson looks at what that conversion actually does, and at the other ways to represent color besides RGB — <strong>HSV</strong> (separating color from brightness), <strong>YCbCr</strong> (separating luminance from chrominance, the basis of video compression from Lesson 17), and <strong>Lab</strong> (designed so distances match human perception) — each suited to a different task.</p>
+<h1 id="Lesson-18:-Color-Spaces">Lesson 18: Color Spaces<a class="anchor-link" href="#Lesson-18:-Color-Spaces">¶</a></h1><p>Nearly every earlier lesson converted color images to grayscale and moved on. This lesson looks at what that conversion actually does, and at the other ways to represent color besides RGB — <strong>HSV</strong> (separating color from brightness), <strong>YCbCr</strong> (separating luminance from chrominance, the basis of video compression from Lesson 17), and <strong>Lab</strong> (designed so distances match human perception) — each suited to a different task.</p>
 </div>
 </div>
 </div>
@@ -69,7 +69,7 @@
 <h3 id="Why-this-formula-is-outdated-(even-though-widely-used,-and-still-useful)">Why this formula is outdated (even though widely used, and still useful)<a class="anchor-link" href="#Why-this-formula-is-outdated-(even-though-widely-used,-and-still-useful)">¶</a></h3><p>Two things are hiding in that formula that are worth knowing about:</p>
 <ol>
 <li><strong>Old primaries.</strong> The weights $0.299, 0.587, 0.114$ come from the 1953 NTSC standard (Rec. 601), derived from the specific red/green/blue phosphors used in early color CRT televisions. Modern displays — and the sRGB/Rec. 709 standard nearly everything uses today — have different, more saturated primaries, so the colorimetrically correct weights for a modern screen are actually $Y = 0.2126R + 0.7152G + 0.0722B$ (Rec. 709): noticeably <em>more</em> green-weighted and <em>less</em> red-weighted. <code>cv2.cvtColor(..., COLOR_BGR2GRAY)</code> still uses the old Rec. 601 weights, mainly for backward compatibility with decades of existing code.</li>
-<li><strong>Assumes linear light.</strong> The weighted-sum formula is only true luminance when $R$, $G$, $B$ are <em>linear</em> light values. But as Lesson 24 covered, stored pixel values are gamma-<em>encoded</em>, not linear. <code>cv2.cvtColor</code> applies the weights directly to the raw encoded 8-bit values, without decoding gamma first — fast, and close enough for most computer-vision purposes, but not the physically correct luminance a display-calibration or photometry application would need.</li>
+<li><strong>Assumes linear light.</strong> The weighted-sum formula is only true luminance when $R$, $G$, $B$ are <em>linear</em> light values. But as Lesson 25 covered, stored pixel values are gamma-<em>encoded</em>, not linear. <code>cv2.cvtColor</code> applies the weights directly to the raw encoded 8-bit values, without decoding gamma first — fast, and close enough for most computer-vision purposes, but not the physically correct luminance a display-calibration or photometry application would need.</li>
 </ol>
 </div>
 </div>
@@ -412,8 +412,8 @@ resulting Lab distances: min=3.0, median=17.3, max=38.1
 </div>
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson27_structure_from_motion.html">&larr; Lesson 27: Structure from Motion</a></div>
-            <div class="lesson-nav-next"><a href="lesson29_projection.html">Lesson 29: Projection &mdash; The Central Idea &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson17_compression.html">&larr; Lesson 17: Image Compression &mdash; Lossless and Lossy</a></div>
+            <div class="lesson-nav-next"><a href="lesson19_feature_detection_matching.html">Lesson 19: Feature Detection and Matching &rarr;</a></div>
         </div>
     </div>
 </body>

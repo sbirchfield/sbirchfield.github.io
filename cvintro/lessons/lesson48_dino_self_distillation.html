@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=ee0881d9"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=6511f9de"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-48:-DINOv2-and-Self-Distillation">Lesson 48: DINOv2 and Self-Distillation<a class="anchor-link" href="#Lesson-48:-DINOv2-and-Self-Distillation">¶</a></h1><p>Lesson 47's contrastive loss needs explicit negative pairs (other images in the batch) to avoid the trivial solution of mapping every image to the same point. <strong>Self-distillation</strong>, the mechanism behind <strong>DINO</strong> (<a href="../references.html#caron-2021-dino">Caron et al., 2021</a>) and its successor <strong>DINOv2</strong> (<a href="../references.html#oquab-2023-dinov2">Oquab et al., 2023</a>), removes negatives entirely: a slowly-updated "teacher" network guides a "student" network, with no labels and no negative pairs at all. Without a careful safeguard, this setup collapses to the trivial solution immediately — this lesson builds the safeguard (centering) from scratch and shows exactly why it's needed.</p>

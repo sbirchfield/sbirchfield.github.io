@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=b6ce525d"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=61d836b1"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-46:-Vision-Transformers-(ViT)">Lesson 46: Vision Transformers (ViT)<a class="anchor-link" href="#Lesson-46:-Vision-Transformers-(ViT)">¶</a></h1><p>Lesson 45's Transformer encoder operates on a sequence of vectors. An image isn't a sequence — so the <strong>Vision Transformer</strong> ("An Image is Worth 16x16 Words", <a href="../references.html#dosovitskiy-2020">Dosovitskiy et al., 2020</a><span class="landmark-paper">★</span>) turns it into one: chop the image into fixed-size patches, flatten and linearly embed each patch into a vector, and feed the resulting sequence straight into an ordinary Transformer encoder, exactly as built in Lesson 45. No convolution anywhere. This lesson builds that pipeline, and then runs the exact translation-generalization test from Lesson 33 to show precisely what a Transformer gives up by dropping convolution's built-in inductive bias.</p>

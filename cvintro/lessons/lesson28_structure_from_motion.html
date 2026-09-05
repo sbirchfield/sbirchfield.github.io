@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson27 Structure From Motion - Introduction to Computer Vision</title>
+    <title>Lesson28 Structure From Motion - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson27_structure_from_motion.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson28_structure_from_motion.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson27_structure_from_motion.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson28_structure_from_motion.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=725b135c"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-27:-Structure-from-Motion">Lesson 27: Structure from Motion<a class="anchor-link" href="#Lesson-27:-Structure-from-Motion">¶</a></h1><p>This lesson is a capstone: it assembles feature matching (Lesson 18), robust estimation (Lesson 22), the essential matrix and pose recovery (Lesson 25), and calibration (Lesson 26) into a complete pipeline that takes 2D image correspondences from two views and recovers <strong>both</strong> the cameras' relative motion <strong>and</strong> the 3D positions of the points that were being viewed — <strong>S</strong>tructure <strong>f</strong>rom <strong>M</strong>otion. The one genuinely new ingredient is <strong>triangulation</strong>: turning a matched 2D point pair, plus known camera poses, into a 3D point.</p>
+<h1 id="Lesson-28:-Structure-from-Motion">Lesson 28: Structure from Motion<a class="anchor-link" href="#Lesson-28:-Structure-from-Motion">¶</a></h1><p>This lesson is a capstone: it assembles feature matching (Lesson 19), robust estimation (Lesson 23), the essential matrix and pose recovery (Lesson 26), and calibration (Lesson 27) into a complete pipeline that takes 2D image correspondences from two views and recovers <strong>both</strong> the cameras' relative motion <strong>and</strong> the 3D positions of the points that were being viewed — <strong>S</strong>tructure <strong>f</strong>rom <strong>M</strong>otion. The one genuinely new ingredient is <strong>triangulation</strong>: turning a matched 2D point pair, plus known camera poses, into a 3D point.</p>
 </div>
 </div>
 </div>
@@ -59,12 +59,12 @@
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="The-classic-pipeline,-at-a-glance">The classic pipeline, at a glance<a class="anchor-link" href="#The-classic-pipeline,-at-a-glance">¶</a></h2><ol>
-<li><strong>Match features</strong> between two images (Lesson 18: SIFT + ratio test).</li>
-<li><strong>Estimate the essential matrix</strong> $E$ from those correspondences, robustly (Lesson 22: RANSAC), using known intrinsics $K$ (Lesson 26: calibration).</li>
-<li><strong>Recover relative pose</strong> $(R, t)$ from $E$ (Lesson 25: <code>cv2.recoverPose</code>) — up to an unknown scale on $t$.</li>
+<li><strong>Match features</strong> between two images (Lesson 19: SIFT + ratio test).</li>
+<li><strong>Estimate the essential matrix</strong> $E$ from those correspondences, robustly (Lesson 23: RANSAC), using known intrinsics $K$ (Lesson 27: calibration).</li>
+<li><strong>Recover relative pose</strong> $(R, t)$ from $E$ (Lesson 26: <code>cv2.recoverPose</code>) — up to an unknown scale on $t$.</li>
 <li><strong>Triangulate</strong>: for every matched pair, intersect the two corresponding rays in 3D to recover a 3D point — new in this lesson.</li>
 </ol>
-<p>We build a synthetic two-camera scene (as in Lessons 25-26) so we always have ground truth to check the <em>entire</em> pipeline against, end to end.</p>
+<p>We build a synthetic two-camera scene (as in Lessons 26-27) so we always have ground truth to check the <em>entire</em> pipeline against, end to end.</p>
 </div>
 </div>
 </div>
@@ -102,7 +102,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=313721d7"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-1-2:-robust-essential-matrix-and-pose-recovery">Step 1-2: robust essential matrix and pose recovery<a class="anchor-link" href="#Step-1-2:-robust-essential-matrix-and-pose-recovery">¶</a></h2><p>Standing in for real (imperfect) feature matches from Lesson 18, we feed the correspondences through the same robust pipeline built in Lessons 22 and 25.</p>
+<h2 id="Step-1-2:-robust-essential-matrix-and-pose-recovery">Step 1-2: robust essential matrix and pose recovery<a class="anchor-link" href="#Step-1-2:-robust-essential-matrix-and-pose-recovery">¶</a></h2><p>Standing in for real (imperfect) feature matches from Lesson 19, we feed the correspondences through the same robust pipeline built in Lessons 23 and 26.</p>
 </div>
 </div>
 </div>
@@ -150,14 +150,14 @@ true translation direction:      [0.9806 0.     0.1961]
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=3b8cb849"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As in Lesson 25, <code>recoverPose</code> returns a <strong>unit-length</strong> translation direction — the actual baseline distance between the cameras is fundamentally unrecoverable from image correspondences alone. We'll come back to that.</p>
+<p>As in Lesson 26, <code>recoverPose</code> returns a <strong>unit-length</strong> translation direction — the actual baseline distance between the cameras is fundamentally unrecoverable from image correspondences alone. We'll come back to that.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=9f129208"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-3:-triangulation">Step 3: triangulation<a class="anchor-link" href="#Step-3:-triangulation">¶</a></h2><p>Given two camera projection matrices $P_1, P_2$ (each $3\times4$, mapping a 3D point to a 2D image point in homogeneous coordinates) and a matched pixel pair $(x_1, x_2)$, we want the 3D point $X$ satisfying both $x_1 \propto P_1 X$ and $x_2 \propto P_2 X$. Each view contributes 2 independent linear equations in $X$'s 4 homogeneous unknowns (cross-multiplying out the unknown scale factor), by the same DLT/SVD recipe used for homographies (Lesson 21) and the fundamental matrix (Lesson 25):</p>
+<h2 id="Step-3:-triangulation">Step 3: triangulation<a class="anchor-link" href="#Step-3:-triangulation">¶</a></h2><p>Given two camera projection matrices $P_1, P_2$ (each $3\times4$, mapping a 3D point to a 2D image point in homogeneous coordinates) and a matched pixel pair $(x_1, x_2)$, we want the 3D point $X$ satisfying both $x_1 \propto P_1 X$ and $x_2 \propto P_2 X$. Each view contributes 2 independent linear equations in $X$'s 4 homogeneous unknowns (cross-multiplying out the unknown scale factor), by the same DLT/SVD recipe used for homographies (Lesson 22) and the fundamental matrix (Lesson 26):</p>
 <p>$$A = \begin{bmatrix} u_1 P_1^{(3)} - P_1^{(1)} \\ v_1 P_1^{(3)} - P_1^{(2)} \\ u_2 P_2^{(3)} - P_2^{(1)} \\ v_2 P_2^{(3)} - P_2^{(2)} \end{bmatrix}, \qquad AX = 0$$</p>
 <p>where $P^{(i)}$ denotes row $i$ of $P$. The null space of $A$ (smallest-singular-value right singular vector) gives $X$.</p>
 </div>
@@ -247,7 +247,7 @@ max 3D reconstruction error:                                   1.46e-09
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=fd6a74a3"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>With clean correspondences, the entire pipeline — essential matrix, pose, triangulation — reconstructs the scene to essentially floating-point precision, using nothing but 2D pixel correspondences and known intrinsics, plus <em>one</em> external number (the true baseline) to fix the scale ambiguity. In practice, that scale reference might come from a known object size in the scene, a second sensor (GPS, IMU, LiDAR), or a calibrated stereo rig (Lesson 20) instead of two arbitrary independent cameras.</p>
+<p>With clean correspondences, the entire pipeline — essential matrix, pose, triangulation — reconstructs the scene to essentially floating-point precision, using nothing but 2D pixel correspondences and known intrinsics, plus <em>one</em> external number (the true baseline) to fix the scale ambiguity. In practice, that scale reference might come from a known object size in the scene, a second sensor (GPS, IMU, LiDAR), or a calibrated stereo rig (Lesson 21) instead of two arbitrary independent cameras.</p>
 </div>
 </div>
 </div>
@@ -297,7 +297,7 @@ max 3D reconstruction error:                                   1.46e-09
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
-<li>Add pixel noise (e.g. <code>rng.normal(0, 1.0, x1.shape)</code>) to both <code>x1</code> and <code>x2</code> before running the pipeline. How much does the reconstruction error grow, and does it grow uniformly, or worse for points farther from the cameras (think back to the disparity-depth relationship in Lesson 20 — distant points produce smaller, noisier parallax)?</li>
+<li>Add pixel noise (e.g. <code>rng.normal(0, 1.0, x1.shape)</code>) to both <code>x1</code> and <code>x2</code> before running the pipeline. How much does the reconstruction error grow, and does it grow uniformly, or worse for points farther from the cameras (think back to the disparity-depth relationship in Lesson 21 — distant points produce smaller, noisier parallax)?</li>
 <li>This lesson only used two views. Real structure-from-motion pipelines (e.g. COLMAP) add many more views incrementally: each new image is <em>resected</em> against the already-reconstructed 3D points (a problem called Perspective-n-Point, or PnP — given 2D-3D correspondences and $K$, solve for that camera's pose) via <code>cv2.solvePnP</code>, then its new points are triangulated against the growing reconstruction. Look up <code>cv2.solvePnP</code>'s signature and sketch (in words) how you'd extend this notebook to a third camera.</li>
 <li>Try moving <code>t_true</code> to have a much smaller magnitude (e.g. <code>[0.05, 0.0, 0.01]</code>, a very short baseline). Does pose recovery and triangulation degrade? This models a real, practical problem in SfM and stereo alike: a very small baseline gives very little parallax to work with, and even tiny pixel noise translates into large 3D uncertainty.</li>
 </ol>
@@ -306,8 +306,8 @@ max 3D reconstruction error:                                   1.46e-09
 </div>
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson26_camera_calibration.html">&larr; Lesson 26: Camera Calibration</a></div>
-            <div class="lesson-nav-next"><a href="lesson28_color_spaces.html">Lesson 28: Color Spaces &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson27_camera_calibration.html">&larr; Lesson 27: Camera Calibration</a></div>
+            <div class="lesson-nav-next"><a href="lesson29_projection.html">Lesson 29: Projection &mdash; The Central Idea &rarr;</a></div>
         </div>
     </div>
 </body>
