@@ -37,7 +37,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=e4d8059b"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-24:-Image-Stitching-and-Mosaicking">Lesson 24: Image Stitching and Mosaicking<a class="anchor-link" href="#Lesson-24:-Image-Stitching-and-Mosaicking">¶</a></h1><p>This lesson is a capstone for the projective-geometry block: it assembles feature detection and matching (Lesson 19), homography estimation (Lesson 22), and robust fitting (Lesson 23) into a complete pipeline that stitches two overlapping photos into a single seamless panorama.</p>
+<h1 id="Lesson-24:-Image-Stitching-and-Mosaicking">Lesson 24: Image Stitching and Mosaicking<a class="anchor-link" href="#Lesson-24:-Image-Stitching-and-Mosaicking">¶</a></h1><p>This lesson is a capstone for the projective-geometry block: it assembles feature detection and matching (Lesson 19), homography estimation (Lesson 23), and robust fitting (Lesson 22) into a complete pipeline that stitches two overlapping photos into a single seamless panorama.</p>
 </div>
 </div>
 </div>
@@ -59,7 +59,7 @@
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="The-pipeline,-at-a-glance">The pipeline, at a glance<a class="anchor-link" href="#The-pipeline,-at-a-glance">¶</a></h2><ol>
 <li><strong>Detect and match features</strong> between the two photos (Lesson 19: SIFT + ratio test).</li>
-<li><strong>Estimate a homography</strong> relating one image's plane to the other's, robustly (Lesson 22's homography, Lesson 23's RANSAC).</li>
+<li><strong>Estimate a homography</strong> relating one image's plane to the other's, robustly (Lesson 23's homography, Lesson 22's RANSAC).</li>
 <li><strong>Warp</strong> one image into the other's coordinate frame (Lesson 9: <code>cv2.warpPerspective</code>).</li>
 <li><strong>Composite and blend</strong> the two images onto one canvas, feathering across the overlap so the seam is invisible.</li>
 </ol>
@@ -386,7 +386,7 @@ max absolute pixel error vs. ground truth:  44
 </div>
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson23_model_fitting_ransac.html">&larr; Lesson 23: Model Fitting, Robust Estimation, and RANSAC</a></div>
+            <div class="lesson-nav-prev"><a href="lesson23_projective_geometry.html">&larr; Lesson 23: Projective Geometry</a></div>
             <div class="lesson-nav-next"><a href="lesson25_image_formation.html">Lesson 25: Image Formation &rarr;</a></div>
         </div>
     </div>

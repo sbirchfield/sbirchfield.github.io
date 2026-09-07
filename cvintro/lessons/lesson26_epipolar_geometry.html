@@ -104,7 +104,18 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=a6fdf675"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-8-point-algorithm">The 8-point algorithm<a class="anchor-link" href="#The-8-point-algorithm">¶</a></h2><p>Each correspondence gives one linear equation in the 9 unknown entries of $F$ (expanding $x_2^\top F x_1 = 0$). With 8 or more correspondences, this becomes a homogeneous least-squares problem solvable by SVD — the same kind of DLT machinery used for the homography fit in Lesson 22, just with a different constraint equation and an extra step to enforce that $F$ has rank 2 (since $F$ is singular by construction — a fundamental matrix always has a zero eigenvalue).</p>
+<h2 id="The-8-point-algorithm">The 8-point algorithm<a class="anchor-link" href="#The-8-point-algorithm">¶</a></h2><p>Each correspondence gives one linear equation in the 9 unknown entries of $F$ (expanding $x_2^\top F x_1 = 0$). With 8 or more correspondences, this becomes a homogeneous least-squares problem solvable by SVD — the same kind of DLT machinery used for the homography fit in Lesson 23, just with a different constraint equation and an extra step to enforce that $F$ has rank 2 (since $F$ is singular by construction — a fundamental matrix always has a zero eigenvalue).</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=f0cd4426"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="The-SVD,-briefly">The SVD, briefly<a class="anchor-link" href="#The-SVD,-briefly">¶</a></h3><p>Any matrix $A$ factors as $A=U\Sigma V^\top$, with $U$ and $V$ orthogonal and $\Sigma$ diagonal, non-negative, sorted largest to smallest (the <strong>singular values</strong>). Two facts about this are all the code below actually needs:</p>
+<ul>
+<li><strong>Solving $Ax=0$ as closely as possible, subject to $\|x\|=1$</strong>: the answer is $V$'s last column (equivalently $V^\top$'s last row) — the right singular vector with the <em>smallest</em> singular value. This is Lesson 22's total-least-squares trick, generalized: $V$'s columns are the eigenvectors of $A^\top A$, sorted by eigenvalue, so the smallest-singular-value direction is exactly the same "direction of least fit error" as the smallest-eigenvalue eigenvector of a small covariance matrix — just for a $9\times9$ one here, which nobody wants to form and eigendecompose by hand.</li>
+<li><strong>Enforcing a rank constraint</strong>: zeroing the smallest singular value(s) and reconstructing gives the closest lower-rank matrix (in a least-squares sense) to the original. That's exactly what's needed to force the estimated $F$ — which must be exactly rank 2 — back onto that constraint after the unconstrained 9-parameter solve inevitably drifts off it slightly.</li>
+</ul>
 </div>
 </div>
 </div>
@@ -265,7 +276,7 @@ mean |x2^T F x1|, cv2 F:  1.09e-07
 <h2 id="From-fundamental-to-essential:-adding-calibration">From fundamental to essential: adding calibration<a class="anchor-link" href="#From-fundamental-to-essential:-adding-calibration">¶</a></h2><p>The fundamental matrix works in raw pixel coordinates and folds in the (unknown) camera intrinsics. If we <em>do</em> know the intrinsics $K$ (from camera calibration), we can remove them and work in normalized coordinates, giving the <strong>essential matrix</strong>:</p>
 <p>$$E = K_2^\top F K_1 \qquad \text{(same } K \text{ for both, if it's the same camera)}$$</p>
 <p>Unlike $F$ (7 degrees of freedom), $E$ has only 5 — it's built entirely from a relative rotation $R$ and translation direction $t$ between the two cameras: $E = [t]_\times R$. This means $E$ can be <em>decomposed</em> back into $R$ and $t$, which is how you recover camera motion from image correspondences alone.</p>
-<p>We estimate $E$ robustly with <code>cv2.findEssentialMat(..., method=cv2.RANSAC, ...)</code>, exactly the kind of outlier-rejecting fit built from scratch in Lesson 23.</p>
+<p>We estimate $E$ robustly with <code>cv2.findEssentialMat(..., method=cv2.RANSAC, ...)</code>, exactly the kind of outlier-rejecting fit built from scratch in Lesson 22.</p>
 </div>
 </div>
 </div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson22 Projective Geometry - Introduction to Computer Vision</title>
+    <title>Lesson23 Projective Geometry - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson22_projective_geometry.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson23_projective_geometry.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson22_projective_geometry.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson23_projective_geometry.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=9aa037fa"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-22:-Projective-Geometry">Lesson 22: Projective Geometry<a class="anchor-link" href="#Lesson-22:-Projective-Geometry">¶</a></h1><p>Lesson 8 built a hierarchy of 2D transforms — Euclidean, similarity, affine — and noted that all three preserve parallel lines. This lesson covers the next, most general step: the <strong>projective transform (homography)</strong>, which models what a camera actually does when it looks at a flat surface from an angle, and which does <em>not</em> preserve parallelism. That's not a bug — it's exactly the phenomenon of a vanishing point, and it's the tool behind perspective correction and image stitching.</p>
+<h1 id="Lesson-23:-Projective-Geometry">Lesson 23: Projective Geometry<a class="anchor-link" href="#Lesson-23:-Projective-Geometry">¶</a></h1><p>Lesson 8 built a hierarchy of 2D transforms — Euclidean, similarity, affine — and noted that all three preserve parallel lines. This lesson covers the next, most general step: the <strong>projective transform (homography)</strong>, which models what a camera actually does when it looks at a flat surface from an angle, and which does <em>not</em> preserve parallelism. That's not a bug — it's exactly the phenomenon of a vanishing point, and it's the tool behind perspective correction and image stitching.</p>
 </div>
 </div>
 </div>
@@ -327,7 +327,7 @@ vanishing point (H @ infinity trick): [50.  5.]
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=22bc3037"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Solving-for-a-homography-from-many-correspondences">Solving for a homography from many correspondences<a class="anchor-link" href="#Solving-for-a-homography-from-many-correspondences">¶</a></h2><p>4 correspondences exactly determine a homography's 8 degrees of freedom, with no slack for error. With <em>more</em> than 4 (typically from automatic feature matching, Lesson 19), the problem becomes an overdetermined least-squares fit — the Direct Linear Transform (DLT) algorithm that <code>cv2.findHomography</code> implements, optionally wrapped in RANSAC (Lesson 23) to reject bad correspondences (mismatched features) as outliers.</p>
+<h2 id="Solving-for-a-homography-from-many-correspondences">Solving for a homography from many correspondences<a class="anchor-link" href="#Solving-for-a-homography-from-many-correspondences">¶</a></h2><p>4 correspondences exactly determine a homography's 8 degrees of freedom, with no slack for error. With <em>more</em> than 4 (typically from automatic feature matching, Lesson 19), the problem becomes an overdetermined least-squares fit — the Direct Linear Transform (DLT) algorithm that <code>cv2.findHomography</code> implements, optionally wrapped in RANSAC (Lesson 22) to reject bad correspondences (mismatched features) as outliers.</p>
 </div>
 </div>
 </div>
@@ -378,10 +378,66 @@ inliers: 30 / 30
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=027c2137"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="RANSAC-in-practice:-homography-estimation-with-bad-matches">RANSAC in practice: homography estimation with bad matches<a class="anchor-link" href="#RANSAC-in-practice:-homography-estimation-with-bad-matches">¶</a></h2><p>Even though the code above passes <code>cv2.RANSAC</code> to <code>findHomography</code>, with clean correspondences there is nothing for it to reject — it makes no visible difference. What effect does RANSAC actually have? Since real feature matching (Lesson 19) inevitably produces mismatched features, even after a ratio test, we need a way to discard such outliers. To illustrate this, we inject 15 deliberately garbage correspondences alongside the 30 genuine ones and compare the RANSAC fit against a plain least-squares fit on the exact same contaminated data.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=76115a5c">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">pts1_bad</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">pts2_bad</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>  <span class="c1"># unrelated -- simulated bad matches</span>
+
+<span class="n">pts1_contaminated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">pts1</span><span class="p">,</span> <span class="n">pts1_bad</span><span class="p">])</span>
+<span class="n">pts2_contaminated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">pts2</span><span class="p">,</span> <span class="n">pts2_bad</span><span class="p">])</span>
+
+<span class="n">H_ransac</span><span class="p">,</span> <span class="n">mask</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">findHomography</span><span class="p">(</span><span class="n">pts1_contaminated</span><span class="p">,</span> <span class="n">pts2_contaminated</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">RANSAC</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+<span class="n">H_plain</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">findHomography</span><span class="p">(</span><span class="n">pts1_contaminated</span><span class="p">,</span> <span class="n">pts2_contaminated</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># method=0: plain least squares, no outlier rejection</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">mean_reprojection_error</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">pts1</span><span class="p">,</span> <span class="n">pts2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">apply_homography</span><span class="p">(</span><span class="n">pts1</span><span class="p">,</span> <span class="n">H</span><span class="p">)</span> <span class="o">-</span> <span class="n">pts2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'inliers found by RANSAC: </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="si">}</span><span class="s1"> / </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="si">}</span><span class="s1">  (30 correspondences were genuinely correct)'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'mean reprojection error on the TRUE inliers:'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'  RANSAC fit: </span><span class="si">{</span><span class="n">mean_reprojection_error</span><span class="p">(</span><span class="n">H_ransac</span><span class="p">,</span><span class="w"> </span><span class="n">pts1</span><span class="p">,</span><span class="w"> </span><span class="n">pts2</span><span class="p">)</span><span class="si">:</span><span class="s1">.2e</span><span class="si">}</span><span class="s1"> pixels'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'  plain fit:  </span><span class="si">{</span><span class="n">mean_reprojection_error</span><span class="p">(</span><span class="n">H_plain</span><span class="p">,</span><span class="w"> </span><span class="n">pts1</span><span class="p">,</span><span class="w"> </span><span class="n">pts2</span><span class="p">)</span><span class="si">:</span><span class="s1">.2e</span><span class="si">}</span><span class="s1"> pixels'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>inliers found by RANSAC: 30 / 45  (30 correspondences were genuinely correct)
+
+mean reprojection error on the TRUE inliers:
+  RANSAC fit: 1.49e-06 pixels
+  plain fit:  1.06e+04 pixels
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=a4e4ccb3"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>RANSAC finds exactly the 30 genuine correspondences and reconstructs the homography to essentially machine precision. The plain least-squares fit, given the exact same data, is off by many orders of magnitude more error — effectively useless for anything requiring pixel-level accuracy — because 15 bad matches out of 45 (33%) was more than enough to noticeably corrupt an unweighted sum-of-squares fit.</p>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=d67ebd89"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Looking-ahead:-projective-geometry-in-3D">Looking ahead: projective geometry in 3D<a class="anchor-link" href="#Looking-ahead:-projective-geometry-in-3D">¶</a></h2><p>Everything in this lesson has been 2D-to-2D: a homography relates two flat images of the same plane. Lesson 25 extends the same projective machinery one dimension further, deriving the camera's projection matrix that maps a 3D scene onto a 2D image in the first place.</p>
+<h2 id="Looking-ahead:-projective-geometry-in-3D">Looking ahead: projective geometry in 3D<a class="anchor-link" href="#Looking-ahead:-projective-geometry-in-3D">¶</a></h2><p>Everything in this lesson has been 2D-to-2D: a homography relates two planes (images or flat surfaces in the world). Lesson 25 extends the same projective machinery one dimension further, deriving the camera's projection matrix that maps a 3D scene onto a 2D image in the first place.</p>
 </div>
 </div>
 </div>
@@ -390,7 +446,7 @@ inliers: 30 / 30
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
 <li>Add zero-mean Gaussian noise (e.g. std 2 pixels) to <code>pts2</code> before calling <code>cv2.findHomography</code>. How much does the estimated homography drift from <code>H_true</code>, and does increasing the number of correspondences (say, from 30 to 200) reduce that drift?</li>
-<li>Deliberately corrupt a few rows of <code>pts2</code> with completely wrong values (simulating bad feature matches) and compare <code>cv2.findHomography(..., cv2.RANSAC, ...)</code> against passing <code>method=0</code> (plain least squares, no outlier rejection). How badly does the non-robust version get pulled off by the outliers?</li>
+<li>Increase the number of injected bad matches (<code>pts1_bad</code>/<code>pts2_bad</code>) from 15 until RANSAC starts to fail. Using the iteration-count formula from Lesson 22 (minimal sample size 4 for a homography), roughly what outlier fraction is that, and how many iterations would it theoretically require to stay 99% confident of success?</li>
 <li>In the vanishing-point demo, change the two lines to be <em>vertical</em> instead of horizontal (e.g. <code>x=0</code> and <code>x=1</code>), and predict, then verify, where their vanishing point ends up using the point-at-infinity trick with direction <code>(0, 1, 0)</code>.</li>
 </ol>
 </div>
@@ -398,8 +454,8 @@ inliers: 30 / 30
 </div>
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson21_stereo_matching.html">&larr; Lesson 21: Stereo Matching</a></div>
-            <div class="lesson-nav-next"><a href="lesson23_model_fitting_ransac.html">Lesson 23: Model Fitting, Robust Estimation, and RANSAC &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson22_model_fitting_ransac.html">&larr; Lesson 22: Model Fitting, Robust Estimation, and RANSAC</a></div>
+            <div class="lesson-nav-next"><a href="lesson24_stitching_mosaicking.html">Lesson 24: Image Stitching and Mosaicking &rarr;</a></div>
         </div>
     </div>
 </body>
