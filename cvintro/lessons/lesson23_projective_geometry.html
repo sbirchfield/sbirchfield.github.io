@@ -327,7 +327,7 @@ vanishing point (H @ infinity trick): [50.  5.]
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=22bc3037"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Solving-for-a-homography-from-many-correspondences">Solving for a homography from many correspondences<a class="anchor-link" href="#Solving-for-a-homography-from-many-correspondences">¶</a></h2><p>4 correspondences exactly determine a homography's 8 degrees of freedom, with no slack for error. With <em>more</em> than 4 (typically from automatic feature matching, Lesson 19), the problem becomes an overdetermined least-squares fit — the Direct Linear Transform (DLT) algorithm that <code>cv2.findHomography</code> implements, optionally wrapped in RANSAC (Lesson 22) to reject bad correspondences (mismatched features) as outliers.</p>
+<h2 id="Solving-for-a-homography-from-many-correspondences">Solving for a homography from many correspondences<a class="anchor-link" href="#Solving-for-a-homography-from-many-correspondences">¶</a></h2><p>4 correspondences exactly determine a homography's 8 degrees of freedom, with no slack for error. With <em>more</em> than 4 (typically from automatic feature matching, Lesson 19), the problem becomes an overdetermined least-squares fit — the Direct Linear Transform (DLT) algorithm that <code>cv2.findHomography</code> implements, optionally wrapped in RANSAC (Lesson 22) to reject bad correspondences (mismatched features) as outliers. <code>cv2.findHomography</code> also normalizes the point coordinates internally before solving, for numerical conditioning — the same trick made explicit in Lesson 26's 8-point algorithm.</p>
 </div>
 </div>
 </div>
