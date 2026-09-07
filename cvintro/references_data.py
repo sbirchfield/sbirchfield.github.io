@@ -292,6 +292,15 @@ REFERENCES = [
         "landmark": False,
     },
     {
+        "id": "yao-2020-blendedmvs",
+        "authors": "Yao, Y., Luo, Z., Li, S., Zhang, J., Ren, Y., Zhou, L., Fang, T., & Quan, L.",
+        "sort_name": "Yao",
+        "year": 2020,
+        "title": "BlendedMVS: A Large-scale Dataset for Generalized Multi-view Stereo Networks",
+        "url": "https://arxiv.org/abs/1911.10127",
+        "landmark": False,
+    },
+    {
         "id": "zhang-2000",
         "authors": "Zhang, Z.",
         "sort_name": "Zhang",
