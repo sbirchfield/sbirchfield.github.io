@@ -454,10 +454,18 @@ max 3D reconstruction error:                                     0.096
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=a5fd9ef5"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="From-two-views-to-many:-incremental-SfM-and-bundle-adjustment">From two views to many: incremental SfM and bundle adjustment<a class="anchor-link" href="#From-two-views-to-many:-incremental-SfM-and-bundle-adjustment">¶</a></h3><p>Real reconstructions rarely stop at two views. The standard recipe sequentially incorporates new images in 3 steps: 1) match features between the new image and one or more existing images; 2) compute the new camera pose relative to the existing 3D point cloud; and 3) update the 3D point cloud with the new matches by triangulation. Step 2 requires solving Perspective-n-Point (i.e., given 2D-3D correspondences and $K$, recover that camera's pose via <code>cv2.solvePnP</code>).</p>
+<p>As views are accumulated, errors compound — pose corrupts the triangulated points, which then corrupt the next recovered pose, and so on. <strong>Bundle adjustment</strong> fixes this by refining all camera poses and 3D points <em>together</em> in one large nonlinear least-squares optimization (Lesson 32) that minimizes the total reprojection error summed across every point in every view at once. Bundle adjustment is arguably the single most important step separating a simple two-view pipeline like the one in this lesson from a real SfM system (COLMAP, etc.).</p>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=d4820c99"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="From-sparse-to-dense">From sparse to dense<a class="anchor-link" href="#From-sparse-to-dense">¶</a></h3><p>Even loosened, feature matching only ever gives a <em>sparse</em> cloud — one point per distinctive keypoint, with large gaps over smooth, low-texture regions. Once SfM has recovered the camera poses, though, every pixel becomes fair game: <strong>multi-view stereo (MVS)</strong> sweeps a plane-hypothesis or patch (Lesson 21's stereo matching, generalized from a rectified pair to arbitrarily-posed calibrated cameras) through space to estimate a depth for <em>every</em> pixel in <em>every</em> view, then fuses those per-view depth maps — filtering out inconsistent estimates and merging the rest — into the dense colored point cloud (or mesh) that toolkits like COLMAP or, fittingly, BlendedMVS's own reconstruction pipeline produce.</p>
+<h3 id="From-sparse-to-dense">From sparse to dense<a class="anchor-link" href="#From-sparse-to-dense">¶</a></h3><p>Even with the loosened thresholds above, feature matching only yields a <em>sparse</em> cloud — one 3D point per distinctive image keypoint. With the camera poses now known, though, we're no longer limited to distinctive keypoints: <strong>multi-view stereo (MVS)</strong> estimates a depth for <em>every</em> pixel in <em>every</em> view, by sweeping a plane-hypothesis or patch through space (a generalization of Lesson 21's stereo matching from a rectified pair to arbitrarily-posed calibrated cameras). Those per-view depth maps are then fused — inconsistent estimates filtered out, the rest merged — into the dense colored point cloud (or mesh) that toolkits like COLMAP produce.</p>
 </div>
 </div>
 </div>
@@ -466,7 +474,7 @@ max 3D reconstruction error:                                     0.096
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
 <li>Add extra synthetic pixel noise (e.g. <code>rng.normal(0, 1.0, x1_in.shape)</code>) on top of the already-real detections in <code>x1_in</code>/<code>x2_in</code> before triangulating. How much does the reconstruction error grow, and does it grow uniformly, or worse for points farther from the cameras (Lesson 21's disparity-depth relationship: distant points produce smaller, noisier parallax)?</li>
-<li>This lesson only used 2 of the scene's 131 available views. Real structure-from-motion pipelines (e.g. COLMAP) add many more views incrementally: each new image is <em>resected</em> against the already-reconstructed 3D points (a problem called Perspective-n-Point, or PnP — given 2D-3D correspondences and $K$, solve for that camera's pose) via <code>cv2.solvePnP</code>, then its new points are triangulated against the growing reconstruction. Look up <code>cv2.solvePnP</code>'s signature and sketch (in words) how you'd extend this notebook to a third view.</li>
+<li>Look up <code>cv2.solvePnP</code>'s signature and sketch (in words) how you'd extend this notebook to a third view: which 3D points from the <code>view1</code>/<code>view2</code> reconstruction would you match into the new image, and how would <code>solvePnP</code>'s inputs and outputs map onto the pieces we already have (<code>K</code>, matched 2D points, and the existing 3D point cloud)?</li>
 <li>This pair (views 0 and 2) has a deliberately generous baseline for reliable matching. Swap in views 0 and 1 instead (a much shorter baseline — you'll need their <code>.npz</code> camera parameters from the same BlendedMVS scene). How does the shorter baseline affect the number of RANSAC inliers, and the accuracy of the recovered pose and reconstruction, compared to the wider-baseline pair used above?</li>
 </ol>
 </div>
