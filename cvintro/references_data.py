@@ -238,6 +238,15 @@ REFERENCES = [
         "landmark": False,
     },
     {
+        "id": "hartley-1997",
+        "authors": "Hartley, R.",
+        "sort_name": "Hartley",
+        "year": 1997,
+        "title": "In Defense of the Eight-Point Algorithm",
+        "url": "https://www.cse.unr.edu/~bebis/CS485/Handouts/hartley.pdf",
+        "landmark": False,
+    },
+    {
         "id": "harris-stephens-1988",
         "authors": "Harris, C., & Stephens, M.",
         "sort_name": "Harris",
