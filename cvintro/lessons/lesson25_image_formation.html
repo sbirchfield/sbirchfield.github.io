@@ -59,7 +59,7 @@
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="The-pinhole-projection-matrix,-derived">The pinhole projection matrix, derived<a class="anchor-link" href="#The-pinhole-projection-matrix,-derived">¶</a></h2><p>A pinhole camera only lets through rays of light passing through a particular point (the <em>center of projection</em>). By similar triangles, a 3D point $(X, Y, Z)$ (camera-centered coordinates) lands on the image plane at</p>
 <p>$$x = f\frac{X}{Z}, \qquad y = f\frac{Y}{Z}$$</p>
-<p>where $f$ is the distance from the pinhole to the image plane. Converting to pixel units (accounting for pixel size and the origin location) requires the <strong>intrinsics</strong> $K$; and incorporating the camera's position and orientation relative to the world requires in the <strong>extrinsics</strong> $[R | t]$. Put together, in homogeneous coordinates:</p>
+<p>where $f$ is the distance from the pinhole to the image plane. Converting to pixel units (accounting for pixel size and the origin location) requires the <strong>intrinsics</strong> $K$; and incorporating the camera's position and orientation relative to the world requires the <strong>extrinsics</strong> $[R | t]$. Put together, in homogeneous coordinates:</p>
 <p>$$\underbrace{\begin{bmatrix}u\\v\\1\end{bmatrix}}_{\text{pixel}} \;\propto\; \underbrace{\begin{bmatrix}f_x&amp;0&amp;c_x\\0&amp;f_y&amp;c_y\\0&amp;0&amp;1\end{bmatrix}}_{K}\underbrace{\begin{bmatrix}R &amp; t\end{bmatrix}}_{\text{extrinsics}}\begin{bmatrix}X\\Y\\Z\\1\end{bmatrix}_{\text{world}}$$</p>
 <p>This is exactly the $P = K [R | t]$ that Lessons 26-28 (Epipolar Geometry, Camera Calibration, and Structure from Motion) will use. Every symbol can be traced back to a physical cause: $f_x, f_y$ to focal length and pixel size; $(c_x, c_y)$ to where the optical axis hits the sensor (known as the <em>principal point</em>); $R, t$ to the camera's pose.</p>
 </div>
@@ -182,14 +182,14 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=73b046c2"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This explains why a wider aperture gathers more light (at the expense of a shallower depth of field), while a narrow aperture produces a sharp image (but letting in less light) — the classic photographic aperture/depth-of-field tradeoff. This is the reason portrait photos often blur the background while keeping the subject sharp.</p>
+<p>This explains why a wider aperture gathers more light (at the expense of a shallower depth of field), while a narrow aperture produces a sharp image (but lets in less light) — the classic photographic aperture/depth-of-field tradeoff. This is the reason portrait photos often blur the background while keeping the subject sharp.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=2783ccbb"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-Bayer-color-filter-array:-one-color-per-pixel">The Bayer color filter array: one color per pixel<a class="anchor-link" href="#The-Bayer-color-filter-array:-one-color-per-pixel">¶</a></h2><p>To keep costs down, most camera sensors don't measure red, green, and blue separately at every pixel. Instead, a single monochrome photosensor array sits under a mosaic of tiny color filters, so each individual pixel physically records only <em>one</em> of the three colors. The most common arrangement (RGGB) — the <strong>Bayer filter</strong> (<a href="../references.html#bayer-1976">Bayer, 1976</a>) —  repeats in a 2x2 tile pattern: one red, one blue, and <em>two</em> green filters, since the human eye is most sensitive to green. Every pixel in the raw sensor output is therefore missing two-thirds of its color information by construction.</p>
+<h2 id="The-Bayer-color-filter-array:-one-color-per-pixel">The Bayer color filter array: one color per pixel<a class="anchor-link" href="#The-Bayer-color-filter-array:-one-color-per-pixel">¶</a></h2><p>To keep costs down, most camera sensors don't measure red, green, and blue separately at every pixel. Instead, a single monochrome photosensor array sits under a mosaic of tiny color filters, so each individual pixel physically records only <em>one</em> of the three colors. The most common arrangement (RGGB) — the <strong>Bayer filter</strong> (<a href="../references.html#bayer-1976">Bayer, 1976</a>) — repeats in a 2x2 tile pattern: one red, one blue, and <em>two</em> green filters, since the human eye is most sensitive to green. Every pixel in the raw sensor output is therefore missing two-thirds of its color information by construction.</p>
 </div>
 </div>
 </div>
@@ -384,7 +384,7 @@ WRONG pattern (BayerRG2BGR) MAE:   64.69
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=96accf51"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The error jumps significantly if the wrong pattern is used — every red sample gets treated as blue and vice versa, producing a strongly color-shifted image. This is the practical reason RAW image pipelines always need to know a camera's exact sensor layout.</p>
+<p>The error jumps by more than an order of magnitude if the wrong pattern is used — every red sample gets treated as blue and vice versa, producing a strongly color-shifted image. This is the practical reason RAW image pipelines always need to know a camera's exact sensor layout.</p>
 </div>
 </div>
 </div>
