@@ -37,7 +37,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=725b135c"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-28:-Structure-from-Motion">Lesson 28: Structure from Motion<a class="anchor-link" href="#Lesson-28:-Structure-from-Motion">¶</a></h1><p>This lesson assembles feature matching (Lesson 19), robust estimation (Lesson 22), the essential matrix and pose recovery (Lesson 27), and calibration (Lesson 26) into a complete pipeline that takes 2D image correspondences from two views and recovers <strong>both</strong> the cameras' relative motion <strong>and</strong> the 3D positions of the points that were being viewed — <strong>S</strong>tructure <strong>f</strong>rom <strong>M</strong>otion. The one ingredient we haven't yet developed in detail is <strong>triangulation</strong>: turning a matched 2D point pair, plus known camera poses, into a 3D point. Lesson 21 mentioned it by name (disparity converts to depth via triangulation), but this lesson derives and implements it directly.</p>
+<h1 id="Lesson-28:-Structure-from-Motion">Lesson 28: Structure from Motion<a class="anchor-link" href="#Lesson-28:-Structure-from-Motion">¶</a></h1><p>This lesson assembles feature matching (Lesson 19), robust estimation (Lesson 22), calibration (Lesson 26), and the essential matrix and pose recovery (Lesson 27) into a complete pipeline that takes 2D image correspondences from two views and recovers <strong>both</strong> the cameras' relative motion <strong>and</strong> the 3D positions of the points that were being viewed — <strong>S</strong>tructure <strong>f</strong>rom <strong>M</strong>otion. The one ingredient we haven't yet developed in detail is <strong>triangulation</strong>: turning a matched 2D point pair, plus known camera poses, into a 3D point. (Lesson 21 showed how to convert disparity to depth in the case of rectified images; this lesson generalizes the idea.)</p>
 </div>
 </div>
 </div>
@@ -64,14 +64,14 @@
 <li><strong>Recover relative pose</strong> $(R, t)$ from $E$ (Lesson 27: <code>cv2.recoverPose</code>) — up to an unknown scale on $t$.</li>
 <li><strong>Triangulate</strong>: for every matched pair, intersect the two corresponding rays in 3D to recover a 3D point — developed in detail for the first time in this lesson.</li>
 </ol>
-<p>We use two real photos of a bronze sculpture from the BlendedMVS dataset (<a href="../references.html#yao-2020-blendedmvs">Yao et al., 2020</a>), which reconstructed each scene's geometry with a full SfM+MVS pipeline and ships every photo's recovered camera pose alongside it — so, unlike a photo pair we'd shoot ourselves, we still have ground truth to check the <em>entire</em> pipeline against, end to end.</p>
+<p>We use two realistic synthetic photos of a bronze sculpture from the BlendedMVS dataset (<a href="../references.html#yao-2020-blendedmvs">Yao et al., 2020</a>). Unlike a photo pair we'd shoot ourselves, these images come with ground truth camera poses, calibration, and geometry for checking the entire pipeline.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=4a4a7afa"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Two-real-photos,-with-known-camera-poses">Two real photos, with known camera poses<a class="anchor-link" href="#Two-real-photos,-with-known-camera-poses">¶</a></h2><p>BlendedMVS recovered each scene's 3D geometry and camera poses from real photos via SfM+MVS, so every image ships with a ground-truth $(K, R, t)$. We treat the first photo's camera as the world origin and express the second camera's pose relative to it — giving us <code>P1</code> and <code>P2_true</code>, the two ground-truth projection matrices this whole lesson tries to recover from image correspondences alone.</p>
+<h2 id="Two-real-photos,-with-known-camera-poses">Two real photos, with known camera poses<a class="anchor-link" href="#Two-real-photos,-with-known-camera-poses">¶</a></h2><p>As just mentioned, every image ships with a ground-truth $(K, R, t)$. We treat the first photo's camera as the world origin and express the second camera's pose relative to it — giving us <code>P1</code> and <code>P2_true</code>, the two ground-truth projection matrices this whole lesson tries to recover from image correspondences alone.</p>
 </div>
 </div>
 </div>
@@ -246,7 +246,7 @@ true translation direction:      [-0.999   0.0125  0.0427]
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Step-3:-triangulation">Step 3: triangulation<a class="anchor-link" href="#Step-3:-triangulation">¶</a></h2><p>Given two camera projection matrices $P_1, P_2$ (each $3\times4$, mapping a 3D point to a 2D image point in homogeneous coordinates) and a matched pixel pair $(x_1, x_2)$, we want the 3D point $X$ satisfying both $x_1 \propto P_1 X$ and $x_2 \propto P_2 X$. Each view contributes 2 independent linear equations in $X$'s 4 homogeneous unknowns (cross-multiplying out the unknown scale factor), by the same DLT/SVD recipe used for homographies (Lesson 23) and the fundamental matrix (Lesson 27):</p>
 <p>$$A = \begin{bmatrix} u_1 P_1^{(3)} - P_1^{(1)} \\ v_1 P_1^{(3)} - P_1^{(2)} \\ u_2 P_2^{(3)} - P_2^{(1)} \\ v_2 P_2^{(3)} - P_2^{(2)} \end{bmatrix}, \qquad AX = 0$$</p>
-<p>where $P^{(i)}$ denotes row $i$ of $P$. The null space of $A$ (smallest-singular-value right singular vector) gives $X$.</p>
+<p>where $P^{(i)}$ denotes row $i$ of $P$. The null space of $A$ (the right singular vector associated with the smallest singular value) gives $X$.</p>
 </div>
 </div>
 </div>
@@ -316,10 +316,17 @@ reprojection error using TRUE camera poses: mean 0.169 px, max 1.680 px
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=3882ef0f"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Cheirality:-a-free-sanity-check">Cheirality: a free sanity check<a class="anchor-link" href="#Cheirality:-a-free-sanity-check">¶</a></h3><p>Decomposing $E$ into $(R, t)$ back in Step 2 actually yields four mathematically valid sign combinations; only one places the observed points in front of <em>both</em> cameras, and <code>cv2.recoverPose</code> uses exactly that fact — the <strong>cheirality constraint</strong> — to pick the right one internally, by triangulating a few points and checking their depth. The check above applies the same idea explicitly: the epipolar constraint alone doesn't rule out a correspondence that triangulates <em>behind</em> a camera, so a mismatched point can still pass RANSAC's inlier test. Requiring positive depth in both views is a free extra filter on top of that — it's what dropped the one inlier flagged above.</p>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=3d4fc872"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Putting-it-together:-reconstruction-using-estimated-pose">Putting it together: reconstruction using <em>estimated</em> pose<a class="anchor-link" href="#Putting-it-together:-reconstruction-using-estimated-pose">¶</a></h2><p>Now the real test: triangulate using the camera matrix built from <code>recoverPose</code>'s <em>estimated</em> $(R, t)$, not the dataset's true pose. Because $t$ was only recovered up to scale, so is the reconstruction — every 3D point comes out a fixed factor smaller than reality. Multiplying by the true baseline length (the one piece of information triangulation from image correspondences alone can never supply — here read off from BlendedMVS's ground truth, standing in for whatever real-world scale reference you'd use in practice) should recover the correct metric scene.</p>
+<h2 id="Putting-it-together:-reconstruction-using-estimated-pose">Putting it together: reconstruction using <em>estimated</em> pose<a class="anchor-link" href="#Putting-it-together:-reconstruction-using-estimated-pose">¶</a></h2><p>Now the real test: triangulate using the camera matrix built from <code>recoverPose</code>'s <em>estimated</em> $(R, t)$, not the dataset's true pose. Because $t$ was only recovered up to scale, so is the reconstruction — every 3D point comes out a fixed factor smaller than reality. Multiplying by the true baseline length (a bit of cheating, just for evaluation) should recover the correct metric scene.</p>
 </div>
 </div>
 </div>
@@ -454,18 +461,18 @@ max 3D reconstruction error:                                     0.096
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=d4820c99"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="From-sparse-to-dense">From sparse to dense<a class="anchor-link" href="#From-sparse-to-dense">¶</a></h3><p>Even with the loosened thresholds above, feature matching only yields a <em>sparse</em> cloud — one 3D point per distinctive image keypoint. As shown above, the sparse cloud is often not very satisfying. But with the camera poses now known, we're no longer limited to distinctive keypoints: <strong>multi-view stereo (MVS)</strong> estimates a depth for <em>every</em> pixel in <em>every</em> view, by sweeping a plane-hypothesis or patch through space (a generalization of Lesson 21's stereo matching from a rectified pair to arbitrarily-posed calibrated cameras). Those per-view depth maps are then fused — inconsistent estimates filtered out, the rest merged — into the dense colored point cloud (or mesh) that toolkits like COLMAP produce.</p>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=a5fd9ef5"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="From-two-views-to-many:-incremental-SfM-and-bundle-adjustment">From two views to many: incremental SfM and bundle adjustment<a class="anchor-link" href="#From-two-views-to-many:-incremental-SfM-and-bundle-adjustment">¶</a></h3><p>Real reconstructions rarely stop at two views. The standard recipe sequentially incorporates new images in 3 steps: 1) match features between the new image and one or more existing images; 2) compute the new camera pose relative to the existing 3D point cloud; and 3) update the 3D point cloud with the new matches by triangulation. Step 2 requires solving Perspective-n-Point (i.e., given 2D-3D correspondences and $K$, recover that camera's pose via <code>cv2.solvePnP</code>).</p>
-<p>As views are accumulated, errors compound — pose corrupts the triangulated points, which then corrupt the next recovered pose, and so on. <strong>Bundle adjustment</strong> fixes this by refining all camera poses and 3D points <em>together</em> in one large nonlinear least-squares optimization (Lesson 32) that minimizes the total reprojection error summed across every point in every view at once. Bundle adjustment is arguably the single most important step separating a simple two-view pipeline like the one in this lesson from a real SfM system (COLMAP, etc.).</p>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=d4820c99"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="From-sparse-to-dense">From sparse to dense<a class="anchor-link" href="#From-sparse-to-dense">¶</a></h3><p>Even with the loosened thresholds above, feature matching only yields a <em>sparse</em> cloud — one 3D point per distinctive image keypoint. With the camera poses now known, though, we're no longer limited to distinctive keypoints: <strong>multi-view stereo (MVS)</strong> estimates a depth for <em>every</em> pixel in <em>every</em> view, by sweeping a plane-hypothesis or patch through space (a generalization of Lesson 21's stereo matching from a rectified pair to arbitrarily-posed calibrated cameras). Those per-view depth maps are then fused — inconsistent estimates filtered out, the rest merged — into the dense colored point cloud (or mesh) that toolkits like COLMAP produce.</p>
+<p>As views are accumulated, errors compound — pose corrupts the triangulated points, which then corrupt the next recovered pose, and so on. <strong>Bundle adjustment</strong> fixes this by refining all camera poses and 3D points <em>together</em> in one large nonlinear least-squares optimization that minimizes the total reprojection error summed across every point in every view at once. Bundle adjustment is arguably the single most important step separating a simple two-view pipeline like the one in this lesson from a real SfM system (COLMAP, etc.).</p>
 </div>
 </div>
 </div>
