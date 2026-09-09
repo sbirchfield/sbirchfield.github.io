@@ -138,7 +138,8 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=3cd8d7d7"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="A-color-image-is-a-3D-array">A color image is a 3D array<a class="anchor-link" href="#A-color-image-is-a-3D-array">¶</a></h2><p>An image's dimensions are <code>(height, width, channels)</code> — the output of <code>array.shape</code>. The <strong>first</strong> axis selects the row (moving down the image, i.e., $y$), the <strong>second</strong> axis selects the column (moving across, i.e., $x$); the <strong>third</strong> axis selects the color channel (red, green, or blue).  By convention, the origin is the top-left corner.</p>
+<h2 id="A-color-image-is-a-3D-array">A color image is a 3D array<a class="anchor-link" href="#A-color-image-is-a-3D-array">¶</a></h2><p>An image's dimensions are <code>(height, width, channels)</code> — the output of <code>array.shape</code>. The <strong>first</strong> axis selects the row (moving down the image, i.e., $y$), the <strong>second</strong> axis selects the column (moving across, i.e., $x$); the <strong>third</strong> axis selects the color channel (red, green, or blue). By convention, the origin is the top-left corner.</p>
+<p><strong>Warning:</strong> Even though <code>array.shape</code> and NumPy indexing use <code>(row, column)</code> = <code>(y, x)</code> indexing, many OpenCV functions that take points or sizes — <code>cv2.circle</code>, <code>cv2.rectangle</code>, <code>cv2.resize</code>, <code>cv2.warpAffine</code>'s <code>dsize</code> etc. — expect the opposite order, i.e., <code>(x, y)</code> or <code>(width, height)</code>. This reversal is a common source of bugs; always check a function's argument order rather than assuming it matches array shape.</p>
 </div>
 </div>
 </div>
@@ -298,13 +299,7 @@
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>shape:</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> (209, 309, 3)  (last axis is in BGR order)
+<pre>shape: (209, 309, 3)  (last axis is in BGR order)
 </pre>
 </div>
 </div>
