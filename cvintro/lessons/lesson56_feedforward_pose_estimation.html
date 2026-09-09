@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=57dfcc6e"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=96917d87"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-56:-Feed-Forward-Camera-Pose-Estimation">Lesson 56: Feed-Forward Camera Pose Estimation<a class="anchor-link" href="#Lesson-56:-Feed-Forward-Camera-Pose-Estimation">¶</a></h1><p>Lesson 22's RANSAC and Lesson 28's structure from motion recover camera geometry through an iterative pipeline: detect features, match them, run RANSAC to reject outliers, solve for the essential matrix, decompose it into rotation and translation. Each stage is a separate, hand-designed algorithm. <strong>VGGT</strong> (Visual Geometry Grounded Transformer, <a href="../references.html#wang-2024-vggt">Wang et al., 2025</a>) replaces the entire pipeline with a single feed-forward network: feed it correspondences (or even raw images) from multiple views, and it directly regresses camera poses in one forward pass, with no explicit RANSAC step anywhere. This lesson builds a small version of that idea and compares it against the classical pipeline it replaces — including exactly where each one wins.</p>
@@ -118,7 +118,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=341abd85"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-classical-pipeline:-essential-matrix-+-RANSAC">The classical pipeline: essential matrix + RANSAC<a class="anchor-link" href="#The-classical-pipeline:-essential-matrix-+-RANSAC">¶</a></h2><p><code>cv2.findEssentialMat</code> with <code>RANSAC</code> (Lesson 22) followed by <code>cv2.recoverPose</code> (Lesson 26) — the standard textbook approach to two-view relative pose, and the exact pipeline VGGT-style networks are built to replace.</p>
+<h2 id="The-classical-pipeline:-essential-matrix-+-RANSAC">The classical pipeline: essential matrix + RANSAC<a class="anchor-link" href="#The-classical-pipeline:-essential-matrix-+-RANSAC">¶</a></h2><p><code>cv2.findEssentialMat</code> with <code>RANSAC</code> (Lesson 22) followed by <code>cv2.recoverPose</code> (Lesson 27) — the standard textbook approach to two-view relative pose, and the exact pipeline VGGT-style networks are built to replace.</p>
 </div>
 </div>
 </div>
@@ -157,13 +157,7 @@
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>outlier_frac=0.0: classical rot err=0.08 deg, trans dir err=0.38 deg
 outlier_frac=0.2: classical rot err=5.10 deg, trans dir err=23.81 deg
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>outlier_frac=0.4: classical rot err=7.02 deg, trans dir err=34.20 deg
+outlier_frac=0.4: classical rot err=7.02 deg, trans dir err=34.20 deg
 </pre>
 </div>
 </div>
@@ -291,7 +285,13 @@ outlier_frac=0.2: classical rot err=5.10 deg, trans dir err=23.81 deg
 <pre>outlier_frac=0.0:
   learned:   rot err=7.83 deg, trans dir err=36.60 deg
   classical: rot err=2.89 deg, trans dir err=8.87 deg
-outlier_frac=0.2:
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>outlier_frac=0.2:
   learned:   rot err=6.80 deg, trans dir err=23.65 deg
   classical: rot err=7.48 deg, trans dir err=32.12 deg
 </pre>

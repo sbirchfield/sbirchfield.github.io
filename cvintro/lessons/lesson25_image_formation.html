@@ -61,7 +61,7 @@
 <p>$$x = f\frac{X}{Z}, \qquad y = f\frac{Y}{Z}$$</p>
 <p>where $f$ is the distance from the pinhole to the image plane. Converting to pixel units (accounting for pixel size and the origin location) requires the <strong>intrinsics</strong> $K$; and incorporating the camera's position and orientation relative to the world requires the <strong>extrinsics</strong> $[R | t]$. Put together, in homogeneous coordinates:</p>
 <p>$$\underbrace{\begin{bmatrix}u\\v\\1\end{bmatrix}}_{\text{pixel}} \;\propto\; \underbrace{\begin{bmatrix}f_x&amp;0&amp;c_x\\0&amp;f_y&amp;c_y\\0&amp;0&amp;1\end{bmatrix}}_{K}\underbrace{\begin{bmatrix}R &amp; t\end{bmatrix}}_{\text{extrinsics}}\begin{bmatrix}X\\Y\\Z\\1\end{bmatrix}_{\text{world}}$$</p>
-<p>This is exactly the $P = K [R | t]$ that Lessons 26-28 (Epipolar Geometry, Camera Calibration, and Structure from Motion) will use. Every symbol can be traced back to a physical cause: $f_x, f_y$ to focal length and pixel size; $(c_x, c_y)$ to where the optical axis hits the sensor (known as the <em>principal point</em>); $R, t$ to the camera's pose.</p>
+<p>This is exactly the $P = K [R | t]$ that Lessons 26-28 (Camera Calibration, Epipolar Geometry, and Structure from Motion) will use. Every symbol can be traced back to a physical cause: $f_x, f_y$ to focal length and pixel size; $(c_x, c_y)$ to where the optical axis hits the sensor (known as the <em>principal point</em>); $R, t$ to the camera's pose.</p>
 </div>
 </div>
 </div>
@@ -621,7 +621,7 @@ mean abs pixel error after correction:  7.43
 
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson24_stitching_mosaicking.html">&larr; Lesson 24: Image Stitching and Mosaicking</a></div>
-            <div class="lesson-nav-next"><a href="lesson26_epipolar_geometry.html">Lesson 26: Epipolar Geometry &rarr;</a></div>
+            <div class="lesson-nav-next"><a href="lesson26_camera_calibration.html">Lesson 26: Camera Calibration &rarr;</a></div>
         </div>
     </div>
 </body>

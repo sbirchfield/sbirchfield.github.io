@@ -37,7 +37,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=add51d1a"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-22:-Model-Fitting,-Robust-Estimation,-and-RANSAC">Lesson 22: Model Fitting, Robust Estimation, and RANSAC<a class="anchor-link" href="#Lesson-22:-Model-Fitting,-Robust-Estimation,-and-RANSAC">¶</a></h1><p>Many computer vision problems boil down to fitting a model — a line, a circle, a plane, a homography (Lesson 23), a fundamental matrix (Lesson 26) — to a set of corresponding points. In practice, that data almost always contains outliers: correspondences that are simply wrong. This lesson confronts that directly: least-squares fitting is catastrophically fragile to even a few bad points, and <strong>RANSAC</strong> is the standard fix.</p>
+<h1 id="Lesson-22:-Model-Fitting,-Robust-Estimation,-and-RANSAC">Lesson 22: Model Fitting, Robust Estimation, and RANSAC<a class="anchor-link" href="#Lesson-22:-Model-Fitting,-Robust-Estimation,-and-RANSAC">¶</a></h1><p>Many computer vision problems boil down to fitting a model — a line, a circle, a plane, a homography (Lesson 23), a fundamental matrix (Lesson 27) — to a set of corresponding points. In practice, that data almost always contains outliers: correspondences that are simply wrong. This lesson confronts that directly: least-squares fitting is catastrophically fragile to even a few bad points, and <strong>RANSAC</strong> is the standard fix.</p>
 </div>
 </div>
 </div>
@@ -58,7 +58,7 @@
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Ordinary-vs.-total-least-squares">Ordinary vs. total least squares<a class="anchor-link" href="#Ordinary-vs.-total-least-squares">¶</a></h2><p>Fitting $y=mx+b$ by minimizing $\sum(y_i-(mx_i+b))^2$ — <strong>ordinary least squares (OLS)</strong> — measures error <em>vertically</em>. That's the right choice when $x$ is known exactly and only $y$ is noisy, but not when both coordinates carry comparable noise, as they typically do for 2D image points: the fit gets biased toward whichever direction has less spread. (And it can't even represent a vertical line.) <strong>Total least squares (TLS)</strong> instead minimizes the <em>perpendicular</em> distance from each point to the line, treating both coordinates symmetrically.</p>
-<p>For a 2D line, TLS needs no new machinery: the best-fit line passes through the centroid, and its direction is the eigenvector of the (centered) points' covariance matrix with the <em>largest</em> eigenvalue — exactly Lesson 6's covariance-and-eigenvectors idea, just picking out the axis of maximum spread instead of describing a blob's shape. (With more unknowns — such as with a homography or fundamental matrix — the approach generalizes to the <strong>singular value decomposition (SVD)</strong>, introduced in Lesson 26.)</p>
+<p>For a 2D line, TLS needs no new machinery: the best-fit line passes through the centroid, and its direction is the eigenvector of the (centered) points' covariance matrix with the <em>largest</em> eigenvalue — exactly Lesson 6's covariance-and-eigenvectors idea, just picking out the axis of maximum spread instead of describing a blob's shape. (With more unknowns — such as with a homography or fundamental matrix — the approach generalizes to the <strong>singular value decomposition (SVD)</strong>, introduced in Lesson 27.)</p>
 </div>
 </div>
 </div>
