@@ -34,10 +34,10 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=c9d939a5"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=ae2ccaf3"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-40:-Object-Detection-I-%E2%80%94-Sliding-Windows,-from-Rowley-Baluja-Kanade-to-Viola-Jones">Lesson 40: Object Detection I — Sliding Windows, from Rowley-Baluja-Kanade to Viola-Jones<a class="anchor-link" href="#Lesson-40:-Object-Detection-I-%E2%80%94-Sliding-Windows,-from-Rowley-Baluja-Kanade-to-Viola-Jones">¶</a></h1><p>Every classifier so far has answered "what is in this image?" for an image that already contains exactly one thing, centered and cropped. Object <strong>detection</strong> asks a harder question: given a scene that may contain zero, one, or several objects at unknown locations and scales, find <em>where</em> each one is.</p>
+<h1 id="Lesson-40:-Object-Detection-from-Sliding-Windows">Lesson 40: Object Detection from Sliding Windows<a class="anchor-link" href="#Lesson-40:-Object-Detection-from-Sliding-Windows">¶</a></h1><p>Every classifier so far has answered "what is in this image?" for an image that already contains exactly one thing, centered and cropped. Object <strong>detection</strong> asks a harder question: given a scene that may contain zero, one, or several objects at unknown locations and scales, find <em>where</em> each one is.</p>
 <p>The oldest and still-conceptually-clearest answer is the <strong>sliding window</strong>: turn a classifier for "is there a face right here, filling this window?" into a detector by running it at every location (and, in principle, every scale) in the image. <a href="../references.html#rowley-baluja-kanade-1996">Rowley, Baluja, and Kanade (1996)</a> did exactly this with a small neural network as the window classifier — one of the first genuinely successful uses of a neural net for a real vision task, years before deep learning's resurgence (Lesson 37). <a href="../references.html#viola-jones-2001">Viola and Jones (2001)</a> later made the same sliding-window idea fast enough for real-time video using a cascade of much cheaper features, which is why face detection first appeared in consumer cameras through their method rather than RBK's. This lesson builds RBK's approach end to end: a small window classifier, applied at every position, followed by the classic step neither original paper's core diagram shows but that any real system needs — merging duplicate detections.</p>
 </div>
 </div>
@@ -355,7 +355,7 @@ detections after NMS: 2
 
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson39_visualizing_cnns.html">&larr; Lesson 39: Visualizing and Understanding CNNs</a></div>
-            <div class="lesson-nav-next"><a href="lesson41_object_detection_regression.html">Lesson 41: Object Detection II — From Classification to Regression &rarr;</a></div>
+            <div class="lesson-nav-next"><a href="lesson41_object_detection_regression.html">Lesson 41: Object Detection as Regression &rarr;</a></div>
         </div>
     </div>
 </body>
