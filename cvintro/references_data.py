@@ -40,6 +40,15 @@ REFERENCES = [
         "landmark": True,
     },
     {
+        "id": "russakovsky-2015",
+        "authors": "Russakovsky, O., Deng, J., Su, H., Krause, J., Satheesh, S., Ma, S., Huang, Z., Karpathy, A., Khosla, A., Bernstein, M., Berg, A. C., & Fei-Fei, L.",
+        "sort_name": "Russakovsky",
+        "year": 2015,
+        "title": "ImageNet Large Scale Visual Recognition Challenge",
+        "url": "https://arxiv.org/abs/1409.0575",
+        "landmark": True,
+    },
+    {
         "id": "simonyan-zisserman-2014",
         "authors": "Simonyan, K., & Zisserman, A.",
         "sort_name": "Simonyan",
@@ -343,7 +352,7 @@ REFERENCES = [
         "year": 2015,
         "title": "Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift",
         "url": "https://arxiv.org/abs/1502.03167",
-        "landmark": False,
+        "landmark": True,
     },
     {
         "id": "simonyan-2013-saliency",
@@ -361,7 +370,7 @@ REFERENCES = [
         "year": 2017,
         "title": "Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization",
         "url": "https://arxiv.org/abs/1610.02391",
-        "landmark": False,
+        "landmark": True,
     },
     {
         "id": "rowley-baluja-kanade-1996",

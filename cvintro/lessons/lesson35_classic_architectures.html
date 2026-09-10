@@ -34,10 +34,54 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=c501e5c2"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=c438d564"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-35:-Classic-Architectures">Lesson 35: Classic Architectures<a class="anchor-link" href="#Lesson-35:-Classic-Architectures">¶</a></h1><p>Lessons 33-34 built and trained one small CNN. This lesson looks at how CNN <em>architectures</em> evolved over roughly two decades, and works through the single biggest architectural idea in that history in detail: the residual connection, and the vanishing-gradient problem it was designed to fix.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=50644c26"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="ImageNet-and-ILSVRC:-the-benchmark-that-drove-this">ImageNet and ILSVRC: the benchmark that drove this<a class="anchor-link" href="#ImageNet-and-ILSVRC:-the-benchmark-that-drove-this">¶</a></h2><p><strong>ImageNet</strong> (<a href="../references.html#deng-2009">Deng et al., 2009</a><span class="landmark-paper">★</span>) is a <em>dataset</em>: over 14 million images, hand-labeled across more than 20,000 categories, built by crowdsourcing annotations onto WordNet's existing noun hierarchy. A big labeled dataset alone doesn't drive progress, though — a shared, standardized <em>competition</em> does. Starting in 2010, the <strong>ILSVRC</strong> (ImageNet Large Scale Visual Recognition Challenge, <a href="../references.html#russakovsky-2015">Russakovsky et al., 2015</a><span class="landmark-paper">★</span>) turned a 1000-category, ~1.2-million-image subset of ImageNet into an annual benchmark: every group trained on the same data and was scored on the same held-out test set, making architectures directly, objectively comparable at a scale no one had managed before. Every architecture in the tour below reports its result as an ILSVRC entry, and the competition's winning top-5 error rate by year is a fair proxy for the field's progress across the decade this lesson covers:</p>
+<table>
+<thead>
+<tr>
+<th>Year</th>
+<th>Winner</th>
+<th>Top-5 error</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2010</td>
+<td>(pre-deep-learning features)</td>
+<td>28.2%</td>
+</tr>
+<tr>
+<td>2012</td>
+<td>AlexNet</td>
+<td>16.4%</td>
+</tr>
+<tr>
+<td>2014</td>
+<td>GoogLeNet (VGG close behind, at 7.3%)</td>
+<td>6.7%</td>
+</tr>
+<tr>
+<td>2015</td>
+<td>ResNet</td>
+<td>3.57%</td>
+</tr>
+<tr>
+<td>2017</td>
+<td>SENet</td>
+<td>2.25%</td>
+</tr>
+</tbody>
+</table>
+<p>ResNet's 2015 result was the first to beat the ~5% error rate typically cited for a trained human on this same task. By 2017, with the winning error under 2.5%, ILSVRC's classification track was retired — its job as a benchmark essentially done. That trajectory, all measured on one shared competition, is the concrete history behind almost every architectural idea in this lesson.</p>
 </div>
 </div>
 </div>
@@ -61,7 +105,7 @@
 <h2 id="A-brief-tour">A brief tour<a class="anchor-link" href="#A-brief-tour">¶</a></h2><p>A handful of architectures defined the field, each solving a specific problem with the previous one:</p>
 <ul>
 <li><strong>LeNet-5</strong> ("Gradient-Based Learning Applied to Document Recognition", <a href="../references.html#lecun-1998">LeCun et al., 1998</a><span class="landmark-paper">★</span>) — the template Lesson 33 already implements: conv, pool, conv, pool, then fully-connected layers. Built for digit recognition on 32x32 images.</li>
-<li><strong>AlexNet</strong> (<a href="../references.html#krizhevsky-2012">Krizhevsky, Sutskever &amp; Hinton, 2012</a><span class="landmark-paper">★</span>) — the same template, just much bigger (5 conv layers, ~60M parameters), trained on <strong>ImageNet</strong> (<a href="../references.html#deng-2009">Deng et al., 2009</a><span class="landmark-paper">★</span>) using GPUs and ReLU instead of tanh/sigmoid. Its win in the 2012 ImageNet competition (top-5 error dropping from ~26% to ~15%) is usually cited as the event that restarted mainstream interest in neural networks.</li>
+<li><strong>AlexNet</strong> (<a href="../references.html#krizhevsky-2012">Krizhevsky, Sutskever &amp; Hinton, 2012</a><span class="landmark-paper">★</span>) — the same template, just much bigger (5 conv layers, ~60M parameters), trained on ImageNet using GPUs and ReLU instead of tanh/sigmoid. Its 2012 ILSVRC win (see the table above) is usually cited as the event that restarted mainstream interest in neural networks.</li>
 <li><strong>VGG</strong> (<a href="../references.html#simonyan-zisserman-2014">Simonyan &amp; Zisserman, 2014</a><span class="landmark-paper">★</span>) — replaced AlexNet's large 11x11/5x5 filters with a deep stack of small 3x3 convolutions. Two stacked 3x3 convs have the same <em>receptive field</em> as one 5x5 conv (Lesson 11's pyramid idea again) but fewer parameters and an extra nonlinearity in between.</li>
 <li><strong>GoogLeNet / Inception</strong> (<a href="../references.html#szegedy-2015">Szegedy et al., 2015</a><span class="landmark-paper">★</span>) — went wider instead of just deeper: each "Inception module" runs several convolution sizes (1x1, 3x3, 5x5) side by side on the same input and concatenates their outputs, so the network doesn't have to commit to one filter size per layer. 1x1 convolutions are used first to cheaply shrink the channel count, keeping the wider module affordable.</li>
 <li><strong>ResNet</strong> (<a href="../references.html#he-2015-resnet">He et al., 2015</a><span class="landmark-paper">★</span>) — the subject of the rest of this lesson. Pushed depth from VGG's ~19 layers to 50, 101, even 152, by solving the problem that had made naively stacking more layers <em>worse</em>, not better.</li>
@@ -174,7 +218,7 @@ residual net: gradient norm at layer 0 / gradient norm at layer 29 = 1.05e+00
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=a7d53eac"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Batch-normalization">Batch normalization<a class="anchor-link" href="#Batch-normalization">¶</a></h2><p>The convolutional residual block below uses one more ingredient: <strong>batch normalization</strong> (<a href="../references.html#ioffe-szegedy-2015">Ioffe &amp; Szegedy, 2015</a>). The idea is simple — for each channel, subtract that channel's mean and divide by its standard deviation, computed <em>across the current mini-batch</em> (over the batch, height, and width dimensions, separately per channel), so every channel's activations always have mean 0 and standard deviation 1 going into the next layer. Two learnable parameters, a per-channel scale <code>gamma</code> and shift <code>beta</code>, are then applied on top, so the layer can still recover a different mean/scale if that's actually useful — normalization to 0/1 is a <em>starting point</em> the network can undo, not a hard constraint.</p>
+<h2 id="Batch-normalization">Batch normalization<a class="anchor-link" href="#Batch-normalization">¶</a></h2><p>The convolutional residual block below uses one more ingredient: <strong>batch normalization</strong> (<a href="../references.html#ioffe-szegedy-2015">Ioffe &amp; Szegedy, 2015</a><span class="landmark-paper">★</span>). The idea is simple — for each channel, subtract that channel's mean and divide by its standard deviation, computed <em>across the current mini-batch</em> (over the batch, height, and width dimensions, separately per channel), so every channel's activations always have mean 0 and standard deviation 1 going into the next layer. Two learnable parameters, a per-channel scale <code>gamma</code> and shift <code>beta</code>, are then applied on top, so the layer can still recover a different mean/scale if that's actually useful — normalization to 0/1 is a <em>starting point</em> the network can undo, not a hard constraint.</p>
 <p>Deep networks without batch norm are prone to a related but distinct problem from vanishing gradients: as training updates early layers, the <em>distribution</em> of activations feeding into later layers keeps shifting (sometimes called "internal covariate shift"), so later layers are constantly chasing a moving target. Renormalizing at every layer keeps that distribution stable, which in practice lets much higher learning rates be used and makes deep networks noticeably easier to train — one of the reasons ResNet could push to 50+ layers where earlier architectures struggled past ~20.</p>
 </div>
 </div>
@@ -213,7 +257,13 @@ residual net: gradient norm at layer 0 / gradient norm at layer 29 = 1.05e+00
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>max abs diff vs nn.BatchNorm2d: 4.77e-07
+<pre>max abs diff vs nn.BatchNorm2d: 4.77e-07</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
 per-channel mean before: [-0.046  0.165 -0.061 -0.165]
 per-channel std before:  [0.939 1.037 0.911 0.977]
 per-channel mean after:  [ 0.  0. -0.  0.]
