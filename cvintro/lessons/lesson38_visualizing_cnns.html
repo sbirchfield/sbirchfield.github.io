@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=f48ddc93"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=d633626e"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-38:-Visualizing-and-Understanding-CNNs">Lesson 38: Visualizing and Understanding CNNs<a class="anchor-link" href="#Lesson-38:-Visualizing-and-Understanding-CNNs">¶</a></h1><p>A trained CNN is a black box in the sense that its millions of weights don't have obvious individual meanings. But <em>where in the input image</em> a prediction comes from is answerable, and answering it is often what separates "the model got the right answer" from "the model got the right answer for the right reason." This lesson builds two visualization tools from scratch: <strong>saliency maps</strong> (<a href="../references.html#simonyan-2013-saliency">Simonyan et al., 2013</a>) and <strong>Grad-CAM</strong> (<a href="../references.html#selvaraju-2017">Selvaraju et al., 2017</a><span class="landmark-paper">★</span>).</p>
@@ -292,7 +292,7 @@
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Both methods land far closer to the true shape center than a random guess would, confirming they're picking out genuinely relevant image regions rather than something spurious — and here, with full spatial resolution preserved in the last conv layer, Grad-CAM is actually the more precise of the two.</p>
-<p>In practice these tools matter most for catching a specific failure: a network that gets the right answer on a training or validation set for the <em>wrong</em> reason — for example, learning to recognize a background watermark that happened to correlate with one class, rather than the object itself. A saliency map or Grad-CAM overlay on such a network would show it "looking" at the watermark, not the object — a bug that overall accuracy alone would never reveal (echoing Lesson 37's point that a single accuracy number hides a lot).</p>
+<p>In practice these tools matter most for catching a specific failure: a network that gets the right answer on a training or validation set for the <em>wrong</em> reason — for example, learning to recognize a background watermark that happened to correlate with one class, rather than the object itself. A saliency map or Grad-CAM overlay on such a network would show it "looking" at the watermark, not the object — a bug that overall accuracy alone would never reveal (echoing Lesson 35's point that a single accuracy number hides a lot).</p>
 <h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
 <li>Grad-CAM here uses the <em>last</em> conv layer. Modify <code>grad_cam</code> to instead use the intermediate feature map after <code>conv1</code> (before <code>conv2</code>). Does the resulting heatmap get sharper (closer to pixel-perfect, like the saliency map) or coarser, and why would an earlier layer behave that way?</li>
 <li>Deliberately corrupt the dataset: add a small fixed bright square in the same corner of <em>every</em> "plus" training image (but no circle images), retrain, and check whether Grad-CAM on a test plus image lights up on the shape or on the corrupted corner.</li>
@@ -303,7 +303,7 @@
 </div>
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson37_image_classification_practice.html">&larr; Lesson 37: Image Classification in Practice</a></div>
+            <div class="lesson-nav-prev"><a href="lesson37_transfer_learning.html">&larr; Lesson 37: Transfer Learning</a></div>
             <div class="lesson-nav-next"><a href="lesson39_object_detection_sliding_windows.html">Lesson 39: Object Detection I — Sliding Windows, from Rowley-Baluja-Kanade to Viola-Jones &rarr;</a></div>
         </div>
     </div>
