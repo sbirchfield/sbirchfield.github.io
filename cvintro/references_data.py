@@ -22,6 +22,15 @@ REFERENCES = [
         "landmark": True,
     },
     {
+        "id": "krizhevsky-2009-cifar",
+        "authors": "Krizhevsky, A.",
+        "sort_name": "Krizhevsky",
+        "year": 2009,
+        "title": "Learning Multiple Layers of Features from Tiny Images",
+        "url": "https://www.cs.toronto.edu/~kriz/learning-features-2009-TR.pdf",
+        "landmark": False,
+    },
+    {
         "id": "krizhevsky-2012",
         "authors": "Krizhevsky, A., Sutskever, I., & Hinton, G. E.",
         "sort_name": "Krizhevsky",

@@ -440,9 +440,9 @@ all 4 hidden units still have identical weight vectors after 3000 steps of zero-
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>fixed weight std = 0.05, activation variance after 20 tanh layers:
-  width=  16: variance = 1.91e-28
-  width=  64: variance = 6.23e-17
-  width= 256: variance = 3.31e-05
+  width=  16: variance = 5.10e-29
+  width=  64: variance = 7.09e-17
+  width= 256: variance = 2.72e-05
 </pre>
 </div>
 </div>
@@ -488,9 +488,9 @@ all 4 hidden units still have identical weight vectors after 3000 steps of zero-
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Xavier std = sqrt(1/fan_in), activation variance after 20 tanh layers:
-  width=  16: variance = 0.016
-  width=  64: variance = 0.017
-  width= 256: variance = 0.027
+  width=  16: variance = 0.009
+  width=  64: variance = 0.019
+  width= 256: variance = 0.024
 
 nn.init.xavier_normal_ weight std: 0.0625  (formula predicts 0.0625)
 </pre>
@@ -537,10 +537,10 @@ nn.init.xavier_normal_ weight std: 0.0625  (formula predicts 0.0625)
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>ReLU net, Xavier scale (sqrt(1/fan_in), no ReLU correction): variance after 20 layers = 3.12e-07
-ReLU net, Kaiming scale (sqrt(2/fan_in)):                    variance after 20 layers = 0.674
+<pre>ReLU net, Xavier scale (sqrt(1/fan_in), no ReLU correction): variance after 20 layers = 3.65e-07
+ReLU net, Kaiming scale (sqrt(2/fan_in)):                    variance after 20 layers = 1.038
 
-nn.init.kaiming_normal_ weight std: 0.0885  (formula predicts 0.0884)
+nn.init.kaiming_normal_ weight std: 0.0886  (formula predicts 0.0884)
 </pre>
 </div>
 </div>
@@ -681,7 +681,13 @@ linear warmup: max diff vs torch.optim.lr_scheduler = 0.00e+00
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>constant lr:  mean loss over final 50 steps = 0.2142
+<pre>constant lr:  mean loss over final 50 steps = 0.2142</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
 step decay:   mean loss over final 50 steps = 0.0025
 </pre>
 </div>
