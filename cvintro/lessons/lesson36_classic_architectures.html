@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson35 Classic Architectures - Introduction to Computer Vision</title>
+    <title>Lesson36 Classic Architectures - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson35_classic_architectures.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson36_classic_architectures.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson35_classic_architectures.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson36_classic_architectures.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=c438d564"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=49eb98bf"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-35:-Classic-Architectures">Lesson 35: Classic Architectures<a class="anchor-link" href="#Lesson-35:-Classic-Architectures">¶</a></h1><p>Lessons 33-34 built and trained one small CNN. This lesson looks at how CNN <em>architectures</em> evolved over roughly two decades, and works through the single biggest architectural idea in that history in detail: the residual connection, and the vanishing-gradient problem it was designed to fix.</p>
+<h1 id="Lesson-36:-Classic-Architectures">Lesson 36: Classic Architectures<a class="anchor-link" href="#Lesson-36:-Classic-Architectures">¶</a></h1><p>Lessons 33-34 built and trained one small CNN. This lesson looks at how CNN <em>architectures</em> evolved over roughly two decades, and works through the single biggest architectural idea in that history in detail: the residual connection, and the vanishing-gradient problem it was designed to fix.</p>
 </div>
 </div>
 </div>
@@ -257,13 +257,7 @@ residual net: gradient norm at layer 0 / gradient norm at layer 29 = 1.05e+00
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>max abs diff vs nn.BatchNorm2d: 4.77e-07</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
+<pre>max abs diff vs nn.BatchNorm2d: 4.77e-07
 per-channel mean before: [-0.046  0.165 -0.061 -0.165]
 per-channel std before:  [0.939 1.037 0.911 0.977]
 per-channel mean after:  [ 0.  0. -0.  0.]
@@ -334,8 +328,8 @@ output shape: (4, 16, 20, 20)  (unchanged — a residual block preserves shape, 
 </div>
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson34_training_a_cnn.html">&larr; Lesson 34: Training a CNN</a></div>
-            <div class="lesson-nav-next"><a href="lesson36_transfer_learning.html">Lesson 36: Transfer Learning &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson35_image_classification_practice.html">&larr; Lesson 35: Image Classification in Practice</a></div>
+            <div class="lesson-nav-next"><a href="lesson37_transfer_learning.html">Lesson 37: Transfer Learning &rarr;</a></div>
         </div>
     </div>
 </body>

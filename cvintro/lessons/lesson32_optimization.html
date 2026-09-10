@@ -440,15 +440,9 @@ all 4 hidden units still have identical weight vectors after 3000 steps of zero-
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>fixed weight std = 0.05, activation variance after 20 tanh layers:
-  width=  16: variance = 2.50e-29
-  width=  64: variance = 1.39e-16
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>  width= 256: variance = 3.48e-05
+  width=  16: variance = 1.91e-28
+  width=  64: variance = 6.23e-17
+  width= 256: variance = 3.31e-05
 </pre>
 </div>
 </div>
@@ -494,17 +488,11 @@ all 4 hidden units still have identical weight vectors after 3000 steps of zero-
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Xavier std = sqrt(1/fan_in), activation variance after 20 tanh layers:
-  width=  16: variance = 0.010
-  width=  64: variance = 0.024
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>  width= 256: variance = 0.026
+  width=  16: variance = 0.016
+  width=  64: variance = 0.017
+  width= 256: variance = 0.027
 
-nn.init.xavier_normal_ weight std: 0.0628  (formula predicts 0.0625)
+nn.init.xavier_normal_ weight std: 0.0625  (formula predicts 0.0625)
 </pre>
 </div>
 </div>
@@ -549,10 +537,10 @@ nn.init.xavier_normal_ weight std: 0.0628  (formula predicts 0.0625)
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>ReLU net, Xavier scale (sqrt(1/fan_in), no ReLU correction): variance after 20 layers = 3.45e-07
-ReLU net, Kaiming scale (sqrt(2/fan_in)):                    variance after 20 layers = 0.782
+<pre>ReLU net, Xavier scale (sqrt(1/fan_in), no ReLU correction): variance after 20 layers = 3.12e-07
+ReLU net, Kaiming scale (sqrt(2/fan_in)):                    variance after 20 layers = 0.674
 
-nn.init.kaiming_normal_ weight std: 0.0886  (formula predicts 0.0884)
+nn.init.kaiming_normal_ weight std: 0.0885  (formula predicts 0.0884)
 </pre>
 </div>
 </div>
@@ -562,7 +550,7 @@ nn.init.kaiming_normal_ weight std: 0.0886  (formula predicts 0.0884)
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=79f4c316"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The rule of thumb that follows: use Kaiming init for <code>ReLU</code>-family networks (the default for <code>nn.Conv2d</code>/<code>nn.Linear</code> is actually already a variant of this), and Xavier for <code>tanh</code>/<code>sigmoid</code>. Both are strictly better than picking a fixed std and hoping — they're derived, not tuned, from a simple requirement: keep activation variance roughly constant from layer to layer, so a network can be made arbitrarily deep without silently losing its signal before training even starts. This is the same instinct behind Lesson 35's <code>xavier_normal_</code> call in the vanishing-gradient demo, and behind batch normalization (also Lesson 35) — normalizing activation statistics is a recurring fix for the same underlying problem, applied at different points (once at initialization, continuously during training).</p>
+<p>The rule of thumb that follows: use Kaiming init for <code>ReLU</code>-family networks (the default for <code>nn.Conv2d</code>/<code>nn.Linear</code> is actually already a variant of this), and Xavier for <code>tanh</code>/<code>sigmoid</code>. Both are strictly better than picking a fixed std and hoping — they're derived, not tuned, from a simple requirement: keep activation variance roughly constant from layer to layer, so a network can be made arbitrarily deep without silently losing its signal before training even starts. This is the same instinct behind Lesson 36's <code>xavier_normal_</code> call in the vanishing-gradient demo, and behind batch normalization (also Lesson 36) — normalizing activation statistics is a recurring fix for the same underlying problem, applied at different points (once at initialization, continuously during training).</p>
 </div>
 </div>
 </div>
