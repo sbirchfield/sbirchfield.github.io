@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=e5908d2c"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=22059f4b"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-44:-The-Attention-Mechanism">Lesson 44: The Attention Mechanism<a class="anchor-link" href="#Lesson-44:-The-Attention-Mechanism">¶</a></h1><p>Every model in Part 3 processed spatial structure through convolution: a fixed, local neighborhood pattern, applied the same way everywhere (Lesson 10). <strong>Attention</strong> is a different way to mix information across a sequence or an image: instead of a fixed neighborhood, every position decides, dynamically, which <em>other</em> positions are relevant to it right now, and mixes them in proportion to that relevance. This lesson builds attention from scratch, validates it against PyTorch's own implementation, and shows concretely what it's doing: soft, content-based retrieval.</p>
@@ -61,7 +61,7 @@
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Queries,-keys,-and-values">Queries, keys, and values<a class="anchor-link" href="#Queries,-keys,-and-values">¶</a></h2><p>Every position in a sequence produces three vectors: a <strong>query</strong> (what it's looking for), a <strong>key</strong> (what it advertises about itself, for others to match against), and a <strong>value</strong> (what it actually contributes if selected). Attention compares every query against every key via a dot product — a similarity score — turns those scores into weights with softmax, and returns a weighted sum of values:</p>
 <p>$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$</p>
-<p>The $\sqrt{d_k}$ scaling (dividing by the square root of the key dimension) keeps the dot products from growing too large as dimensionality increases, which would otherwise push softmax into a regime with vanishing gradients (Lesson 36) — the same instinct as Lesson 32's weight-init scaling, applied to attention scores instead of layer activations.</p>
+<p>The $\sqrt{d_k}$ scaling (dividing by the square root of the key dimension) keeps the dot products from growing too large as dimensionality increases, which would otherwise push softmax into a regime with vanishing gradients (Lesson 37) — the same instinct as Lesson 33's weight-init scaling, applied to attention scores instead of layer activations.</p>
 </div>
 </div>
 </div>
@@ -223,7 +223,7 @@ max abs diff vs F.scaled_dot_product_attention(..., is_causal=True): 1.19e-07
 </div>
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson42_instance_segmentation.html">&larr; Lesson 42: Instance Segmentation</a></div>
+            <div class="lesson-nav-prev"><a href="lesson43_instance_segmentation.html">&larr; Lesson 43: Instance Segmentation</a></div>
             <div class="lesson-nav-next"><a href="lesson45_transformer_architecture.html">Lesson 45: The Transformer Architecture &rarr;</a></div>
         </div>
     </div>

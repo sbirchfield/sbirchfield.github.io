@@ -516,4 +516,22 @@ REFERENCES = [
         "url": "https://arxiv.org/abs/2308.04079",
         "landmark": False,
     },
+    {
+        "id": "hinton-2006-autoencoder",
+        "authors": "Hinton, G. E., & Salakhutdinov, R. R.",
+        "sort_name": "Hinton",
+        "year": 2006,
+        "title": "Reducing the Dimensionality of Data with Neural Networks",
+        "url": "https://www.science.org/doi/10.1126/science.1127647",
+        "landmark": True,
+    },
+    {
+        "id": "he-2021-mae",
+        "authors": "He, K., Chen, X., Xie, S., Li, Y., Dollár, P., & Girshick, R.",
+        "sort_name": "He",
+        "year": 2021,
+        "title": "Masked Autoencoders Are Scalable Vision Learners",
+        "url": "https://arxiv.org/abs/2111.06377",
+        "landmark": True,
+    },
 ]

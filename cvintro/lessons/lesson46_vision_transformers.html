@@ -34,10 +34,10 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=61d836b1"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=843e9fe5"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-46:-Vision-Transformers-(ViT)">Lesson 46: Vision Transformers (ViT)<a class="anchor-link" href="#Lesson-46:-Vision-Transformers-(ViT)">¶</a></h1><p>Lesson 45's Transformer encoder operates on a sequence of vectors. An image isn't a sequence — so the <strong>Vision Transformer</strong> ("An Image is Worth 16x16 Words", <a href="../references.html#dosovitskiy-2020">Dosovitskiy et al., 2020</a><span class="landmark-paper">★</span>) turns it into one: chop the image into fixed-size patches, flatten and linearly embed each patch into a vector, and feed the resulting sequence straight into an ordinary Transformer encoder, exactly as built in Lesson 45. No convolution anywhere. This lesson builds that pipeline, and then runs the exact translation-generalization test from Lesson 33 to show precisely what a Transformer gives up by dropping convolution's built-in inductive bias.</p>
+<h1 id="Lesson-46:-Vision-Transformers-(ViT)">Lesson 46: Vision Transformers (ViT)<a class="anchor-link" href="#Lesson-46:-Vision-Transformers-(ViT)">¶</a></h1><p>Lesson 45's Transformer encoder operates on a sequence of vectors. An image isn't a sequence — so the <strong>Vision Transformer</strong> ("An Image is Worth 16x16 Words", <a href="../references.html#dosovitskiy-2020">Dosovitskiy et al., 2020</a><span class="landmark-paper">★</span>) turns it into one: chop the image into fixed-size patches, flatten and linearly embed each patch into a vector, and feed the resulting sequence straight into an ordinary Transformer encoder, exactly as built in Lesson 45. No convolution anywhere. This lesson builds that pipeline, and then runs the exact translation-generalization test from Lesson 34 to show precisely what a Transformer gives up by dropping convolution's built-in inductive bias.</p>
 </div>
 </div>
 </div>
@@ -100,7 +100,7 @@
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>image (2, 1, 16, 16) -&gt; patch sequence (2, 16, 16)  (16 patches of 16 values each)
-linear-on-patches vs. strided-conv max abs diff: 2.38e-07
+linear-on-patches vs. strided-conv max abs diff: 2.98e-07
 </pre>
 </div>
 </div>
@@ -174,7 +174,7 @@ linear-on-patches vs. strided-conv max abs diff: 2.38e-07
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=a3bf1a12"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="What-convolution's-inductive-bias-buys-you">What convolution's inductive bias buys you<a class="anchor-link" href="#What-convolution's-inductive-bias-buys-you">¶</a></h2><p>Lesson 33 trained a CNN and a flatten-based MLP on plus-vs-circle shapes at one range of positions, then tested both at <em>unseen</em> positions — the CNN generalized (global max pooling makes it exactly translation-invariant); the flatten-based MLP didn't (its first layer's weights are tied to absolute pixel coordinates). Rerun that exact experiment, swapping in <code>TinyViT</code> for the MLP.</p>
+<h2 id="What-convolution's-inductive-bias-buys-you">What convolution's inductive bias buys you<a class="anchor-link" href="#What-convolution's-inductive-bias-buys-you">¶</a></h2><p>Lesson 34 trained a CNN and a flatten-based MLP on plus-vs-circle shapes at one range of positions, then tested both at <em>unseen</em> positions — the CNN generalized (global max pooling makes it exactly translation-invariant); the flatten-based MLP didn't (its first layer's weights are tied to absolute pixel coordinates). Rerun that exact experiment, swapping in <code>TinyViT</code> for the MLP.</p>
 <p>A ViT has no built-in translation invariance either — patch embedding and positional encoding are both position-specific, same as the MLP's flattened input. The chief practical mechanism ViTs use to compensate is scale: pretraining on enormous datasets lets attention <em>learn</em> something like translation invariance from data, rather than getting it for free from the architecture the way a CNN does. On the tiny dataset in this course, expect that learning to fail.</p>
 </div>
 </div>
@@ -273,7 +273,7 @@ linear-on-patches vs. strided-conv max abs diff: 2.38e-07
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=dbc06358"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Both models fit the training positions perfectly, but the ViT collapses to chance-level (or worse) on unseen positions every time, while the CNN generalizes perfectly — reproducing Lesson 33's MLP-vs-CNN gap almost exactly, with the ViT standing in for the MLP. This is the well-documented empirical finding behind real ViTs: they need either far more training data, or heavy data augmentation, or a hybrid architecture that reintroduces some convolutional structure, to match a CNN's data efficiency on small-to-medium datasets — because a CNN's translation invariance is a hard architectural guarantee, while a ViT's has to be learned from examples. At the scale of hundreds of millions of images, ViTs match or beat CNNs handily; at the scale of hundreds of images, they don't.</p>
+<p>Both models fit the training positions perfectly, but the ViT collapses to chance-level (or worse) on unseen positions every time, while the CNN generalizes perfectly — reproducing Lesson 34's MLP-vs-CNN gap almost exactly, with the ViT standing in for the MLP. This is the well-documented empirical finding behind real ViTs: they need either far more training data, or heavy data augmentation, or a hybrid architecture that reintroduces some convolutional structure, to match a CNN's data efficiency on small-to-medium datasets — because a CNN's translation invariance is a hard architectural guarantee, while a ViT's has to be learned from examples. At the scale of hundreds of millions of images, ViTs match or beat CNNs handily; at the scale of hundreds of images, they don't.</p>
 <h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
 <li>Increase the training set size in <code>make_dataset(data_rng, 300, ...)</code> from 300 to 3000 images at the same training positions. Does the ViT's unseen-position accuracy improve substantially, partially, or not at all — and what does that suggest about <em>how much</em> more data a ViT needs to compensate for its missing inductive bias?</li>
 <li>Reduce <code>patch_size</code> from 4 to 2 (finer patches, longer sequence). Does finer patching help the ViT generalize better to unseen positions, or is the failure mode unrelated to patch resolution?</li>
@@ -285,7 +285,7 @@ linear-on-patches vs. strided-conv max abs diff: 2.38e-07
 
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson45_transformer_architecture.html">&larr; Lesson 45: The Transformer Architecture</a></div>
-            <div class="lesson-nav-next"><a href="lesson47_self_supervised_learning.html">Lesson 47: Self-Supervised and Contrastive Learning &rarr;</a></div>
+            <div class="lesson-nav-next"><a href="lesson47_autoencoders.html">Lesson 47: Autoencoders &rarr;</a></div>
         </div>
     </div>
 </body>
