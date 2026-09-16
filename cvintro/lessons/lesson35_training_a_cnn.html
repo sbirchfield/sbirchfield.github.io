@@ -37,7 +37,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=686bd577"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-35:-Training-a-CNN">Lesson 35: Training a CNN<a class="anchor-link" href="#Lesson-35:-Training-a-CNN">¶</a></h1><p>Lesson 34's CNN was trained and evaluated on data drawn from the same, fairly generous distribution. Real training has a much sharper failure mode lurking: with too little data and too much model capacity, a network can perfectly memorize its training set while learning nothing that generalizes. This lesson makes that failure concrete, then fixes it two different ways: <strong>data augmentation</strong> (Lesson 8's transforms, repurposed) and <strong>regularization</strong> (weight decay).</p>
+<h1 id="Lesson-35:-Training-a-CNN">Lesson 35: Training a CNN<a class="anchor-link" href="#Lesson-35:-Training-a-CNN">¶</a></h1><p>Lesson 34's CNN was trained and evaluated on data drawn from the same, fairly generous distribution. Real training has a much sharper failure mode lurking: with too little data and too much model capacity, a network can perfectly memorize its training set while learning nothing that generalizes. Lesson 32 showed that more capacity means a model <em>can</em> represent more; this lesson shows the flip side — that same surplus capacity, with too little data to constrain it, is exactly what lets a network memorize instead of generalize. This lesson makes that failure concrete, then fixes it two different ways: <strong>data augmentation</strong> (Lesson 8's transforms, repurposed) and <strong>regularization</strong> (weight decay).</p>
 </div>
 </div>
 </div>
@@ -452,7 +452,7 @@ dropout(0.5):   mean val acc = 70.2%  (+/- 8.0%, 8 seeds)
 </div>
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson34_convolutional_neural_networks.html">&larr; Lesson 34: Convolutional Neural Networks</a></div>
+            <div class="lesson-nav-prev"><a href="lesson34_convolutional_neural_networks.html">&larr; Lesson 34: Convolutional Neural Networks (CNNs)</a></div>
             <div class="lesson-nav-next"><a href="lesson36_image_classification_practice.html">Lesson 36: Image Classification in Practice &rarr;</a></div>
         </div>
     </div>
