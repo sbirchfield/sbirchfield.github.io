@@ -37,7 +37,9 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=8d00ab3f"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-33:-Optimization">Lesson 33: Optimization<a class="anchor-link" href="#Lesson-33:-Optimization">¶</a></h1><p>Lessons 31-32 used plain gradient descent: take the gradient, take a fixed-size step against it, repeat. That's enough to prove the <em>idea</em> works, but it's rarely how real networks are trained. This lesson covers four practical upgrades — <strong>momentum</strong>, <strong>adaptive step sizes (Adam)</strong>, <strong>weight initialization schemes</strong>, and <strong>learning rate schedules</strong> — each fixing a specific, concrete failure mode of plain gradient descent.</p>
+<h1 id="Lesson-33:-Optimization">Lesson 33: Optimization<a class="anchor-link" href="#Lesson-33:-Optimization">¶</a></h1><p>Lessons 31-32 used plain gradient descent: take the gradient, take a fixed-size step against it:</p>
+<p>$$p \leftarrow p - \eta\,\nabla f(p)$$</p>
+<p>where $p$ is whatever's being learned (a weight, a bias, or the whole parameter vector at once), $\eta$ is the <strong>learning rate</strong>, and $\nabla f(p)$ is the loss gradient at the current parameters. That's enough to prove the <em>idea</em> works, but it's rarely how real networks are trained. This lesson covers four practical upgrades — <strong>momentum</strong>, <strong>adaptive step sizes (Adam)</strong>, <strong>weight initialization schemes</strong>, and <strong>learning rate schedules</strong> — each fixing a specific, concrete failure mode of plain gradient descent.</p>
 </div>
 </div>
 </div>
@@ -317,7 +319,7 @@ max diff vs torch.optim.Adam: 1.11e-16
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=f5ac0d62"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Weight-initialization:-why-zero-doesn't-work">Weight initialization: why zero doesn't work<a class="anchor-link" href="#Weight-initialization:-why-zero-doesn't-work">¶</a></h2><p>It's tempting to initialize all weights to zero — it seems like the most "neutral" starting point. It's actually catastrophic for any layer with more than one unit: every hidden unit computes the exact same function of the input, gets the exact same gradient, and gets updated by the exact same amount, forever. This <strong>symmetry</strong> never breaks on its own.</p>
+<h2 id="Weight-initialization:-why-zero-doesn't-work">Weight initialization: why zero doesn't work<a class="anchor-link" href="#Weight-initialization:-why-zero-doesn't-work">¶</a></h2><p>It's tempting to initialize all weights to zero. Although this seems like the most "neutral" starting point, it's actually catastrophic for any layer with more than one unit: every hidden unit computes the exact same function of the input, gets the exact same gradient, and gets updated by the exact same amount, forever. This <strong>symmetry</strong> never breaks on its own.</p>
 </div>
 </div>
 </div>
@@ -440,9 +442,9 @@ all 4 hidden units still have identical weight vectors after 3000 steps of zero-
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>fixed weight std = 0.05, activation variance after 20 tanh layers:
-  width=  16: variance = 2.73e-29
-  width=  64: variance = 5.39e-17
-  width= 256: variance = 3.36e-05
+  width=  16: variance = 2.03e-29
+  width=  64: variance = 8.12e-17
+  width= 256: variance = 3.32e-05
 </pre>
 </div>
 </div>
@@ -452,7 +454,8 @@ all 4 hidden units still have identical weight vectors after 3000 steps of zero-
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=8d1078c3"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>A fixed std of 0.05 vanishes to essentially zero after 20 layers, and gets <em>worse</em> as the layer gets wider — more incoming connections means more terms summed into each output, so a fixed per-weight std pushes the pre-activation further from zero even as the individual weights stay the same size. <strong>Xavier initialization</strong> (<a href="../references.html#glorot-bengio-2010">Glorot &amp; Bengio, 2010</a>) — also known as <em>Glorot initialization</em> — fixes this by scaling the std with the layer's <strong>fan-in</strong> (number of inputs): <code>std = sqrt(1 / fan_in)</code>. Repeat the same experiment with Xavier-scaled weights:</p>
+<p>A fixed std of 0.05 vanishes to essentially zero after 20 layers — and the amount it vanishes depends heavily on layer width. Each layer's pre-activation variance scales as <code>fan_in * std^2</code>, where <strong>fan-in</strong> is the layer's number of inputs: at width 16, that's <code>16 * 0.05^2 ≈ 0.04</code>, so each layer keeps only about 4% of the previous layer's variance, and 20 compounding layers erase the signal almost completely. At width 256, the <em>same</em> fixed std keeps <code>256 * 0.05^2 ≈ 0.64</code> of the variance per layer — still shrinking, but far more slowly, which is exactly why the width-256 column above vanishes so much less severely than width-16's. A fixed std's effect depends entirely on fan-in, so the same number that badly vanishes a narrow layer would, at a wide enough layer, push <code>fan_in * std^2</code> past 1 and start <em>exploding</em> instead.</p>
+<p><strong>Xavier initialization</strong> (<a href="../references.html#glorot-bengio-2010">Glorot &amp; Bengio, 2010</a>) — also known as <em>Glorot initialization</em> — fixes this by scaling the std with the layer's fan-in: <code>std = sqrt(1 / fan_in)</code>, which keeps <code>fan_in * std^2</code> pinned at exactly 1 regardless of width. Repeat the same experiment with Xavier-scaled weights:</p>
 </div>
 </div>
 </div>
@@ -488,11 +491,11 @@ all 4 hidden units still have identical weight vectors after 3000 steps of zero-
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Xavier std = sqrt(1/fan_in), activation variance after 20 tanh layers:
-  width=  16: variance = 0.005
-  width=  64: variance = 0.023
+  width=  16: variance = 0.029
+  width=  64: variance = 0.024
   width= 256: variance = 0.027
 
-nn.init.xavier_normal_ weight std: 0.0627  (formula predicts 0.0625)
+nn.init.xavier_normal_ weight std: 0.0622  (formula predicts 0.0625)
 </pre>
 </div>
 </div>
@@ -502,7 +505,8 @@ nn.init.xavier_normal_ weight std: 0.0627  (formula predicts 0.0625)
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=35277db1"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Xavier keeps the variance in the same ballpark regardless of width, instead of vanishing catastrophically. But Xavier's derivation assumes a symmetric activation like <code>tanh</code>; <strong>Kaiming initialization</strong> (<a href="../references.html#he-2015-kaiming">He et al., 2015</a>) — also known as <em>He initialization</em> — is the same idea adjusted for <code>ReLU</code>, which zeros out roughly half its inputs and so needs twice the variance to compensate: <code>std = sqrt(2 / fan_in)</code>. Using Xavier's <code>tanh</code>-derived scale on a <code>ReLU</code> network still vanishes:</p>
+<p>Xavier keeps the variance in the same ballpark regardless of width, instead of vanishing catastrophically. But Xavier's derivation assumes a symmetric activation like <code>tanh</code>.</p>
+<p><strong>Kaiming initialization</strong> (<a href="../references.html#he-2015-kaiming">He et al., 2015</a>) — also known as <em>He initialization</em> — is the same idea adjusted for <code>ReLU</code>, which zeros out roughly half its inputs and so needs twice the variance to compensate: <code>std = sqrt(2 / fan_in)</code>. Using Xavier's <code>tanh</code>-derived scale on a <code>ReLU</code> network still vanishes:</p>
 </div>
 </div>
 </div>
@@ -537,10 +541,10 @@ nn.init.xavier_normal_ weight std: 0.0627  (formula predicts 0.0625)
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>ReLU net, Xavier scale (sqrt(1/fan_in), no ReLU correction): variance after 20 layers = 1.02e-06
-ReLU net, Kaiming scale (sqrt(2/fan_in)):                    variance after 20 layers = 0.289
+<pre>ReLU net, Xavier scale (sqrt(1/fan_in), no ReLU correction): variance after 20 layers = 5.80e-07
+ReLU net, Kaiming scale (sqrt(2/fan_in)):                    variance after 20 layers = 0.949
 
-nn.init.kaiming_normal_ weight std: 0.0882  (formula predicts 0.0884)
+nn.init.kaiming_normal_ weight std: 0.0885  (formula predicts 0.0884)
 </pre>
 </div>
 </div>
@@ -550,17 +554,17 @@ nn.init.kaiming_normal_ weight std: 0.0882  (formula predicts 0.0884)
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=79f4c316"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The rule of thumb that follows: use Kaiming init for <code>ReLU</code>-family networks (the default for <code>nn.Conv2d</code>/<code>nn.Linear</code> is actually already a variant of this), and Xavier for <code>tanh</code>/<code>sigmoid</code>. Both are strictly better than picking a fixed std and hoping — they're derived, not tuned, from a simple requirement: keep activation variance roughly constant from layer to layer, so a network can be made arbitrarily deep without silently losing its signal before training even starts. This is the same instinct behind Lesson 37's <code>xavier_normal_</code> call in the vanishing-gradient demo, and behind batch normalization (also Lesson 37) — normalizing activation statistics is a recurring fix for the same underlying problem, applied at different points (once at initialization, continuously during training).</p>
+<p>Rule of thumb: use Kaiming init for <code>ReLU</code>-family networks (the default for <code>nn.Conv2d</code>/<code>nn.Linear</code> is actually already a variant of this), and Xavier for <code>tanh</code>/<code>sigmoid</code>. Both are strictly better than picking a fixed std and hoping. They're derived, not tuned, from a simple requirement: keep activation variance roughly constant from layer to layer, so a network can be made arbitrarily deep without silently losing its signal before training even starts.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=2d29c169"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Learning-rate-schedules">Learning rate schedules<a class="anchor-link" href="#Learning-rate-schedules">¶</a></h2><p>A single fixed learning rate for an entire training run is another thing that's easy to reach for and often not quite right: a rate large enough to make fast early progress is often too large to settle precisely once training gets close to a minimum. <strong>Learning rate schedules</strong> change the rate over time. Three common ones, validated against <code>torch.optim.lr_scheduler</code>:</p>
+<h2 id="Learning-rate-schedules">Learning rate schedules<a class="anchor-link" href="#Learning-rate-schedules">¶</a></h2><p>A single fixed learning rate for the whole training run is tempting — it's the obvious default — but it's often the wrong choice: a rate large enough for fast early progress is usually too large to settle precisely once training nears a minimum. <strong>Learning rate schedules</strong> change the rate over time. Three common ones, validated against <code>torch.optim.lr_scheduler</code>:</p>
 <ul>
 <li><strong>Step decay</strong>: multiply the rate by a fixed factor every <code>N</code> steps.</li>
-<li><strong>Cosine annealing</strong>: smoothly decay along a cosine curve from the initial rate down to (near) zero.</li>
+<li><strong>Cosine annealing</strong>: smoothly decay along a cosine curve from the initial rate down to (near) zero — the name is borrowed directly from <strong>simulated annealing</strong>, the classical optimization technique of starting "hot" (free to explore, even accepting worse moves) and gradually "cooling" toward a fixed solution.</li>
 <li><strong>Linear warmup</strong>: <em>ramp up</em> from zero over the first few steps, before applying the main schedule — used because early updates, before a model's gradient statistics have stabilized, can be unreliable enough that a large rate from step one causes damage a few steps of gradual ramp-up would have avoided.</li>
 </ul>
 </div>
@@ -681,7 +685,13 @@ linear warmup: max diff vs torch.optim.lr_scheduler = 0.00e+00
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>constant lr:  mean loss over final 50 steps = 0.2142
+<pre>constant lr:  mean loss over final 50 steps = 0.2142</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
 step decay:   mean loss over final 50 steps = 0.0025
 </pre>
 </div>
@@ -717,8 +727,8 @@ step decay:   mean loss over final 50 steps = 0.0025
 </div>
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson32_multilayer_perceptrons.html">&larr; Lesson 32: Multi-Layer Perceptrons &mdash; Composing Projections</a></div>
-            <div class="lesson-nav-next"><a href="lesson34_convolutional_neural_networks.html">Lesson 34: Convolutional Neural Networks &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson32_multilayer_perceptrons.html">&larr; Lesson 32: Multi-Layer Perceptrons</a></div>
+            <div class="lesson-nav-next"><a href="lesson34_convolutional_neural_networks.html">Lesson 34: Convolutional Neural Networks (CNNs) &rarr;</a></div>
         </div>
     </div>
 </body>
