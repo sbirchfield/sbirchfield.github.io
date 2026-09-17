@@ -40,6 +40,7 @@
 <h1 id="Lesson-33:-Optimization">Lesson 33: Optimization<a class="anchor-link" href="#Lesson-33:-Optimization">¶</a></h1><p>Lessons 31-32 used plain gradient descent: take the gradient, take a fixed-size step against it:</p>
 <p>$$p \leftarrow p - \eta\,\nabla f(p)$$</p>
 <p>where $p$ is whatever's being learned (a weight, a bias, or the whole parameter vector at once), $\eta$ is the <strong>learning rate</strong>, and $\nabla f(p)$ is the loss gradient at the current parameters. That's enough to prove the <em>idea</em> works, but it's rarely how real networks are trained. This lesson covers four practical upgrades — <strong>momentum</strong>, <strong>adaptive step sizes (Adam)</strong>, <strong>weight initialization schemes</strong>, and <strong>learning rate schedules</strong> — each fixing a specific, concrete failure mode of plain gradient descent.</p>
+<p>Note that in real training, the gradient is almost never computed over the <em>entire</em> training set at once — it wouldn't fit into memory. Rather, it's estimated from a small, randomly sampled <strong>mini-batch</strong> (say, 32 or 256 examples) at every step instead. The resulting noisy, sample-to-sample-varying estimate is what gives <strong>stochastic gradient descent (SGD)</strong> its name. This lesson mostly uses the exact, noise-free gradient of a fixed function (calling it "SGD" for convenience); the last section simulates mini-batch noise directly to show why it matters.</p>
 </div>
 </div>
 </div>
@@ -442,9 +443,9 @@ all 4 hidden units still have identical weight vectors after 3000 steps of zero-
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>fixed weight std = 0.05, activation variance after 20 tanh layers:
-  width=  16: variance = 2.03e-29
-  width=  64: variance = 8.12e-17
-  width= 256: variance = 3.32e-05
+  width=  16: variance = 7.94e-28
+  width=  64: variance = 1.02e-16
+  width= 256: variance = 3.12e-05
 </pre>
 </div>
 </div>
@@ -491,11 +492,17 @@ all 4 hidden units still have identical weight vectors after 3000 steps of zero-
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Xavier std = sqrt(1/fan_in), activation variance after 20 tanh layers:
-  width=  16: variance = 0.029
-  width=  64: variance = 0.024
-  width= 256: variance = 0.027
+  width=  16: variance = 0.026
+  width=  64: variance = 0.023
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>  width= 256: variance = 0.027
 
-nn.init.xavier_normal_ weight std: 0.0622  (formula predicts 0.0625)
+nn.init.xavier_normal_ weight std: 0.0627  (formula predicts 0.0625)
 </pre>
 </div>
 </div>
@@ -541,10 +548,10 @@ nn.init.xavier_normal_ weight std: 0.0622  (formula predicts 0.0625)
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>ReLU net, Xavier scale (sqrt(1/fan_in), no ReLU correction): variance after 20 layers = 5.80e-07
-ReLU net, Kaiming scale (sqrt(2/fan_in)):                    variance after 20 layers = 0.949
+<pre>ReLU net, Xavier scale (sqrt(1/fan_in), no ReLU correction): variance after 20 layers = 3.06e-07
+ReLU net, Kaiming scale (sqrt(2/fan_in)):                    variance after 20 layers = 1.324
 
-nn.init.kaiming_normal_ weight std: 0.0885  (formula predicts 0.0884)
+nn.init.kaiming_normal_ weight std: 0.0887  (formula predicts 0.0884)
 </pre>
 </div>
 </div>
@@ -644,7 +651,7 @@ linear warmup: max diff vs torch.optim.lr_scheduler = 0.00e+00
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=baffb86a"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Why-decay-actually-helps:-noisy-gradients">Why decay actually helps: noisy gradients<a class="anchor-link" href="#Why-decay-actually-helps:-noisy-gradients">¶</a></h3><p>On the exact, noise-free narrow bowl from the top of this lesson, a well-chosen constant learning rate converges just fine — there's nothing to decay away from. Real training almost never sees the exact gradient, though: each step uses a <em>mini-batch</em> estimate, which is noisy. Simulate that by adding random noise to the gradient every step, and compare a constant rate against step decay.</p>
+<h3 id="Why-decay-actually-helps:-noisy-gradients">Why decay actually helps: noisy gradients<a class="anchor-link" href="#Why-decay-actually-helps:-noisy-gradients">¶</a></h3><p>On the exact, noise-free narrow bowl from the top of this lesson, a well-chosen constant learning rate converges just fine — there's nothing to decay away from. As mentioned above, real training almost never sees the exact gradient, though: each step uses a mini-batch estimate, which is noisy. Simulate that by adding random noise to the gradient every step, and compare a constant rate against step decay.</p>
 </div>
 </div>
 </div>
@@ -685,13 +692,7 @@ linear warmup: max diff vs torch.optim.lr_scheduler = 0.00e+00
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>constant lr:  mean loss over final 50 steps = 0.2142</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
+<pre>constant lr:  mean loss over final 50 steps = 0.2142
 step decay:   mean loss over final 50 steps = 0.0025
 </pre>
 </div>
