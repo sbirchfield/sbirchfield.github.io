@@ -93,7 +93,7 @@ def get_lesson_sequence():
 def build_notebook(nb_path: pathlib.Path, sequence=None):
     print(f"Executing {nb_path.name} ...")
     nb = nbformat.read(nb_path, as_version=4)
-    ExecutePreprocessor(timeout=120, kernel_name="python3").preprocess(
+    ExecutePreprocessor(timeout=600, kernel_name="python3").preprocess(
         nb, {"metadata": {"path": str(NOTEBOOKS_DIR)}}
     )
 

@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=d29ce29c"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=7fe0af27"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-37:-Classic-Architectures">Lesson 37: Classic Architectures<a class="anchor-link" href="#Lesson-37:-Classic-Architectures">¶</a></h1><p>Lessons 34-35 built and trained one small CNN. This lesson looks at how CNN <em>architectures</em> evolved over roughly two decades, and works through the single biggest architectural idea in that history in detail: the residual connection, and the vanishing-gradient problem it was designed to fix.</p>
@@ -81,7 +81,7 @@
 </tr>
 </tbody>
 </table>
-<p>ResNet's 2015 result was the first to beat the ~5% error rate typically cited for a trained human on this same task. By 2017, with the winning error under 2.5%, ILSVRC's classification track was retired — its job as a benchmark essentially done. That trajectory, all measured on one shared competition, is the concrete history behind almost every architectural idea in this lesson.</p>
+<p>On this same task, a trained human achieves ~5% error rate. ResNet was the first to beat this number — sometimes referred to as "super-human" performance. By 2017, with the winning error under 2.5%, ILSVRC's classification track was retired — its job as a benchmark essentially done.</p>
 </div>
 </div>
 </div>
@@ -102,21 +102,23 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=2e290d56"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="A-brief-tour">A brief tour<a class="anchor-link" href="#A-brief-tour">¶</a></h2><p>A handful of architectures defined the field, each solving a specific problem with the previous one:</p>
+<h2 id="A-brief-historical-tour">A brief historical tour<a class="anchor-link" href="#A-brief-historical-tour">¶</a></h2><p>A handful of architectures were invented during this history, each solving a specific problem:</p>
 <ul>
 <li><strong>LeNet-5</strong> ("Gradient-Based Learning Applied to Document Recognition", <a href="../references.html#lecun-1998">LeCun et al., 1998</a><span class="landmark-paper">★</span>) — the template Lesson 34 already implements: conv, pool, conv, pool, then fully-connected layers. Built for digit recognition on 32x32 images.</li>
-<li><strong>AlexNet</strong> (<a href="../references.html#krizhevsky-2012">Krizhevsky, Sutskever &amp; Hinton, 2012</a><span class="landmark-paper">★</span>) — the same template, just much bigger (5 conv layers, ~60M parameters), trained on ImageNet using GPUs and ReLU instead of tanh/sigmoid. Its 2012 ILSVRC win (see the table above) is usually cited as the event that restarted mainstream interest in neural networks.</li>
+<li><strong>AlexNet</strong> (<a href="../references.html#krizhevsky-2012">Krizhevsky, Sutskever &amp; Hinton, 2012</a><span class="landmark-paper">★</span>) — the same template, just much bigger (5 conv layers, ~60M parameters), trained on ImageNet using GPUs and ReLU instead of tanh/sigmoid. Its 2012 ILSVRC win (see the table above) is the watershed event that began the deep learning revolution in computer vision — reviving mainstream interest in neural networks after a decade-long winter (akin to the "AI winter").</li>
 <li><strong>VGG</strong> (<a href="../references.html#simonyan-zisserman-2014">Simonyan &amp; Zisserman, 2014</a><span class="landmark-paper">★</span>) — replaced AlexNet's large 11x11/5x5 filters with a deep stack of small 3x3 convolutions. Two stacked 3x3 convs have the same <em>receptive field</em> as one 5x5 conv (Lesson 11's pyramid idea again) but fewer parameters and an extra nonlinearity in between.</li>
 <li><strong>GoogLeNet / Inception</strong> (<a href="../references.html#szegedy-2015">Szegedy et al., 2015</a><span class="landmark-paper">★</span>) — went wider instead of just deeper: each "Inception module" runs several convolution sizes (1x1, 3x3, 5x5) side by side on the same input and concatenates their outputs, so the network doesn't have to commit to one filter size per layer. 1x1 convolutions are used first to cheaply shrink the channel count, keeping the wider module affordable.</li>
-<li><strong>ResNet</strong> (<a href="../references.html#he-2015-resnet">He et al., 2015</a><span class="landmark-paper">★</span>) — the subject of the rest of this lesson. Pushed depth from VGG's ~19 layers to 50, 101, even 152, by solving the problem that had made naively stacking more layers <em>worse</em>, not better.</li>
+<li><strong>ResNet</strong> (<a href="../references.html#he-2015-resnet">He et al., 2015</a><span class="landmark-paper">★</span>) — pushed depth from VGG's ~19 layers to 50, 101, even 152, by solving the problem that had made naively stacking more layers <em>worse</em>, not better.</li>
+<li><strong>SENet</strong> (<a href="../references.html#hu-2018-senet">Hu, Shen &amp; Sun, 2018</a><span class="landmark-paper">★</span>), the 2017 ILSVRC winner from the table above — not a new backbone shape, but a refinement: its "squeeze-and-excitation" block lets each layer learn per-channel weights (which feature channels matter most for this input) rather than treating every channel equally.</li>
 </ul>
+<p>The rest of this lesson focuses on ResNet's residual connection as the single most consequential idea in this history.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=e36db620"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-vanishing-gradient-problem">The vanishing-gradient problem<a class="anchor-link" href="#The-vanishing-gradient-problem">¶</a></h2><p>Why did stacking more layers make plain networks <em>worse</em>? Backprop's chain rule multiplies a gradient by every layer's local Jacobian on its way back to the input. If those per-layer factors are consistently smaller than 1 — which happens easily with a saturating activation like sigmoid, whose derivative is at most 0.25 — a deep enough stack multiplies the gradient by a very small number many times over. The gradient reaching early layers shrinks toward zero, and those layers stop learning at all, even though nothing is mathematically wrong with the network.</p>
+<h2 id="Building-a-ResNet-block">Building a ResNet block<a class="anchor-link" href="#Building-a-ResNet-block">¶</a></h2><h3 id="The-vanishing-gradient-problem">The vanishing-gradient problem<a class="anchor-link" href="#The-vanishing-gradient-problem">¶</a></h3><p>Why does stacking more layers make plain networks <em>worse</em>? Backprop's chain rule multiplies a gradient by every layer's local Jacobian on its way back to the input. If those per-layer factors are consistently smaller than 1 — which happens easily with a saturating activation like sigmoid, whose derivative is at most 0.25 — a deep enough stack multiplies the gradient by a very small number many times over. The gradient reaching early layers shrinks toward zero, and those layers stop learning at all.</p>
 <p>Build a 30-layer, sigmoid-activated network of <code>Linear</code> layers and track the gradient magnitude at every depth, for two versions: a <strong>plain</strong> stack <code>x = sigmoid(layer(x))</code>, and a <strong>residual</strong> stack <code>x = x + 0.3 * sigmoid(layer(x))</code> where each layer only has to learn a small <em>correction</em> added to its input, rather than replacing it outright.</p>
 </div>
 </div>
@@ -210,15 +212,15 @@ residual net: gradient norm at layer 0 / gradient norm at layer 29 = 1.05e+00
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=b556f1ea"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The plain network's gradient shrinks by roughly nineteen orders of magnitude between the last layer and the first — for all practical purposes, the early layers receive no learning signal at all. The residual network's gradient stays essentially flat across all 30 layers.</p>
-<p>The reason is structural, not a matter of tuning: with a residual connection, <code>x_{l+1} = x_l + F(x_l)</code>, so <code>dx_{l+1}/dx_l = I + dF/dx_l</code>. Backprop multiplies these Jacobians together across layers, but every one of them contains an identity matrix <code>I</code> as a direct term. That gives the gradient a path straight back to the input that never gets multiplied by a small sigmoid derivative — an unobstructed shortcut, regardless of how deep the stack gets. The plain network has no such path: every layer's Jacobian is purely <code>dF/dx_l</code>, so there's nothing to stop repeated multiplication from driving the product toward zero.</p>
+<p>The plain network's gradient shrinks by roughly nineteen orders of magnitude between the last layer and the first — for all practical purposes, the early layers receive no learning signal at all. The residual network's (ResNet's) gradient stays essentially flat across all 30 layers.</p>
+<p>The reason is structural, not a matter of tuning: with a residual connection, $x_{l+1} = x_l + F(x_l)$, so $dx_{l+1}/dx_l = I + dF/dx_l$. Backprop multiplies these Jacobians together across layers, but every one of them contains an identity matrix $I$ as a direct term. That gives the gradient a path straight back to the input that never gets multiplied by a small sigmoid derivative — an unobstructed shortcut, regardless of how deep the stack gets. The plain network has no such path: every layer's Jacobian is purely $dF/dx_l$, so there's nothing to stop repeated multiplication from driving the product toward zero.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=a7d53eac"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Batch-normalization">Batch normalization<a class="anchor-link" href="#Batch-normalization">¶</a></h2><p>The convolutional residual block below uses one more ingredient: <strong>batch normalization</strong> (<a href="../references.html#ioffe-szegedy-2015">Ioffe &amp; Szegedy, 2015</a><span class="landmark-paper">★</span>). The idea is simple — for each channel, subtract that channel's mean and divide by its standard deviation, computed <em>across the current mini-batch</em> (over the batch, height, and width dimensions, separately per channel), so every channel's activations always have mean 0 and standard deviation 1 going into the next layer. Two learnable parameters, a per-channel scale <code>gamma</code> and shift <code>beta</code>, are then applied on top, so the layer can still recover a different mean/scale if that's actually useful — normalization to 0/1 is a <em>starting point</em> the network can undo, not a hard constraint.</p>
+<h3 id="Batch-normalization">Batch normalization<a class="anchor-link" href="#Batch-normalization">¶</a></h3><p>ResNets use one more ingredient: <strong>batch normalization</strong> (<a href="../references.html#ioffe-szegedy-2015">Ioffe &amp; Szegedy, 2015</a><span class="landmark-paper">★</span>). The idea is simple — for each channel, subtract that channel's mean and divide by its standard deviation, computed <em>across the current mini-batch</em> (over the batch, height, and width dimensions, separately per channel), so every channel's activations always have mean 0 and standard deviation 1 going into the next layer. Two learnable parameters, a per-channel scale <code>gamma</code> and shift <code>beta</code>, are then applied on top, so the layer can still recover a different mean/scale if that's actually useful — normalization to 0/1 is a <em>starting point</em> the network can undo, not a hard constraint.</p>
 <p>Deep networks without batch norm are prone to a related but distinct problem from vanishing gradients: as training updates early layers, the <em>distribution</em> of activations feeding into later layers keeps shifting (sometimes called "internal covariate shift"), so later layers are constantly chasing a moving target. Renormalizing at every layer keeps that distribution stable, which in practice lets much higher learning rates be used and makes deep networks noticeably easier to train — one of the reasons ResNet could push to 50+ layers where earlier architectures struggled past ~20.</p>
 </div>
 </div>
@@ -271,7 +273,7 @@ per-channel std after:   [1. 1. 1. 1.]
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=db57c1d7"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="A-convolutional-residual-block">A convolutional residual block<a class="anchor-link" href="#A-convolutional-residual-block">¶</a></h2><p>In an actual ResNet, <code>F</code> is a pair of small convolutions (with batch normalization and ReLU in between), and the shortcut adds the <em>input feature map</em> back onto their output, channel-for-channel and pixel-for-pixel:</p>
+<h3 id="Putting-it-together:-a-convolutional-residual-block">Putting it together: a convolutional residual block<a class="anchor-link" href="#Putting-it-together:-a-convolutional-residual-block">¶</a></h3><p>In an actual ResNet, <code>F</code> is a pair of small convolutions (with batch normalization and ReLU in between), and the shortcut — also called a <strong>skip connection</strong>, since it skips over <code>F</code> entirely — adds the <em>input feature map</em> back onto their output, channel-for-channel and pixel-for-pixel:</p>
 </div>
 </div>
 </div>

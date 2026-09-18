@@ -85,6 +85,15 @@ REFERENCES = [
         "landmark": True,
     },
     {
+        "id": "hu-2018-senet",
+        "authors": "Hu, J., Shen, L., & Sun, G.",
+        "sort_name": "Hu",
+        "year": 2018,
+        "title": "Squeeze-and-Excitation Networks",
+        "url": "https://arxiv.org/abs/1709.01507",
+        "landmark": True,
+    },
+    {
         "id": "ronneberger-2015",
         "authors": "Ronneberger, O., Fischer, P., & Brox, T.",
         "sort_name": "Ronneberger",

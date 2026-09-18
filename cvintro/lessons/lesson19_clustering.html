@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=714d23e6"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=e709a178"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-19:-Clustering-%E2%80%94-k-Means,-GMMs,-and-DBSCAN">Lesson 19: Clustering — k-Means, GMMs, and DBSCAN<a class="anchor-link" href="#Lesson-19:-Clustering-%E2%80%94-k-Means,-GMMs,-and-DBSCAN">¶</a></h1><p>Every prior lesson in this part assumed some <em>target</em> — a threshold, a template, a known transform. <strong>Clustering</strong> asks a different kind of question, with no target at all: given a pile of points (or pixels), group them into a small number of sensible categories, using only how similar they are to each other. This is <strong>unsupervised learning</strong>'s classical starting point — no labels, just a distance function and an assumption about what "a cluster" should look like. This lesson builds three clustering algorithms from scratch, each built on a different assumption about cluster shape, and shows concretely where each one wins and fails: <strong>k-means</strong> (round, similarly-sized clusters), <strong>Gaussian mixture models</strong> (elliptical clusters, soft assignment), and <strong>DBSCAN</strong> (arbitrary shape, defined by density rather than a center).</p>
@@ -386,7 +386,13 @@ DBSCAN accuracy on concentric rings: 100.0%
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>             noise points correctly flagged   out of
+<pre>             noise points correctly flagged   out of</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
    k-means                                0       60  (no noise concept — every point forced into a cluster)
     DBSCAN                                8       60
 </pre>
