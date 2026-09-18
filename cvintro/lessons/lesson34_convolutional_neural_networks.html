@@ -37,7 +37,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=07d92102"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-34:-Convolutional-Neural-Networks-(CNNs)">Lesson 34: Convolutional Neural Networks (CNNs)<a class="anchor-link" href="#Lesson-34:-Convolutional-Neural-Networks-(CNNs)">¶</a></h1><p>The layers in Lessons 31-33 treat every input as a flat vector: each pixel gets its own independent weight, with no notion that pixel $(5,5)$ is <em>near</em> pixel $(5,6)$. That throws away the entire spatial structure images have, and it means a fully-connected layer must independently re-learn what an edge looks like at every single position. <strong>Convolution</strong> — already built from scratch in Lesson 10 — fixes both problems at once.</p>
+<h1 id="Lesson-34:-Convolutional-Neural-Networks-(CNNs)">Lesson 34: Convolutional Neural Networks (CNNs)<a class="anchor-link" href="#Lesson-34:-Convolutional-Neural-Networks-(CNNs)">¶</a></h1><p>The layers in Lessons 31-33 treat every input as a flat vector, and that creates two distinct problems for images. First, each pixel gets its own independent weight, with no notion that neighboring pixels are <em>near</em> each other — the entire spatial structure images have is thrown away. Second, because every position gets its own separate weights, a fully-connected layer has no way to reuse a filter it's already learned: it must independently re-learn what an edge looks like at every single position, all over again. <strong>Convolution</strong> — already built manually in Lesson 10 — fixes both problems at once by baking in an <strong>inductive bias</strong>: restrict each output to a small local patch, and share that patch's weights across every position.</p>
 </div>
 </div>
 </div>
@@ -59,11 +59,18 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=2f234b6f"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="A-conv-layer-is-a-projection,-restricted-and-shared">A conv layer is a projection, restricted and shared<a class="anchor-link" href="#A-conv-layer-is-a-projection,-restricted-and-shared">¶</a></h2><p>Recall Lesson 30's central idea: $y = w^\top x + b$, a projection. A convolutional layer computes <em>exactly this</em>, but for $x$, it only ever looks at a small local patch (say $3\times3$) instead of the whole image — and, crucially, it reuses the <em>same</em> $w$ at every patch location. Two consequences:</p>
+<h2 id="A-conv-layer-is-a-projection,-restricted-and-shared">A conv layer is a projection, restricted and shared<a class="anchor-link" href="#A-conv-layer-is-a-projection,-restricted-and-shared">¶</a></h2><p>Recall Lesson 30's central idea: $y = w^\top x + b$, a projection. A convolutional layer computes <em>exactly this</em>, but for $x$, it only looks at a small local patch (say $3\times3$) instead of the whole image — and, crucially, it reuses the <em>same</em> $w$ at every patch location. Two consequences:</p>
 <ul>
-<li><strong>Vastly fewer parameters.</strong> A $3\times3$ filter has 9 weights, no matter how big the image is — a fully-connected layer over a $16\times16$ image needs 256 weights <em>per output unit</em>.</li>
-<li><strong>Translation equivariance.</strong> Because the same filter slides everywhere, a feature learned at one position is automatically detected at every other position too, for free.</li>
+<li><strong>Vastly fewer parameters.</strong> A $3\times3$ filter over a single input channel has 9 weights, no matter how big the image is — a fully-connected layer over a $16\times16$ image needs 256 weights <em>per output unit</em>.</li>
+<li><strong>Translation equivariance.</strong> Because the same filter slides everywhere, a feature learned at one position is automatically detected at every other position too, for free. <em>Equivariant</em> means the output shifts along with the input, rather than staying fixed — shift the image by 2 pixels and the feature map's detections shift by exactly 2 pixels too. That's a distinct, weaker property than <em>invariance</em> (an unchanged output despite a shifted input), which pooling adds a bit of, later in this lesson.</li>
 </ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=39b16814"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="A-conv-layer-kernel-is-3D">A conv layer kernel is 3D<a class="anchor-link" href="#A-conv-layer-kernel-is-3D">¶</a></h2><p>One more thing: In the context of a convolutional neural network (CNN), a "$3\times3$ filter" is really $3\times3\times C_{in}$, not just $3\times3$. Lesson 10's kernels were flat 2D grids, because they slid over a single grayscale channel. A conv layer's filter has to reach across <em>every</em> input channel at once — a $3\times3$ filter on a 3-channel RGB image has $3\times3\times3=27$ weights, one full depth-slice per input channel, summed together into a single output value at each position. Stack $C_{out}$ of these $3\times3\times C_{in}$ filters side by side (one per output channel) and the full weight tensor is 4D: <code>(C_out, C_in, 3, 3)</code> — exactly the shape <code>conv2d_forward</code> below expects.</p>
 </div>
 </div>
 </div>
@@ -125,8 +132,8 @@
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">img</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
-<span class="n">kernel</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="o">*</span> <span class="mf">0.5</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>          <span class="c1"># 3 input channels, e.g. RGB</span>
+<span class="n">kernel</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="o">*</span> <span class="mf">0.5</span>  <span class="c1"># ONE output filter, spanning all 3 input channels</span>
 <span class="n">bias</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">])</span>
 
 <span class="n">out</span> <span class="o">=</span> <span class="n">conv2d_forward</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">bias</span><span class="p">)</span>
@@ -153,16 +160,16 @@
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>forward max diff: 4.44e-16
+<pre>forward max diff: 8.88e-16
 </pre>
 </div>
 </div>
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>grad_img max diff:    4.44e-16
-grad_kernel max diff: 2.22e-15
-grad_bias max diff:   1.11e-15
+<pre>grad_img max diff:    8.88e-16
+grad_kernel max diff: 7.99e-15
+grad_bias max diff:   1.78e-15
 </pre>
 </div>
 </div>
@@ -172,7 +179,7 @@ grad_bias max diff:   1.11e-15
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=2dac3a2c"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Filters-you-already-know:-Lesson-12's-edge-detectors">Filters you already know: Lesson 12's edge detectors<a class="anchor-link" href="#Filters-you-already-know:-Lesson-12's-edge-detectors">¶</a></h2><p>The output of a conv layer before training is nonsense; the point is that gradient descent will <em>find</em> useful filters. To see what a useful filter's output already looks like, apply a filter you designed by hand back in Lesson 12: Sobel's edge kernel. Every trained CNN's first-layer filters typically converge to something visually similar to this — oriented edge and blob detectors — independent of what the network was trained to do.</p>
+<h2 id="Filters-you-already-know:-Lesson-12's-edge-detectors">Filters you already know: Lesson 12's edge detectors<a class="anchor-link" href="#Filters-you-already-know:-Lesson-12's-edge-detectors">¶</a></h2><p>The output of a conv layer before training is nonsense; the point is that gradient descent will <em>find</em> useful filters. To see what a useful filter's output already looks like, apply a filter you designed by hand back in Lesson 12: Sobel's edge kernel. Trained CNN's first-layer filters typically converge to something visually similar to this — oriented edge and blob detectors — independent of what the network was trained to do.</p>
 </div>
 </div>
 </div>
@@ -250,6 +257,13 @@ grad_bias max diff:   1.11e-15
 </pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=58567c8e"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Putting-them-together:-convolution-and-pooling,-interleaved">Putting them together: convolution and pooling, interleaved<a class="anchor-link" href="#Putting-them-together:-convolution-and-pooling,-interleaved">¶</a></h2><p>A real CNN is neither all convolution nor all pooling — it's the two stacked in alternation: convolution, pooling, convolution, pooling, and so on. Each pooling step roughly <em>halves</em> the spatial size ($H$ and $W$), and the rule of thumb is to roughly <em>double</em> the number of channels in the conv layer that follows. That's not a coincidence: pooling throws away spatial resolution, so doubling the channel count right after keeps the total amount of information ($C \times H \times W$) roughly constant from stage to stage, even as the representation trades "a little detail at many positions" for "more detail at fewer positions." The <code>CNNClassifier</code> built below follows this pattern: a first conv layer at $1 \rightarrow 8$ channels, full $16\times16$ resolution; a pool that halves it to $8\times8$; then a second conv layer that doubles the channels again, $8 \rightarrow 16$.</p>
 </div>
 </div>
 </div>
