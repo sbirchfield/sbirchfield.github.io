@@ -391,6 +391,15 @@ REFERENCES = [
         "landmark": True,
     },
     {
+        "id": "vandermaaten-2008-tsne",
+        "authors": "van der Maaten, L., & Hinton, G.",
+        "sort_name": "van der Maaten",
+        "year": 2008,
+        "title": "Visualizing Data using t-SNE",
+        "url": "https://www.jmlr.org/papers/v9/vandermaaten08a.html",
+        "landmark": True,
+    },
+    {
         "id": "rowley-baluja-kanade-1996",
         "authors": "Rowley, H. A., Baluja, S., & Kanade, T.",
         "sort_name": "Rowley",
