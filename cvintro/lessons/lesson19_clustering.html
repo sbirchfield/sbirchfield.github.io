@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=e709a178"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=359ebae8"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-19:-Clustering-%E2%80%94-k-Means,-GMMs,-and-DBSCAN">Lesson 19: Clustering — k-Means, GMMs, and DBSCAN<a class="anchor-link" href="#Lesson-19:-Clustering-%E2%80%94-k-Means,-GMMs,-and-DBSCAN">¶</a></h1><p>Every prior lesson in this part assumed some <em>target</em> — a threshold, a template, a known transform. <strong>Clustering</strong> asks a different kind of question, with no target at all: given a pile of points (or pixels), group them into a small number of sensible categories, using only how similar they are to each other. This is <strong>unsupervised learning</strong>'s classical starting point — no labels, just a distance function and an assumption about what "a cluster" should look like. This lesson builds three clustering algorithms from scratch, each built on a different assumption about cluster shape, and shows concretely where each one wins and fails: <strong>k-means</strong> (round, similarly-sized clusters), <strong>Gaussian mixture models</strong> (elliptical clusters, soft assignment), and <strong>DBSCAN</strong> (arbitrary shape, defined by density rather than a center).</p>
@@ -142,7 +142,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=fe03e92f"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>K-means, also known as Lloyd's algorithm, is here unchanged from its textbook form: pick <code>k</code> random points as initial centers, assign every point to its nearest center, recompute each center as the mean of its assigned points, repeat until nothing moves. With compact, roughly equal-sized, roughly round clusters in L<em>a</em>b* space (exactly what this synthetic image has), it recovers the true regions almost perfectly. Two real caveats worth flagging even in this success case: <code>k</code> (the number of clusters) has to be chosen in advance — nothing in the algorithm discovers it — and different random initializations can converge to different, sometimes noticeably worse, local optima (try changing <code>seed=3</code> to <code>seed=0</code> above and rerun).</p>
+<p>K-means, also known as Lloyd's algorithm, is here unchanged from its textbook form: pick <code>k</code> random points as initial centers, assign every point to its nearest center, recompute each center as the mean of its assigned points, repeat until nothing moves. With compact, roughly equal-sized, roughly round clusters in L<em>a</em>b* space (exactly what this synthetic image has), it recovers the true regions almost perfectly. Two real caveats worth flagging even in this success case: <code>k</code> (the number of clusters) has to be chosen in advance — nothing in the algorithm discovers it — and different random initializations can converge to different, sometimes noticeably worse, local optima (try changing <code>seed=3</code> to <code>seed=0</code> above and rerun); <strong>k-means++</strong> (<a href="../references.html#arthur-2007-kmeanspp">Arthur &amp; Vassilvitskii, 2007</a><span class="landmark-paper">★</span>) fixes this by seeding centers to be spread apart rather than purely at random.</p>
 </div>
 </div>
 </div>
@@ -213,7 +213,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=f580d6d3"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Gaussian-mixture-models:-soft,-elliptical-clusters">Gaussian mixture models: soft, elliptical clusters<a class="anchor-link" href="#Gaussian-mixture-models:-soft,-elliptical-clusters">¶</a></h2><p>A <strong>Gaussian mixture model (GMM)</strong> generalizes k-means two ways: each cluster gets its own full covariance (so clusters can be elongated ellipses, not just circles), and assignment is <em>soft</em> — every point gets a probability of belonging to each cluster, not a hard label. Fit by <strong>expectation-maximization (EM)</strong>: the E-step computes each point's responsibility (probability) under the current Gaussians; the M-step re-fits each Gaussian's mean, covariance, and weight to its responsibility-weighted points.</p>
+<h2 id="Gaussian-mixture-models:-soft,-elliptical-clusters">Gaussian mixture models: soft, elliptical clusters<a class="anchor-link" href="#Gaussian-mixture-models:-soft,-elliptical-clusters">¶</a></h2><p>A <strong>Gaussian mixture model (GMM)</strong> generalizes k-means two ways: each cluster gets its own full covariance (so clusters can be elongated ellipses, not just circles), and assignment is <em>soft</em> — every point gets a probability of belonging to each cluster, not a hard label. Fit by <strong>expectation-maximization (EM)</strong> (<a href="../references.html#dempster-1977-em">Dempster, Laird, &amp; Rubin, 1977</a><span class="landmark-paper">★</span>): the E-step computes each point's responsibility (probability) under the current Gaussians; the M-step re-fits each Gaussian's mean, covariance, and weight to its responsibility-weighted points.</p>
 </div>
 </div>
 </div>
@@ -273,7 +273,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=f8687440"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="DBSCAN:-clusters-defined-by-density,-not-shape">DBSCAN: clusters defined by density, not shape<a class="anchor-link" href="#DBSCAN:-clusters-defined-by-density,-not-shape">¶</a></h2><p><strong>DBSCAN</strong> (density-based spatial clustering) never fits a parametric shape at all. A point is a <strong>core point</strong> if at least <code>min_samples</code> other points lie within distance <code>eps</code> of it. Clusters are formed by chaining together core points that are within <code>eps</code> of each other (and their neighbors), so a cluster can be any shape — including a ring — as long as it's a <em>connected, sufficiently dense</em> region of space. Points that end up in no core point's neighborhood are labeled <strong>noise</strong>, not forced into the nearest cluster.</p>
+<h2 id="DBSCAN:-clusters-defined-by-density,-not-shape">DBSCAN: clusters defined by density, not shape<a class="anchor-link" href="#DBSCAN:-clusters-defined-by-density,-not-shape">¶</a></h2><p><strong>DBSCAN</strong> (density-based spatial clustering, <a href="../references.html#ester-1996-dbscan">Ester et al., 1996</a><span class="landmark-paper">★</span>) never fits a parametric shape at all. A point is a <strong>core point</strong> if at least <code>min_samples</code> other points lie within distance <code>eps</code> of it. Clusters are formed by chaining together core points that are within <code>eps</code> of each other (and their neighbors), so a cluster can be any shape — including a ring — as long as it's a <em>connected, sufficiently dense</em> region of space. Points that end up in no core point's neighborhood are labeled <strong>noise</strong>, not forced into the nearest cluster.</p>
 </div>
 </div>
 </div>
@@ -386,13 +386,7 @@ DBSCAN accuracy on concentric rings: 100.0%
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>             noise points correctly flagged   out of</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
+<pre>             noise points correctly flagged   out of
    k-means                                0       60  (no noise concept — every point forced into a cluster)
     DBSCAN                                8       60
 </pre>
