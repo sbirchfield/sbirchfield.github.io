@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson44 Precision And Parallel Training - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/pygments.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <div class="notebook-links">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson44_precision_and_parallel_training.ipynb" target="_blank" rel="noopener">
+                <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
+            </a>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson44_precision_and_parallel_training.ipynb" download>
+                <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
+            </a>
+        </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=ce8b58f5"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Lesson-44:-Precision-and-Parallel-Training">Lesson 44: Precision and Parallel Training<a class="anchor-link" href="#Lesson-44:-Precision-and-Parallel-Training">¶</a></h1><p>Every network in Lessons 31-43 trained on a small, CPU-friendly toy problem in default 32-bit floating point (fp32), on a single process. Real training runs rarely look like that: models are trained in reduced precision to go faster and use less memory, and split across many GPUs because no single device holds a modern model plus its training data. This lesson closes out Part 3 with the engineering underneath <em>how</em> training actually happens at scale, building each mechanism in miniature and checking it against the real thing: <strong>floating-point precision</strong> and why reduced precision needs help to work at all, <strong>mixed-precision training</strong>'s specific fix for that, and the two ways of splitting work across devices, <strong>data parallelism</strong> and <strong>model parallelism</strong>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=5422e222">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=01e09ec7"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Floating-point-precision:-fp32-vs.-fp16">Floating-point precision: fp32 vs. fp16<a class="anchor-link" href="#Floating-point-precision:-fp32-vs.-fp16">¶</a></h2><p>A 32-bit float (fp32) and a 16-bit float (fp16) both use the same idea -- sign, exponent, mantissa -- but fp16 spends far fewer bits on the exponent, so it simply cannot represent very small or very large magnitudes. <code>torch.finfo</code> reports the smallest positive <em>normal</em> value each format can hold: about <code>1.2e-38</code> for fp32, but only <code>6.1e-5</code> for fp16 (fp16 subnormals stretch a little further, down to about <code>6e-8</code>, at the cost of losing precision entirely). Below that floor, a value doesn't round to something small -- it rounds to exactly zero.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=1f470070">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">small_values</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">,</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="mf">1e-7</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">small_fp16</span> <span class="o">=</span> <span class="n">small_values</span><span class="o">.</span><span class="n">half</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="s2">"fp32 value"</span><span class="si">:</span><span class="s1">&gt;12</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="s2">"cast to fp16"</span><span class="si">:</span><span class="s1">&gt;14</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="s2">"underflowed to 0?"</span><span class="si">:</span><span class="s1">&gt;19</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">v32</span><span class="p">,</span> <span class="n">v16</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">small_values</span><span class="p">,</span> <span class="n">small_fp16</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">v32</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s1">&gt;12.1e</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">v16</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s1">&gt;14.1e</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">v16</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="si">:</span><span class="s1">&gt;19</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>  fp32 value   cast to fp16   underflowed to 0?
+     1.0e-02        1.0e-02               False
+     1.0e-03        1.0e-03               False
+     1.0e-04        1.0e-04               False
+     1.0e-05        1.0e-05               False
+     1.0e-06        1.0e-06               False
+     1.0e-07        1.2e-07               False
+     1.0e-08        0.0e+00                True
+     1.0e-09        0.0e+00                True
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=d5f3d905"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Values down to <code>1e-6</code> survive the cast intact; <code>1e-7</code> survives but loses precision (rounds to <code>1.2e-7</code>); <code>1e-8</code> and smaller vanish to exactly <code>0.0</code>. That's not a rounding error in the usual sense -- it's total information loss, and it matters enormously for training because gradients routinely take on exactly these magnitudes, especially in deep networks. Lessons 33 and 37 built and studied the vanishing-gradient problem in fp32, where early-layer gradients shrink but stay nonzero. In fp16, "shrink" can mean "disappear."</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=1844cec1">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">DeepSigmoidNet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">in_dim</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">in_dim</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">depth</span><span class="p">):</span>
+            <span class="n">layers</span> <span class="o">+=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">width</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">()]</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="n">layers</span> <span class="o">+=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">DeepSigmoidNet</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+<span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">model</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="n">first_layer_grad</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">net</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">grad</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'first-layer gradient magnitude: mean=</span><span class="si">{</span><span class="n">first_layer_grad</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s1">.2e</span><span class="si">}</span><span class="s1">, max=</span><span class="si">{</span><span class="n">first_layer_grad</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s1">.2e</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'fraction exactly zero in fp32: </span><span class="si">{</span><span class="p">(</span><span class="n">first_layer_grad</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s1">.1%</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'fraction exactly zero after casting to fp16: </span><span class="si">{</span><span class="p">(</span><span class="n">first_layer_grad</span><span class="o">.</span><span class="n">half</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s1">.1%</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>first-layer gradient magnitude: mean=2.65e-12, max=2.33e-11
+fraction exactly zero in fp32: 0.0%
+fraction exactly zero after casting to fp16: 100.0%
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=09497f33"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A 12-layer sigmoid network (deliberately deep and derivative-shrinking, the same vanishing-gradient setup Lesson 37 diagnosed) produces first-layer gradients around <code>1e-11</code> -- comfortably nonzero in fp32, but 100% zero the instant they're cast to fp16. Train this network directly in fp16 and the first layer would never update at all; the optimizer would faithfully apply a learning rate to a gradient of exactly zero, forever. This is the actual problem mixed-precision training has to solve, not a hypothetical one.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=2cf9f5f0"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Mixed-precision-training:-the-recipe">Mixed-precision training: the recipe<a class="anchor-link" href="#Mixed-precision-training:-the-recipe">¶</a></h2><p>Training entirely in fp16 hits the wall demonstrated above; training entirely in fp32 gives up the speed and memory savings that were the whole point. <strong>Mixed-precision training</strong> (<a href="../references.html#micikevicius-2017-mixedprecision">Micikevicius et al., 2017</a>) keeps both: the forward and backward pass run in fp16 for speed, but two safeguards protect against exactly the failure shown above:</p>
+<ol>
+<li><strong>fp32 master weights</strong>: a full-precision copy of every weight is kept off to the side. Updates apply to the fp32 copy (where small updates don't get rounded away), and an fp16 copy is re-derived from it before each forward pass.</li>
+<li><strong>Loss scaling</strong>: multiply the loss by a large constant <em>before</em> calling <code>.backward()</code>. Since gradients are linear in the loss, every gradient scales up by the same factor -- pushing values that would have underflowed back into fp16's representable range. The update step divides the gradient back down by that same factor before it's applied, so the math is otherwise unaffected.</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=eb1f913b">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">DeepSigmoidNet</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="s2">"loss scale"</span><span class="si">:</span><span class="s1">&gt;12</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="s2">"fraction of fp16 grads still zero"</span><span class="si">:</span><span class="s1">&gt;34</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">scale</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">65536.0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">24</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">28</span><span class="p">]:</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">model</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">loss</span> <span class="o">*</span> <span class="n">scale</span><span class="p">)</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>  <span class="c1"># every gradient in the graph is scaled by `scale`, exactly</span>
+    <span class="n">grad_fp16</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">net</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">half</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">scale</span><span class="si">:</span><span class="s1">&gt;12.0f</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="nb">float</span><span class="p">((</span><span class="n">grad_fp16</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="si">:</span><span class="s1">&gt;33.1%</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>  loss scale  fraction of fp16 grads still zero
+           1                            100.0%
+       65536                             35.9%
+     1048576                              7.8%
+    16777216                              1.6%
+   268435456                              0.0%
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=481142d8"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With no scaling (<code>scale=1</code>), every first-layer gradient underflows, exactly as before. Scaling by <code>65536</code> (<code>2**16</code>, a common real-world default) already rescues most of them, but over a third are still small enough to vanish. Only at <code>2**28</code> does the last gradient clear fp16's floor. This is precisely why real implementations (PyTorch's <code>torch.cuda.amp.GradScaler</code>) use <em>dynamic</em> loss scaling rather than a fixed constant: start with some scale, and increase it further whenever a step completes without producing an <code>inf</code>/<code>NaN</code> (a sign the scale could safely be larger), or back off whenever one appears (a sign the scale overflowed something). One more detail worth naming: <strong>bfloat16</strong> (bf16), an increasingly common alternative to fp16, sidesteps loss scaling entirely -- <code>torch.finfo</code> shows it has the <em>same</em> exponent range as fp32 (<code>smallest_normal</code> around <code>1.2e-38</code> for both), so it can't underflow the way fp16 does. What it gives up instead is precision (<code>eps</code> around <code>0.008</code> for bf16 versus <code>0.001</code> for fp16) -- a different trade-off along the same speed-versus-representable-range axis, not a free lunch.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=859c46ce"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Data-parallelism:-correctness-proven-in-miniature">Data parallelism: correctness proven in miniature<a class="anchor-link" href="#Data-parallelism:-correctness-proven-in-miniature">¶</a></h2><p>Precision controls how much work one device does per step; parallelism controls how many devices share that work. <strong>Data parallelism</strong> (the standard recipe behind large-batch training, e.g. <a href="../references.html#goyal-2017-imagenet1hour">Goyal et al., 2017</a>) splits a batch into shards, runs an identical copy of the model on each shard on its own device, and averages the resulting gradients before the update step. On one CPU there's no speedup to show, but the <em>correctness</em> of that recipe -- that averaging per-shard gradients gives the same answer as computing the gradient on the whole batch at once -- is exactly checkable, because MSE loss is itself an average, and the gradient of an average of per-shard averages is the average of the per-shard gradients.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=b73be682">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># "one device": gradient over the whole batch at once</span>
+<span class="n">model</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+<span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">model</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="n">grad_single_device</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()]</span>
+
+<span class="c1"># "data parallel, 4 shards": an identical model copy per shard, each computing its own</span>
+<span class="c1"># gradient independently; only the gradients get communicated and averaged, never the data</span>
+<span class="n">n_shards</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">shard_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">//</span> <span class="n">n_shards</span>
+<span class="n">per_shard_grads</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_shards</span><span class="p">):</span>
+    <span class="n">shard_model</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="n">shard_model</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">s</span> <span class="o">*</span> <span class="n">shard_size</span><span class="p">:(</span><span class="n">s</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">shard_size</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">s</span> <span class="o">*</span> <span class="n">shard_size</span><span class="p">:(</span><span class="n">s</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">shard_size</span><span class="p">]</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">shard_model</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="n">ys</span><span class="p">)</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="n">per_shard_grads</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">shard_model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()])</span>
+
+<span class="n">averaged_grad</span> <span class="o">=</span> <span class="p">[</span><span class="nb">sum</span><span class="p">(</span><span class="n">shard</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">shard</span> <span class="ow">in</span> <span class="n">per_shard_grads</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_shards</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">grad_single_device</span><span class="p">))]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="s2">"parameter"</span><span class="si">:</span><span class="s1">&gt;10</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="s2">"max abs diff: single-device vs. averaged-shard grad"</span><span class="si">:</span><span class="s1">&gt;52</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">g_single</span><span class="p">,</span> <span class="n">g_avg</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">grad_single_device</span><span class="p">,</span> <span class="n">averaged_grad</span><span class="p">)):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s1">&gt;10</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="p">(</span><span class="n">g_single</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">g_avg</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s1">&gt;52.2e</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre> parameter  max abs diff: single-device vs. averaged-shard grad
+         0                                             1.49e-08
+         1                                             7.45e-09
+         2                                             1.49e-08
+         3                                             0.00e+00
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=709f8448"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Every parameter's averaged-shard gradient matches the single-device gradient to within floating-point roundoff (<code>~1e-8</code>, not a real discrepancy). This is the whole correctness argument for data parallelism in one demonstration: splitting the batch and averaging afterward is mathematically the same computation as never splitting it at all. What this toy version doesn't -- can't -- show is the actual cost real data-parallel training pays: the <strong>all-reduce</strong>, the communication step that sums/averages gradients across every device before any of them can proceed to the update. At small scale that communication is nearly free; at hundreds of GPUs it can dominate the step time, which is why large-scale training spends real engineering effort on overlapping communication with computation rather than doing them one after another.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=aa8894e7"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Model-parallelism:-shipping-activations-across-a-boundary">Model parallelism: shipping activations across a boundary<a class="anchor-link" href="#Model-parallelism:-shipping-activations-across-a-boundary">¶</a></h2><p>Data parallelism copies the whole model onto every device and splits the <em>data</em>. <strong>Model parallelism</strong> (<a href="../references.html#shoeybi-2019-megatron">Shoeybi et al., 2019</a>) does the opposite: split the <em>model</em> itself across devices, because it's too large to fit on one. In the simplest form (pipeline parallelism), each device holds a contiguous block of layers; the forward pass computes one block's output, hands that activation across the device boundary, and the next device picks up from there. The backward pass runs the same handoff in reverse: each device needs only the <em>gradient of the loss with respect to the activation it sent</em>, not anything about what happens on the other side of the boundary.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=c9a93798">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">TwoStageNet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stage1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stage2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stage1</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">whole_model</span> <span class="o">=</span> <span class="n">TwoStageNet</span><span class="p">()</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># "one device": run the whole model, one backward pass, end to end</span>
+<span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">whole_model</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="n">grad_whole</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">whole_model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()]</span>
+
+<span class="c1"># "two devices": stage1 on device A, stage2 on device B, with the activation manually</span>
+<span class="c1"># shipped across the boundary in each direction</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">split_model</span> <span class="o">=</span> <span class="n">TwoStageNet</span><span class="p">()</span>
+<span class="n">split_model</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+<span class="n">activation_out</span> <span class="o">=</span> <span class="n">split_model</span><span class="o">.</span><span class="n">stage1</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>                       <span class="c1"># entirely on "device A"</span>
+<span class="n">activation_in</span> <span class="o">=</span> <span class="n">activation_out</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># crosses the boundary</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">split_model</span><span class="o">.</span><span class="n">stage2</span><span class="p">(</span><span class="n">activation_in</span><span class="p">)</span>                <span class="c1"># entirely on "device B"</span>
+<span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>                          <span class="c1"># backprop stops at the boundary</span>
+<span class="n">activation_grad</span> <span class="o">=</span> <span class="n">activation_in</span><span class="o">.</span><span class="n">grad</span>                          <span class="c1"># shipped back across the boundary</span>
+<span class="n">activation_out</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">activation_grad</span><span class="p">)</span>                      <span class="c1"># resumes backprop into stage1</span>
+
+<span class="n">grad_split</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">split_model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="s2">"parameter"</span><span class="si">:</span><span class="s1">&gt;10</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="s2">"max abs diff: whole model vs. split across 2 stages"</span><span class="si">:</span><span class="s1">&gt;52</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">g_whole</span><span class="p">,</span> <span class="n">g_split</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">grad_whole</span><span class="p">,</span> <span class="n">grad_split</span><span class="p">)):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s1">&gt;10</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="p">(</span><span class="n">g_whole</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">g_split</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s1">&gt;52.2e</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre> parameter  max abs diff: whole model vs. split across 2 stages
+         0                                             0.00e+00
+         1                                             0.00e+00
+         2                                             0.00e+00
+         3                                             0.00e+00
+         4                                             0.00e+00
+         5                                             0.00e+00
+         6                                             0.00e+00
+         7                                             0.00e+00
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=6a6d8ac6"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Every gradient matches exactly -- <code>0.0</code> difference, not just roundoff, because the split-and-reattach mechanism (<code>detach()</code> at the boundary going forward, then manually resuming <code>.backward()</code> with the shipped-back gradient) is mathematically identical to autograd tracing straight through an unsplit model; it just makes the "device boundary" explicit as a place activations get detached and gradients get reattached by hand instead of automatically. Real pipeline parallelism adds one more concern this two-device, one-batch toy sidesteps entirely: while device B works on the tail of the pipeline for one batch, device A sits idle unless a <em>second</em> batch is already flowing in behind it -- the "pipeline bubble" that real implementations fight with careful scheduling (splitting each batch into smaller <em>microbatches</em> so every stage stays busy). Data parallelism's bottleneck is communication (the all-reduce above); model parallelism's is idle time.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=f16c9a6f"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Two-more-practical-tricks">Two more practical tricks<a class="anchor-link" href="#Two-more-practical-tricks">¶</a></h2><p>Two more techniques round out the practical picture without needing their own full demonstration, because both are natural extensions of mechanisms already built above:</p>
+<ul>
+<li><strong>Gradient accumulation</strong> simulates a larger batch than fits in memory by running several small forward/backward passes without an optimizer step in between, summing their gradients, and only then updating -- mathematically the same averaging idea as the data-parallel shards above, just spread across <em>time</em> on one device instead of across <em>devices</em> at once.</li>
+<li><strong>Gradient checkpointing</strong> trades compute for memory: instead of storing every intermediate activation for the backward pass (what autograd normally does), it stores only a handful of checkpoints and <em>recomputes</em> the activations in between during the backward pass. More forward-pass compute, much less memory -- useful when a model's activations, not its weights, are what doesn't fit.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=911e0212"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<li>In the fp16 underflow demo, change <code>DeepSigmoidNet</code>'s <code>depth</code> from 12 to 4. Does the first-layer gradient still underflow completely in fp16? Relate the answer back to Lesson 37's discussion of <em>why</em> depth and sigmoid activations together cause vanishing gradients.</li>
+<li>The loss-scaling table stops at <code>scale=2**28</code>. Keep increasing the scale (try <code>2**32</code>, <code>2**40</code>) -- at what point does the <em>scaled</em> gradient itself start to risk overflowing fp16's <code>max</code> of <code>65504</code> instead of underflowing? What does that imply about why dynamic loss scaling needs to search for a scale, rather than always using the largest one possible?</li>
+<li>Change <code>n_shards</code> in the data-parallelism demo from 4 to 3, with a batch size that doesn't divide evenly (try 65). Does the averaged-shard gradient still match the single-device gradient exactly, or does the mismatch reveal something about how real data-parallel training handles uneven shard sizes?</li>
+<li>Add a third stage to <code>TwoStageNet</code> (three <code>nn.Sequential</code> blocks instead of two) and extend the manual forward/backward handoff to three devices. Does the gradient still match a whole-model backward pass exactly?</li>
+</ol>
+</div>
+</div>
+</div>
+
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="lesson43_instance_segmentation.html">&larr; Lesson 43: Instance Segmentation</a></div>
+            <div class="lesson-nav-next"><a href="lesson45_attention_mechanism.html">Lesson 45: The Attention Mechanism &rarr;</a></div>
+        </div>
+    </div>
+</body>
+</html>

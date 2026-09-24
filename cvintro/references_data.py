@@ -148,6 +148,33 @@ REFERENCES = [
         "landmark": True,
     },
     {
+        "id": "micikevicius-2017-mixedprecision",
+        "authors": "Micikevicius, P., Narang, S., Alben, J., Diamos, G., Elsen, E., García, D., Ginsburg, B., Houston, M., Kuchaiev, O., Venkatesh, G., & Wu, H.",
+        "sort_name": "Micikevicius",
+        "year": 2017,
+        "title": "Mixed Precision Training",
+        "url": "https://arxiv.org/abs/1710.03740",
+        "landmark": False,
+    },
+    {
+        "id": "goyal-2017-imagenet1hour",
+        "authors": "Goyal, P., Dollár, P., Girshick, R., Noordhuis, P., Wesolowski, L., Kyrola, A., Tulloch, A., Jia, Y., & He, K.",
+        "sort_name": "Goyal",
+        "year": 2017,
+        "title": "Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour",
+        "url": "https://arxiv.org/abs/1706.02677",
+        "landmark": False,
+    },
+    {
+        "id": "shoeybi-2019-megatron",
+        "authors": "Shoeybi, M., Patwary, M., Puri, R., LeGresley, P., Casper, J., & Catanzaro, B.",
+        "sort_name": "Shoeybi",
+        "year": 2019,
+        "title": "Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism",
+        "url": "https://arxiv.org/abs/1909.08053",
+        "landmark": False,
+    },
+    {
         "id": "srivastava-2014",
         "authors": "Srivastava, N., Hinton, G., Krizhevsky, A., Sutskever, I., & Salakhutdinov, R.",
         "sort_name": "Srivastava",
@@ -352,7 +379,7 @@ REFERENCES = [
         "year": 1981,
         "title": "Determining Optical Flow",
         "url": "https://dspace.mit.edu/handle/1721.1/6337",
-        "landmark": True,
+        "landmark": False,
     },
     {
         "id": "farneback-2003",
@@ -469,7 +496,7 @@ REFERENCES = [
         "year": 2017,
         "title": "Attention Is All You Need",
         "url": "https://arxiv.org/abs/1706.03762",
-        "landmark": False,
+        "landmark": True,
     },
     {
         "id": "chen-2020-simclr",
@@ -586,7 +613,7 @@ REFERENCES = [
         "year": 2006,
         "title": "Reducing the Dimensionality of Data with Neural Networks",
         "url": "https://www.science.org/doi/10.1126/science.1127647",
-        "landmark": True,
+        "landmark": False,
     },
     {
         "id": "he-2021-mae",
@@ -595,6 +622,6 @@ REFERENCES = [
         "year": 2021,
         "title": "Masked Autoencoders Are Scalable Vision Learners",
         "url": "https://arxiv.org/abs/2111.06377",
-        "landmark": True,
+        "landmark": False,
     },
 ]
