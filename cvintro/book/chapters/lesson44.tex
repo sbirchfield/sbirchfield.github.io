@@ -1,0 +1,105 @@
+\chapter{Precision and Parallel Training}
+\label{ch:lesson44}
+
+Every network in Chapters~\ref{ch:lesson31}--\ref{ch:lesson43} trained on a small, CPU-friendly toy problem in default 32-bit floating point (fp32), on a single process. Real training runs rarely look like that: models are trained in reduced precision to go faster and use less memory, and split across many GPUs because no single device holds a modern model plus its training data. This chapter closes out Part 3 with the engineering underneath \emph{how} training actually happens at scale, building each mechanism in miniature and checking it against the real thing: \textbf{floating-point precision} and why reduced precision needs help to work at all, \textbf{mixed-precision training}'s specific fix for that, and the two ways of splitting work across devices, \textbf{data parallelism} and \textbf{model parallelism}.
+
+\section{Floating-point precision: fp32 vs.\ fp16}
+
+A 32-bit float (fp32) and a 16-bit float (fp16) both use the same idea --- sign, exponent, mantissa --- but fp16 spends far fewer bits on the exponent, so it simply cannot represent very small or very large magnitudes. \code{torch.finfo} reports the smallest positive \emph{normal} value each format can hold: about $1.2\times10^{-38}$ for fp32, but only $6.1\times10^{-5}$ for fp16 (fp16 subnormals stretch a little further, down to about $6\times10^{-8}$, at the cost of losing precision entirely). Below that floor, a value doesn't round to something small --- it rounds to exactly zero.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{rrl}
+\hline
+\textbf{fp32 value} & \textbf{cast to fp16} & \textbf{underflowed to 0?} \\
+\hline
+$1.0\times10^{-2}$ & $1.0\times10^{-2}$ & False \\
+$1.0\times10^{-4}$ & $1.0\times10^{-4}$ & False \\
+$1.0\times10^{-6}$ & $1.0\times10^{-6}$ & False \\
+$1.0\times10^{-7}$ & $1.2\times10^{-7}$ & False \\
+$1.0\times10^{-8}$ & $0.0$ & \textbf{True} \\
+$1.0\times10^{-9}$ & $0.0$ & \textbf{True} \\
+\hline
+\end{tabular}
+\end{center}
+
+Values down to $10^{-6}$ survive the cast intact; $10^{-7}$ survives but loses precision (rounds to $1.2\times10^{-7}$); $10^{-8}$ and smaller vanish to exactly $0.0$. That's not a rounding error in the usual sense --- it's total information loss, and it matters enormously for training because gradients routinely take on exactly these magnitudes, especially in deep networks. Chapters~\ref{ch:lesson33} and \ref{ch:lesson37} built and studied the vanishing-gradient problem in fp32, where early-layer gradients shrink but stay nonzero. In fp16, ``shrink'' can mean ``disappear.''
+
+A 12-layer sigmoid network (deliberately deep and derivative-shrinking, the same vanishing-gradient setup Chapter~\ref{ch:lesson37} diagnosed) produces first-layer gradients with mean magnitude $2.65\times10^{-12}$, max $2.33\times10^{-11}$ --- comfortably nonzero in fp32 ($0.0\%$ exactly zero), but $100.0\%$ exactly zero the instant they're cast to fp16. Train this network directly in fp16 and the first layer would never update at all; the optimizer would faithfully apply a learning rate to a gradient of exactly zero, forever. This is the actual problem mixed-precision training has to solve, not a hypothetical one.
+
+\section{Mixed-precision training: the recipe}
+
+Training entirely in fp16 hits the wall demonstrated above; training entirely in fp32 gives up the speed and memory savings that were the whole point. \textbf{Mixed-precision training} (\citelink{micikevicius2017}{Micikevicius et al., 2018}) keeps both: the forward and backward pass run in fp16 for speed, but two safeguards protect against exactly the failure shown above:
+\begin{enumerate}
+  \item \textbf{fp32 master weights}: a full-precision copy of every weight is kept off to the side. Updates apply to the fp32 copy (where small updates don't get rounded away), and an fp16 copy is re-derived from it before each forward pass.
+  \item \textbf{Loss scaling}: multiply the loss by a large constant \emph{before} calling \code{.backward()}. Since gradients are linear in the loss, every gradient scales up by the same factor --- pushing values that would have underflowed back into fp16's representable range. The update step divides the gradient back down by that same factor before it's applied, so the math is otherwise unaffected.
+\end{enumerate}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{rr}
+\hline
+\textbf{loss scale} & \textbf{fraction of fp16 grads still zero} \\
+\hline
+1           & 100.0\% \\
+65{,}536    & 35.9\% \\
+1{,}048{,}576   & 7.8\% \\
+16{,}777{,}216  & 1.6\% \\
+268{,}435{,}456 & 0.0\% \\
+\hline
+\end{tabular}
+\end{center}
+
+With no scaling ($\text{scale}=1$), every first-layer gradient underflows, exactly as before. Scaling by $65{,}536$ ($2^{16}$, a common real-world default) already rescues most of them, but over a third are still small enough to vanish. Only at $2^{28}$ does the last gradient clear fp16's floor. This is precisely why real implementations (PyTorch's \code{torch.cuda.amp.GradScaler}) use \emph{dynamic} loss scaling rather than a fixed constant: start with some scale, and increase it further whenever a step completes without producing an \code{inf}/\code{NaN} (a sign the scale could safely be larger), or back off whenever one appears (a sign the scale overflowed something). One more detail worth naming: \textbf{bfloat16} (bf16), an increasingly common alternative to fp16, sidesteps loss scaling entirely --- \code{torch.finfo} shows it has the \emph{same} exponent range as fp32 ($\text{smallest\_normal}$ around $1.2\times10^{-38}$ for both), so it can't underflow the way fp16 does. What it gives up instead is precision ($\text{eps}$ around $0.008$ for bf16 versus $0.001$ for fp16) --- a different trade-off along the same speed-versus-representable-range axis, not a free lunch.
+
+\section{Data parallelism: correctness proven in miniature}
+
+Precision controls how much work one device does per step; parallelism controls how many devices share that work. \textbf{Data parallelism} (the standard recipe behind large-batch training, e.g.\ \citelink{goyal2017}{Goyal et al., 2017}) splits a batch into shards, runs an identical copy of the model on each shard on its own device, and averages the resulting gradients before the update step. On one CPU there's no speedup to show, but the \emph{correctness} of that recipe --- that averaging per-shard gradients gives the same answer as computing the gradient on the whole batch at once --- is exactly checkable, because MSE loss is itself an average, and the gradient of an average of per-shard averages is the average of the per-shard gradients.
+
+\begin{lstlisting}
+# "data parallel, 4 shards": an identical model copy per shard, each computing its own
+# gradient independently; only the gradients get communicated and averaged, never the data
+per_shard_grads = []
+for s in range(n_shards):
+    shard_model = copy.deepcopy(model)
+    F.mse_loss(shard_model(xs), ys).backward()
+    per_shard_grads.append([p.grad.clone() for p in shard_model.parameters()])
+averaged_grad = [sum(shard[i] for shard in per_shard_grads) / n_shards for i in range(len(params))]
+\end{lstlisting}
+
+Every parameter's averaged-shard gradient matches the single-device gradient to within $1.49\times10^{-8}$ --- floating-point roundoff, not a real discrepancy. This is the whole correctness argument for data parallelism in one demonstration: splitting the batch and averaging afterward is mathematically the same computation as never splitting it at all. What this toy version doesn't --- can't --- show is the actual cost real data-parallel training pays: the \textbf{all-reduce}, the communication step that sums/averages gradients across every device before any of them can proceed to the update. At small scale that communication is nearly free; at hundreds of GPUs it can dominate the step time, which is why large-scale training spends real engineering effort on overlapping communication with computation rather than doing them one after another.
+
+\section{Model parallelism: shipping activations across a boundary}
+
+Data parallelism copies the whole model onto every device and splits the \emph{data}. \textbf{Model parallelism} (\citelink{shoeybi2019}{Shoeybi et al., 2019}) does the opposite: split the \emph{model} itself across devices, because it's too large to fit on one. In the simplest form (pipeline parallelism), each device holds a contiguous block of layers; the forward pass computes one block's output, hands that activation across the device boundary, and the next device picks up from there. The backward pass runs the same handoff in reverse: each device needs only the \emph{gradient of the loss with respect to the activation it sent}, not anything about what happens on the other side of the boundary.
+
+\begin{lstlisting}
+# "two devices": stage1 on device A, stage2 on device B, with the activation
+# manually shipped across the boundary in each direction
+activation_out = split_model.stage1(X)                        # entirely on "device A"
+activation_in = activation_out.detach().requires_grad_(True)  # crosses the boundary
+prediction = split_model.stage2(activation_in)                # entirely on "device B"
+F.mse_loss(prediction, y).backward()                          # backprop stops at the boundary
+activation_out.backward(activation_in.grad)                   # resumes backprop into stage1
+\end{lstlisting}
+
+Every gradient matches exactly --- $0.0$ difference, not just roundoff, because the split-and-reattach mechanism (\code{detach()} at the boundary going forward, then manually resuming \code{.backward()} with the shipped-back gradient) is mathematically identical to autograd tracing straight through an unsplit model; it just makes the ``device boundary'' explicit as a place activations get detached and gradients get reattached by hand instead of automatically. Real pipeline parallelism adds one more concern this two-device, one-batch toy sidesteps entirely: while device B works on the tail of the pipeline for one batch, device A sits idle unless a \emph{second} batch is already flowing in behind it --- the ``pipeline bubble'' that real implementations fight with careful scheduling (splitting each batch into smaller \emph{microbatches} so every stage stays busy). Data parallelism's bottleneck is communication (the all-reduce above); model parallelism's is idle time.
+
+\section{Two more practical tricks}
+
+Two more techniques round out the practical picture without needing their own full demonstration, because both are natural extensions of mechanisms already built above:
+\begin{itemize}
+  \item \textbf{Gradient accumulation} simulates a larger batch than fits in memory by running several small forward/backward passes without an optimizer step in between, summing their gradients, and only then updating --- mathematically the same averaging idea as the data-parallel shards above, just spread across \emph{time} on one device instead of across \emph{devices} at once.
+  \item \textbf{Gradient checkpointing} trades compute for memory: instead of storing every intermediate activation for the backward pass (what autograd normally does), it stores only a handful of checkpoints and \emph{recomputes} the activations in between during the backward pass. More forward-pass compute, much less memory --- useful when a model's activations, not its weights, are what doesn't fit.
+\end{itemize}
+
+\subsection*{Exercises}
+\begin{enumerate}
+  \item In the fp16 underflow demo, change \code{DeepSigmoidNet}'s \code{depth} from 12 to 4. Does the first-layer gradient still underflow completely in fp16? Relate the answer back to Chapter~\ref{ch:lesson37}'s discussion of \emph{why} depth and sigmoid activations together cause vanishing gradients.
+  \item The loss-scaling table stops at $\text{scale}=2^{28}$. Keep increasing the scale (try $2^{32}$, $2^{40}$) --- at what point does the \emph{scaled} gradient itself start to risk overflowing fp16's max of $65{,}504$ instead of underflowing? What does that imply about why dynamic loss scaling needs to search for a scale, rather than always using the largest one possible?
+  \item Change \code{n\_shards} in the data-parallelism demo from 4 to 3, with a batch size that doesn't divide evenly (try 65). Does the averaged-shard gradient still match the single-device gradient exactly, or does the mismatch reveal something about how real data-parallel training handles uneven shard sizes?
+  \item Add a third stage to \code{TwoStageNet} (three \code{nn.Sequential} blocks instead of two) and extend the manual forward/backward handoff to three devices. Does the gradient still match a whole-model backward pass exactly?
+\end{enumerate}
+
+\vfill
+\fullcode{lesson44}{lesson44_precision_and_parallel_training}

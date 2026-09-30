@@ -41,7 +41,7 @@
 <ol>
 <li><strong>Point-to-point distance metrics</strong> (Manhattan, chessboard, and Euclidean) — which measure how far apart two pixels are.</li>
 <li><strong>Curve-length estimators</strong> (Freeman and a refined weighted estimator) — which measure the length of a <em>digitized curve</em> (e.g. the boundary of a blob) from its chain code.</li>
-<li><strong>Chamfer distance transform</strong> — a fast, image-wide approximation to the Euclidean distance transform, computed with two raster-scan passes.</li>
+<li><strong>Chamfer distance transform</strong> — a fast, image-wide approximation that gives every pixel its distance to the nearest member of a given set (e.g. the foreground), computed with two raster-scan passes.</li>
 </ol>
 </div>
 </div>
@@ -256,7 +256,7 @@ Corrected estimate        = 375.4  (error -0.4%)
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=b79e078f"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Part-3:-Chamfer-distance-transform">Part 3: Chamfer distance transform<a class="anchor-link" href="#Part-3:-Chamfer-distance-transform">¶</a></h2><p>A <strong>distance transform</strong> labels every pixel of a binary image with its distance to the nearest foreground (or background) pixel — useful for skeletonization, shape matching, and path planning. Computing it <em>exactly</em> with Euclidean distance requires comparing every pixel against every foreground pixel (slow), or a more careful algorithm.</p>
+<h2 id="Part-3:-Chamfer-distance-transform">Part 3: Chamfer distance transform<a class="anchor-link" href="#Part-3:-Chamfer-distance-transform">¶</a></h2><p>Unlike the point-to-point metrics in Part 1, which measure the distance between two specific pixels, a <strong>distance transform</strong> labels <em>every</em> pixel of a binary image with its distance to the nearest member of a given set of pixels — typically the foreground, or the background — useful for skeletonization, shape matching, and path planning. Computing it <em>exactly</em> with Euclidean distance requires comparing every pixel against every pixel in that set (slow), or a more careful algorithm.</p>
 <p>The <strong>chamfer distance transform</strong> is a fast approximation: instead of a single global search, it propagates local distances across the image in just two raster-scan passes (top-left to bottom-right, then bottom-right to top-left), adding a small fixed cost for each step to a neighbor. Using integer weights $a=3$ for axis-aligned neighbors and $b=4$ for diagonal neighbors (then dividing by 3 at the end) gives the classic <strong>3-4 chamfer distance</strong>, a good, cheap approximation to Euclidean distance — the same idea as the Freeman/corrected chain-code weights from Part 2, but applied to every pixel instead of just a boundary.</p>
 <p>OpenCV's <code>cv2.distanceTransform</code> with <code>DIST_L2</code> computes the chamfer distance. The <code>maskSize</code> governs the quality of the approximation: a larger mask is more accurate but requires more compute.</p>
 </div>

@@ -1,0 +1,184 @@
+\documentclass[11pt,oneside]{book}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{caption}
+\captionsetup{labelfont=bf}
+\usepackage{tcolorbox}
+\usepackage{parskip}
+\setlength{\parindent}{1.5em} % parskip zeroes this by default; restore it so paragraphs are both indented and spaced
+\usepackage[strings]{underscore}
+\usepackage{tocloft}
+\tcbuselibrary{skins,breakable}
+
+% Show "Part I" (not just "I") for part entries in the table of contents.
+\renewcommand{\cftpartpresnum}{Part }
+\cftsetpnumwidth{1.25em}
+\addtolength{\cftpartnumwidth}{2.3em}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!45!black,
+  citecolor=blue!45!black,
+  urlcolor=blue!45!black,
+}
+
+\definecolor{codebg}{rgb}{0.96,0.96,0.96}
+\definecolor{kwcolor}{rgb}{0.0,0.3,0.6}
+\definecolor{strcolor}{rgb}{0.0,0.45,0.35}
+\definecolor{cmtcolor}{rgb}{0.45,0.45,0.45}
+
+\lstdefinestyle{pycode}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{kwcolor}\bfseries,
+  commentstyle=\color{cmtcolor}\itshape,
+  stringstyle=\color{strcolor},
+  showstringspaces=false,
+  breaklines=true,
+  breakatwhitespace=true,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{gray!40},
+  framesep=4pt,
+  numbers=none,
+  columns=flexible,
+  xleftmargin=0pt,
+  aboveskip=8pt,
+  belowskip=8pt,
+}
+\lstset{style=pycode}
+\newcommand{\code}[1]{\texttt{\small #1}}
+
+\newtcolorbox{warningbox}{
+  colback=red!4, colframe=red!55!black, boxrule=0.6pt,
+  title={Warning}, fonttitle=\bfseries, breakable
+}
+\newtcolorbox{notebox}{
+  colback=blue!4, colframe=blue!35!black, boxrule=0.6pt,
+  title={Note}, fonttitle=\bfseries, breakable
+}
+\newtcolorbox{repobox}{
+  colback=teal!6, colframe=teal!45!black, boxrule=0.6pt, breakable,
+  fontupper=\small\itshape, left=8pt
+}
+
+% Base URL for linking to the fully runnable source notebooks on GitHub.
+\newcommand{\reponotebookurl}{https://github.com/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/}
+
+% \fullcode{short-name}{full-notebook-filename}: displays the short name
+% (e.g. lesson01.ipynb) but links to the actual file on GitHub.
+\newcommand{\fullcode}[2]{%
+  \begin{repobox}
+  \textbf{\upshape Full runnable code} \textit{(including plotting and setup):} \href{\reponotebookurl#2.ipynb}{\texttt{#1.ipynb}} in the course repository.
+  \end{repobox}
+}
+
+% Landmark-paper citation: \citelink{bib-key}{Displayed, Text} links to the
+% matching \bibentry in chapters/references.tex. The landmark star (when
+% present) lives in the bibliography entry itself, not on every citation.
+\newcommand{\citelink}[2]{\hyperlink{bib:#1}{#2}}
+\newcommand{\bibentry}[3]{%
+  \hypertarget{bib:#1}{}%
+  \noindent\textbf{#2}#3\par\smallskip
+}
+\newcommand{\landmark}{\textcolor{orange!80!black}{$\bigstar$}\ }
+
+% Image/photo attribution line inside a figure caption: smaller, italic.
+\newcommand{\attrib}[1]{{\footnotesize\itshape #1}}
+
+\begin{document}
+
+\frontmatter
+
+\begin{titlepage}
+\centering
+\vspace*{3.2cm}
+{\Huge\bfseries Introduction to Computer Vision}\par
+\vspace{0.7cm}
+{\Large\itshape\color{gray!55!black} Lecture notes with working Python code}\par
+\vspace{2.4cm}
+{\Large Stan Birchfield}\par
+\vspace{0.9cm}
+{\normalsize\color{gray!45!black} NVIDIA\\University of Washington}\par
+\vspace{2.6cm}
+{\small\itshape\color{gray!45!black} Created with AI assistance}\par
+\vspace{0.5cm}
+\href{https://sbirchfield.github.io/cvintro}{\small\ttfamily sbirchfield.github.io/cvintro}\par
+\vfill
+{\normalsize 2026}\par
+\vspace{8pt}
+{\small\color{gray!45!black} This book is published under the Creative Commons Attribution 4.0\\
+International License (CC-BY 4.0).}\par
+\vspace*{2.2cm}
+\end{titlepage}
+
+\tableofcontents
+
+\input{chapters/preface}
+
+\mainmatter
+\part{Classical 2D Image Processing (1960--1990)}
+
+\input{chapters/lesson01}
+\input{chapters/lesson02}
+\input{chapters/lesson03}
+\input{chapters/lesson04}
+\input{chapters/lesson05}
+\input{chapters/lesson06}
+\input{chapters/lesson07}
+\input{chapters/lesson08}
+\input{chapters/lesson09}
+\input{chapters/lesson10}
+\input{chapters/lesson11}
+\input{chapters/lesson12}
+\input{chapters/lesson13}
+\input{chapters/lesson14}
+\input{chapters/lesson15}
+\input{chapters/lesson16}
+\input{chapters/lesson17}
+\input{chapters/lesson18}
+\input{chapters/lesson19}
+
+\part{Classical 3D Computer Vision (1980--2010)}
+
+\input{chapters/lesson20}
+\input{chapters/lesson21}
+\input{chapters/lesson22}
+\input{chapters/lesson23}
+\input{chapters/lesson24}
+\input{chapters/lesson25}
+\input{chapters/lesson26}
+\input{chapters/lesson27}
+\input{chapters/lesson28}
+\input{chapters/lesson29}
+
+\part{Deep Learning for Computer Vision (2012--2022)}
+
+\input{chapters/lesson30}
+\input{chapters/lesson31}
+\input{chapters/lesson32}
+\input{chapters/lesson33}
+\input{chapters/lesson34}
+\input{chapters/lesson35}
+\input{chapters/lesson36}
+\input{chapters/lesson37}
+\input{chapters/lesson38}
+\input{chapters/lesson39}
+\input{chapters/lesson40}
+\input{chapters/lesson41}
+\input{chapters/lesson42}
+\input{chapters/lesson43}
+\input{chapters/lesson44}
+
+\backmatter
+\input{chapters/references}
+
+\end{document}

@@ -59,8 +59,8 @@
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="What-calibration-recovers">What calibration recovers<a class="anchor-link" href="#What-calibration-recovers">¶</a></h2><p>Camera calibration recovers two separate things:</p>
 <ol>
-<li><strong>Intrinsics</strong> $K = \begin{bmatrix}f_x &amp; s &amp; c_x\\0 &amp; f_y &amp; c_y\\0&amp;0&amp;1\end{bmatrix}$: focal lengths, principal point, and skew — the ideal pinhole part of the camera model used throughout Lessons 28 and 28. Skew can safely be assumed to be zero for real cameras.</li>
-<li><strong>Distortion coefficients</strong> $(k_1, k_2, p_1, p_2, k_3, \dots)$: real lenses aren't perfect pinholes. Radial distortion ($k_1, k_2, k_3$) bows straight lines into curves (barrel or pincushion, depending on sign); tangential distortion ($p_1, p_2$) accounts for the lens not being perfectly parallel to the sensor. Every equation in Lessons 28 and 28 secretly assumes a pinhole camera model (i.e., distortion is already removed, which requires calibration).</li>
+<li><strong>Intrinsics</strong> $K = \begin{bmatrix}f_x &amp; s &amp; c_x\\0 &amp; f_y &amp; c_y\\0&amp;0&amp;1\end{bmatrix}$: focal lengths, principal point, and skew — the ideal pinhole part of the camera model used throughout Lessons 28 and 29. Skew can safely be assumed to be zero for real cameras.</li>
+<li><strong>Distortion coefficients</strong> $(k_1, k_2, p_1, p_2, k_3, \dots)$: real lenses aren't perfect pinholes. Radial distortion ($k_1, k_2, k_3$) bows straight lines into curves (barrel or pincushion, depending on sign); tangential distortion ($p_1, p_2$) accounts for the lens not being perfectly parallel to the sensor. Every equation in Lessons 28 and 29 secretly assumes a pinhole camera model (i.e., distortion is already removed, which requires calibration).</li>
 </ol>
 </div>
 </div>
@@ -404,7 +404,7 @@ $$y_d = y(1 + k_1r^2 + k_2r^4 + k_3r^6) + p_1(r^2+2y^2) + 2p_2xy$$</p>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=ccdd40ee"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The lines straighten out, though not perfectly — a faint bow remains, since <code>K_estimated</code>/<code>dist_estimated</code> are themselves only approximately correct. This process of calibrating a real camera should be performed, if possible, before handing real photos to any of the geometric machinery from Lessons 28 and 28, all of which implicitly assumes an ideal, distortion-free pinhole model. Keep in mind, however, that many modern pipelines perform auto-calibration without checkerboard images, using simplified camera models (typically just one focal length parameter — ignoring aspect ratio, non-central principal point, and lens distortion).</p>
+<p>The lines straighten out, though not perfectly — a faint bow remains, since <code>K_estimated</code>/<code>dist_estimated</code> are themselves only approximately correct. This process of calibrating a real camera should be performed, if possible, before handing real photos to any of the geometric machinery from Lessons 28 and 29, all of which implicitly assumes an ideal, distortion-free pinhole model. Keep in mind, however, that many modern pipelines perform auto-calibration without checkerboard images, using simplified camera models (typically just one focal length parameter — ignoring aspect ratio, non-central principal point, and lens distortion).</p>
 </div>
 </div>
 </div>
