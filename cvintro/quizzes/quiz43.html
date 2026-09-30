@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 43 Quiz - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <p class="quiz-breadcrumb"><a href="../lessons/lesson43_instance_segmentation.html">&larr; Back to Lesson 43</a></p>
+        <h1>Quiz 43: Instance Segmentation</h1>
+        <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
+        <div id="quiz-questions">
+            <div class="quiz-question" data-q="0">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What can semantic segmentation not distinguish, that instance segmentation adds?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 1)">The color of each object</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 1)">Which pixels belong to *this specific* object versus another object of the same class — two touching same-class instances are just one blob in a semantic mask</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 1)">Whether an object is moving or stationary</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 1)">The exact class name of each pixel</button>
+                </div>
+                <p class="quiz-explanation">Semantic segmentation only assigns a class per pixel; it has no notion of separate identity, so two touching objects of the same class merge into one labeled region.</p>
+            </div>
+            <div class="quiz-question" data-q="1">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. How does this lesson turn Lesson 42's segmentation network into an instance segmentation network?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">By training a completely new, unrelated architecture from scratch</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">By adding a second output head that predicts, for every foreground pixel, an offset pointing toward its own instance's center — then clustering those votes</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">By simply running the semantic network twice</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">By increasing the number of semantic classes</button>
+                </div>
+                <p class="quiz-explanation">The network keeps its original semantic head and gains a second head trained to regress a per-pixel offset to the instance center; clustering the resulting votes (Hough-style) recovers individual instances.</p>
+            </div>
+            <div class="quiz-question" data-q="2">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the toy mask head experiment, why can the mask head reach high per-instance IoU even though every test crop contains a visible neighboring circle?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">Because the crops are too small to contain a neighbor</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">Because detection already solved 'where are the objects' — the mask head only has to answer the strictly easier, local question of which pixels in this one box belong to this one instance</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">Because the neighboring circle is always erased before cropping</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">Because the mask head secretly sees the ground-truth instance mask at test time</button>
+                </div>
+                <p class="quiz-explanation">Given a box already centered on one instance, the mask head's job narrows to a local same-box question, which is why Mask R-CNN's real mask branch can be small and fast — a good box already does most of the work.</p>
+            </div>
+            <div class="quiz-question" data-q="3">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the one new piece Mask R-CNN adds on top of Faster R-CNN (Lesson 41), and what other change does it require?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">A completely new region proposal network, plus a bigger backbone</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">A parallel mask-prediction branch on every detected box, plus replacing RoIPool with RoIAlign so per-pixel masks stay aligned with the box instead of being blurred by coordinate quantization</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">A third detection stage, plus doubling the number of anchor boxes</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">Nothing — Mask R-CNN is Faster R-CNN with a different loss function</button>
+                </div>
+                <p class="quiz-explanation">Mask R-CNN keeps Faster R-CNN's RPN, classifier, and box regression unchanged, adds a mask branch per box, and swaps RoIPool for RoIAlign because coordinate quantization that barely hurts classification visibly misaligns pixel-accurate masks.</p>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="quiz42.html">&larr; Lesson 42 Quiz</a></div>
+            <div class="lesson-nav-next"><a href="quiz44.html">Lesson 44 Quiz &rarr;</a></div>
+        </div>
+    </div>
+    <script>
+    let score = 0;
+    const answered = new Set();
+
+    function shuffleChildren(container) {
+        const children = Array.from(container.children);
+        for (let i = children.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [children[i], children[j]] = [children[j], children[i]];
+        }
+        children.forEach(child => container.appendChild(child));
+        return children;
+    }
+
+    function shuffleQuiz() {
+        const container = document.getElementById('quiz-questions');
+        const questions = shuffleChildren(container);
+        questions.forEach((q, i) => {
+            q.querySelector('.quiz-q-number').textContent = i + 1;
+            shuffleChildren(q.querySelector('.quiz-choices'));
+        });
+    }
+    shuffleQuiz();
+
+    function checkAnswer(qIndex, choiceIndex, correctIndex) {
+        if (answered.has(qIndex)) return;
+        answered.add(qIndex);
+
+        const buttons = document.querySelectorAll(`[data-q="${qIndex}"] .quiz-choice`);
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            const c = parseInt(btn.dataset.c, 10);
+            if (c === correctIndex) btn.classList.add('quiz-correct');
+            else if (c === choiceIndex) btn.classList.add('quiz-incorrect');
+        });
+
+        document.querySelector(`[data-q="${qIndex}"] .quiz-explanation`).style.display = 'block';
+
+        if (choiceIndex === correctIndex) score += 1;
+        document.getElementById('quiz-score').textContent = `Score: ${score} / 4`;
+    }
+    </script>
+</body>
+</html>

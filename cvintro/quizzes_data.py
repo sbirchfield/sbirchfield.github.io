@@ -1889,4 +1889,142 @@ QUIZZES = {
             "explanation": "Two-stage methods (e.g. Faster R-CNN) propose-then-classify; single-stage methods (YOLO, SSD) predict boxes and classes directly per grid cell in a single pass, trading some accuracy for speed.",
         },
     ],
+    42: [
+        {
+            "question": "What is the fundamental difference between semantic segmentation and detection (Lesson 41)?",
+            "choices": [
+                "Segmentation labels every pixel with a class; detection only draws boxes around a handful of objects",
+                "Segmentation only works on grayscale images",
+                "Detection can find more object classes than segmentation ever can",
+                "There is no real difference; the terms are interchangeable",
+            ],
+            "correct": 0,
+            "explanation": "Detection localizes objects with boxes; semantic segmentation goes further and assigns a class label to every single pixel in the image.",
+        },
+        {
+            "question": "In this lesson's minimal FCN-style network, what does the decoder see when producing its output?",
+            "choices": [
+                "Only the low-resolution bottleneck features produced by the encoder, upsampled back to full resolution",
+                "The original input image, unchanged",
+                "A random subset of encoder features at every resolution",
+                "Only the ground-truth mask during training",
+            ],
+            "correct": 0,
+            "explanation": "A plain FCN just downsamples then upsamples: the decoder has no access to the encoder's higher-resolution intermediate features, only the coarse bottleneck.",
+        },
+        {
+            "question": "How do U-Net's skip connections fix the boundary-detail loss of a plain FCN?",
+            "choices": [
+                "By training the network twice as long",
+                "By concatenating the encoder's higher-resolution features directly into the matching decoder stage, giving the decoder a second, non-bottlenecked path to that detail",
+                "By replacing max pooling with average pooling",
+                "By adding more convolutional layers to the bottleneck itself",
+            ],
+            "correct": 1,
+            "explanation": "Skip connections concatenate encoder features into the decoder at each matching resolution, so fine spatial detail never has to survive the lossy bottleneck in the first place.",
+        },
+        {
+            "question": "When the real pretrained FCN is run on a photo containing a tram, it labels part of the tram `train` and part `bus`. What does this reveal?",
+            "choices": [
+                "The model is completely broken and its other predictions cannot be trusted",
+                "Pascal VOC's 20-class vocabulary has no `tram` class, so the model honestly splits its guess between the two closest real classes rather than making a random error",
+                "The photo was corrupted during loading",
+                "FCN can only label one class per image, so this is expected of every photo",
+            ],
+            "correct": 1,
+            "explanation": "The split roughly tracks a real visual seam (windows vs. body) and reflects VOC's limited vocabulary, not a random or nonsensical failure — a reminder that a model's answers are only as good as its label set.",
+        },
+    ],
+    43: [
+        {
+            "question": "What can semantic segmentation not distinguish, that instance segmentation adds?",
+            "choices": [
+                "The color of each object",
+                "Which pixels belong to *this specific* object versus another object of the same class — two touching same-class instances are just one blob in a semantic mask",
+                "Whether an object is moving or stationary",
+                "The exact class name of each pixel",
+            ],
+            "correct": 1,
+            "explanation": "Semantic segmentation only assigns a class per pixel; it has no notion of separate identity, so two touching objects of the same class merge into one labeled region.",
+        },
+        {
+            "question": "How does this lesson turn Lesson 42's segmentation network into an instance segmentation network?",
+            "choices": [
+                "By training a completely new, unrelated architecture from scratch",
+                "By adding a second output head that predicts, for every foreground pixel, an offset pointing toward its own instance's center — then clustering those votes",
+                "By simply running the semantic network twice",
+                "By increasing the number of semantic classes",
+            ],
+            "correct": 1,
+            "explanation": "The network keeps its original semantic head and gains a second head trained to regress a per-pixel offset to the instance center; clustering the resulting votes (Hough-style) recovers individual instances.",
+        },
+        {
+            "question": "In the toy mask head experiment, why can the mask head reach high per-instance IoU even though every test crop contains a visible neighboring circle?",
+            "choices": [
+                "Because the crops are too small to contain a neighbor",
+                "Because detection already solved 'where are the objects' — the mask head only has to answer the strictly easier, local question of which pixels in this one box belong to this one instance",
+                "Because the neighboring circle is always erased before cropping",
+                "Because the mask head secretly sees the ground-truth instance mask at test time",
+            ],
+            "correct": 1,
+            "explanation": "Given a box already centered on one instance, the mask head's job narrows to a local same-box question, which is why Mask R-CNN's real mask branch can be small and fast — a good box already does most of the work.",
+        },
+        {
+            "question": "What is the one new piece Mask R-CNN adds on top of Faster R-CNN (Lesson 41), and what other change does it require?",
+            "choices": [
+                "A completely new region proposal network, plus a bigger backbone",
+                "A parallel mask-prediction branch on every detected box, plus replacing RoIPool with RoIAlign so per-pixel masks stay aligned with the box instead of being blurred by coordinate quantization",
+                "A third detection stage, plus doubling the number of anchor boxes",
+                "Nothing — Mask R-CNN is Faster R-CNN with a different loss function",
+            ],
+            "correct": 1,
+            "explanation": "Mask R-CNN keeps Faster R-CNN's RPN, classifier, and box regression unchanged, adds a mask branch per box, and swaps RoIPool for RoIAlign because coordinate quantization that barely hurts classification visibly misaligns pixel-accurate masks.",
+        },
+    ],
+    44: [
+        {
+            "question": "Why does casting a very small gradient value (e.g. around `1e-11`) from fp32 to fp16 cause training to fail, rather than just losing some precision?",
+            "choices": [
+                "fp16 rounds every value to the nearest power of two, which is always a large relative error",
+                "fp16's limited exponent range means values below its representable floor don't round to something small — they round to exactly zero, so the optimizer applies a learning rate to a gradient of zero forever",
+                "fp16 cannot store negative numbers at all",
+                "PyTorch raises an error and stops training immediately",
+            ],
+            "correct": 1,
+            "explanation": "Below fp16's representable floor, underflow means total information loss (exactly 0.0), not just reduced precision — and gradients in deep sigmoid networks routinely fall in that underflowing range.",
+        },
+        {
+            "question": "What are the two safeguards mixed-precision training uses to keep the speed of fp16 without hitting the underflow problem?",
+            "choices": [
+                "Training for more epochs and using a smaller learning rate",
+                "Keeping fp32 master weights that absorb small updates, and loss scaling — multiplying the loss by a large constant before `.backward()` so gradients land in fp16's representable range, then dividing back down before the update",
+                "Switching to double precision (fp64) whenever a gradient underflows",
+                "Rounding every gradient up to the nearest nonzero fp16 value",
+            ],
+            "correct": 1,
+            "explanation": "fp32 master weights avoid updates being rounded away, and loss scaling exploits gradients being linear in the loss to push otherwise-underflowing values back into fp16's representable range.",
+        },
+        {
+            "question": "In the data-parallelism demonstration, splitting a batch into 4 shards, computing gradients independently per shard, and averaging them afterward produces a result that:",
+            "choices": [
+                "Is only a rough approximation of the single-device gradient, useful but not exact",
+                "Matches the single-device, whole-batch gradient to within ordinary floating-point roundoff — splitting and averaging is mathematically the same computation as never splitting at all",
+                "Is always larger than the single-device gradient by a factor of 4",
+                "Only works if the model has no nonlinear activations",
+            ],
+            "correct": 1,
+            "explanation": "This is the whole correctness argument for data parallelism: per-shard gradients averaged after the fact equal the gradient computed over the whole batch at once, up to ~1e-8 roundoff.",
+        },
+        {
+            "question": "What is the key difference between what limits data parallelism versus what limits (pipeline) model parallelism at scale?",
+            "choices": [
+                "Data parallelism is limited by communication (the all-reduce that sums/averages gradients across devices); model parallelism is limited by idle time (the pipeline bubble while later stages wait for earlier ones)",
+                "Both are limited by exactly the same bottleneck: available GPU memory",
+                "Data parallelism has no real bottleneck at any scale",
+                "Model parallelism is limited by loss-scaling overflow, the same issue as fp16 training",
+            ],
+            "correct": 0,
+            "explanation": "Data parallelism's cost is the all-reduce communication step; model (pipeline) parallelism's cost is devices sitting idle unless multiple microbatches keep every stage busy.",
+        },
+    ],
 }

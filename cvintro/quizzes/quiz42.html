@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 42 Quiz - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <p class="quiz-breadcrumb"><a href="../lessons/lesson42_semantic_segmentation.html">&larr; Back to Lesson 42</a></p>
+        <h1>Quiz 42: Semantic Segmentation</h1>
+        <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
+        <div id="quiz-questions">
+            <div class="quiz-question" data-q="0">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the fundamental difference between semantic segmentation and detection (Lesson 41)?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Segmentation labels every pixel with a class; detection only draws boxes around a handful of objects</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Segmentation only works on grayscale images</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Detection can find more object classes than segmentation ever can</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">There is no real difference; the terms are interchangeable</button>
+                </div>
+                <p class="quiz-explanation">Detection localizes objects with boxes; semantic segmentation goes further and assigns a class label to every single pixel in the image.</p>
+            </div>
+            <div class="quiz-question" data-q="1">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. In this lesson's minimal FCN-style network, what does the decoder see when producing its output?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 0)">Only the low-resolution bottleneck features produced by the encoder, upsampled back to full resolution</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 0)">The original input image, unchanged</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 0)">A random subset of encoder features at every resolution</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 0)">Only the ground-truth mask during training</button>
+                </div>
+                <p class="quiz-explanation">A plain FCN just downsamples then upsamples: the decoder has no access to the encoder's higher-resolution intermediate features, only the coarse bottleneck.</p>
+            </div>
+            <div class="quiz-question" data-q="2">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. How do U-Net's skip connections fix the boundary-detail loss of a plain FCN?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">By training the network twice as long</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">By concatenating the encoder's higher-resolution features directly into the matching decoder stage, giving the decoder a second, non-bottlenecked path to that detail</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">By replacing max pooling with average pooling</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">By adding more convolutional layers to the bottleneck itself</button>
+                </div>
+                <p class="quiz-explanation">Skip connections concatenate encoder features into the decoder at each matching resolution, so fine spatial detail never has to survive the lossy bottleneck in the first place.</p>
+            </div>
+            <div class="quiz-question" data-q="3">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. When the real pretrained FCN is run on a photo containing a tram, it labels part of the tram `train` and part `bus`. What does this reveal?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">The model is completely broken and its other predictions cannot be trusted</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">Pascal VOC's 20-class vocabulary has no `tram` class, so the model honestly splits its guess between the two closest real classes rather than making a random error</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">The photo was corrupted during loading</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">FCN can only label one class per image, so this is expected of every photo</button>
+                </div>
+                <p class="quiz-explanation">The split roughly tracks a real visual seam (windows vs. body) and reflects VOC's limited vocabulary, not a random or nonsensical failure — a reminder that a model's answers are only as good as its label set.</p>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="quiz41.html">&larr; Lesson 41 Quiz</a></div>
+            <div class="lesson-nav-next"><a href="quiz43.html">Lesson 43 Quiz &rarr;</a></div>
+        </div>
+    </div>
+    <script>
+    let score = 0;
+    const answered = new Set();
+
+    function shuffleChildren(container) {
+        const children = Array.from(container.children);
+        for (let i = children.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [children[i], children[j]] = [children[j], children[i]];
+        }
+        children.forEach(child => container.appendChild(child));
+        return children;
+    }
+
+    function shuffleQuiz() {
+        const container = document.getElementById('quiz-questions');
+        const questions = shuffleChildren(container);
+        questions.forEach((q, i) => {
+            q.querySelector('.quiz-q-number').textContent = i + 1;
+            shuffleChildren(q.querySelector('.quiz-choices'));
+        });
+    }
+    shuffleQuiz();
+
+    function checkAnswer(qIndex, choiceIndex, correctIndex) {
+        if (answered.has(qIndex)) return;
+        answered.add(qIndex);
+
+        const buttons = document.querySelectorAll(`[data-q="${qIndex}"] .quiz-choice`);
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            const c = parseInt(btn.dataset.c, 10);
+            if (c === correctIndex) btn.classList.add('quiz-correct');
+            else if (c === choiceIndex) btn.classList.add('quiz-incorrect');
+        });
+
+        document.querySelector(`[data-q="${qIndex}"] .quiz-explanation`).style.display = 'block';
+
+        if (choiceIndex === correctIndex) score += 1;
+        document.getElementById('quiz-score').textContent = `Score: ${score} / 4`;
+    }
+    </script>
+</body>
+</html>

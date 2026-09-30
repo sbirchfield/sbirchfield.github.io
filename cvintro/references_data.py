@@ -94,6 +94,15 @@ REFERENCES = [
         "landmark": True,
     },
     {
+        "id": "long-2015-fcn",
+        "authors": "Long, J., Shelhamer, E., & Darrell, T.",
+        "sort_name": "Long",
+        "year": 2015,
+        "title": "Fully Convolutional Networks for Semantic Segmentation",
+        "url": "https://arxiv.org/abs/1411.4038",
+        "landmark": True,
+    },
+    {
         "id": "ronneberger-2015",
         "authors": "Ronneberger, O., Fischer, P., & Brox, T.",
         "sort_name": "Ronneberger",
