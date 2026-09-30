@@ -642,4 +642,13 @@ REFERENCES = [
         "url": "https://arxiv.org/abs/2111.06377",
         "landmark": False,
     },
+    {
+        "id": "schonberger-2016-colmap",
+        "authors": "Schönberger, J. L., & Frahm, J.-M.",
+        "sort_name": "Schönberger",
+        "year": 2016,
+        "title": "Structure-from-Motion Revisited",
+        "url": "https://openaccess.thecvf.com/content_cvpr_2016/html/Schonberger_Structure-From-Motion_Revisited_CVPR_2016_paper.html",
+        "landmark": False,
+    },
 ]
