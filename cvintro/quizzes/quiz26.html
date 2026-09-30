@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 26 Quiz - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <p class="quiz-breadcrumb"><a href="../lessons/lesson26_image_formation.html">&larr; Back to Lesson 26</a></p>
+        <h1>Quiz 26: Image Formation</h1>
+        <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
+        <div id="quiz-questions">
+            <div class="quiz-question" data-q="0">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the pinhole projection formula <code>x = f*X/Z</code>, <code>y = f*Y/Z</code>, what determines how much a 3D point's image position changes as its depth <code>Z</code> increases (with <code>X</code>, <code>Y</code> fixed)?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 2)">The image position is completely independent of <code>Z</code></button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 2)">Increasing <code>Z</code> moves the projected point further from the image center</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 2)">Increasing <code>Z</code> shrinks the projected coordinates toward the center, since they scale as <code>1/Z</code></button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 2)">Depth <code>Z</code> only affects color, not position</button>
+                </div>
+                <p class="quiz-explanation">Both <code>x</code> and <code>y</code> are divided by <code>Z</code>, so farther points (larger <code>Z</code>) project closer to the image center -- the usual perspective effect.</p>
+            </div>
+            <div class="quiz-question" data-q="1">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why do objects nearer or farther than the focal plane appear blurred (the circle of confusion), according to this lesson?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">Because the sensor's Bayer filter fails at those distances</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">Because a lens focuses sharply only for one particular distance; other distances spread their light over a small disk on the sensor instead of a point</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Because gamma correction distorts out-of-focus regions</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Because JPEG compression blurs distant objects more than near ones</button>
+                </div>
+                <p class="quiz-explanation">Only points at the focal plane converge to a sharp point on the sensor; nearer/farther points spread over a disk whose size grows with distance from the focal plane.</p>
+            </div>
+            <div class="quiz-question" data-q="2">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What happens if a raw Bayer mosaic is demosaicked assuming the wrong filter pattern (e.g. BGGR treated as RGGB)?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">OpenCV raises an error and refuses to proceed</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">The result is identical either way, since demosaicking is pattern-independent</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">It fails silently: every pixel still gets a value, but colors are badly and systematically wrong</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Only the brightness channel is affected, not color</button>
+                </div>
+                <p class="quiz-explanation">Since every pixel gets *some* value regardless of the assumed pattern, a wrong pattern produces a plausible-looking but strongly color-shifted image rather than an obvious failure.</p>
+            </div>
+            <div class="quiz-question" data-q="3">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why is naively averaging two gamma-encoded pixel values (e.g. for blending or blurring) physically wrong?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 0)">Gamma encoding is nonlinear, so averaging encoded values does not equal averaging the true linear light intensity they represent</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 0)">Gamma encoding only affects color images, not grayscale</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 0)">It isn't wrong; encoded values can always be averaged directly</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 0)">Gamma correction has been removed from all modern image formats</button>
+                </div>
+                <p class="quiz-explanation">The correct approach is to decode to linear light, average there, then re-encode; averaging directly in encoded space under-represents the true blended brightness, as the lesson's black/white example shows.</p>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="quiz25.html">&larr; Lesson 25 Quiz</a></div>
+            <div class="lesson-nav-next"><a href="quiz27.html">Lesson 27 Quiz &rarr;</a></div>
+        </div>
+    </div>
+    <script>
+    let score = 0;
+    const answered = new Set();
+
+    function shuffleChildren(container) {
+        const children = Array.from(container.children);
+        for (let i = children.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [children[i], children[j]] = [children[j], children[i]];
+        }
+        children.forEach(child => container.appendChild(child));
+        return children;
+    }
+
+    function shuffleQuiz() {
+        const container = document.getElementById('quiz-questions');
+        const questions = shuffleChildren(container);
+        questions.forEach((q, i) => {
+            q.querySelector('.quiz-q-number').textContent = i + 1;
+            shuffleChildren(q.querySelector('.quiz-choices'));
+        });
+    }
+    shuffleQuiz();
+
+    function checkAnswer(qIndex, choiceIndex, correctIndex) {
+        if (answered.has(qIndex)) return;
+        answered.add(qIndex);
+
+        const buttons = document.querySelectorAll(`[data-q="${qIndex}"] .quiz-choice`);
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            const c = parseInt(btn.dataset.c, 10);
+            if (c === correctIndex) btn.classList.add('quiz-correct');
+            else if (c === choiceIndex) btn.classList.add('quiz-incorrect');
+        });
+
+        document.querySelector(`[data-q="${qIndex}"] .quiz-explanation`).style.display = 'block';
+
+        if (choiceIndex === correctIndex) score += 1;
+        document.getElementById('quiz-score').textContent = `Score: ${score} / 4`;
+    }
+    </script>
+</body>
+</html>

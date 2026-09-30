@@ -213,7 +213,7 @@ max abs diff vs F.scaled_dot_product_attention(..., is_causal=True): 1.19e-07
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Causal masking is exactly why GPT-style models are called "autoregressive": at generation time, each new token's query can only see keys and values from tokens already generated, never ones that don't exist yet. Bidirectional models (like BERT, or every vision transformer in the next lesson) skip this mask entirely — an image doesn't have a "future," so every patch is free to attend to every other patch.</p>
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>In the retrieval demo, change <code>query</code> to <code>vocab[2] + vocab[4]</code> (a blend of two tokens) instead of a pure match. Does attention now split its weight between positions 2 and 4? Does the split look roughly even, and can you explain why from the dot-product formula?</li>
 <li>Remove the <code>/ np.sqrt(d_k)</code> scaling from <code>attention</code> and rerun the retrieval demo with <code>D</code> increased from 8 to 128. Do the attention weights become more or less "peaked" (closer to one-hot) as dimension grows without scaling — and does adding the scaling back restore the original behavior?</li>
 <li>Build a mask that allows each position to attend only to itself and its immediate neighbors (a "local attention" window, width 3) instead of the full causal triangle. How does the resulting weight pattern compare to a Lesson 10 convolution kernel applied along the sequence?</li>

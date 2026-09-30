@@ -384,7 +384,7 @@ good matches after Lowe ratio test: 191 / 723 candidate pairs
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=05aa0df7"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Increase the rotation angle to 90 degrees and the scale to 0.3. Does the number of good matches and the geometric-correctness percentage hold up, or degrade? At what point does SIFT start to struggle?</li>
 <li>Try <code>cv2.ORB_create()</code> (a much faster, free binary-descriptor alternative to SIFT) with <code>cv2.NORM_HAMMING</code> in the <code>BFMatcher</code> instead of the default L2 norm. Compare the number of good matches and qualitatively compare speed using <code>%timeit</code> on <code>detectAndCompute</code>.</li>
 <li>Lower the ratio-test threshold from <code>0.75</code> to <code>0.6</code>. How do the number of good matches and the fraction that are geometrically correct both change? What does this tell you about the threshold's role in a precision/recall tradeoff?</li>
@@ -393,6 +393,9 @@ good matches after Lowe ratio test: 191 / 723 candidate pairs
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz20.html" class="quiz-button">Take the Lesson 20 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson18_color_spaces.html">&larr; Lesson 18: Color Spaces</a></div>
             <div class="lesson-nav-next"><a href="lesson21_optical_flow.html">Lesson 21: Optical Flow and Motion Estimation &rarr;</a></div>

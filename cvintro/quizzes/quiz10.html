@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 10 Quiz - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <p class="quiz-breadcrumb"><a href="../lessons/lesson10_convolution.html">&larr; Back to Lesson 10</a></p>
+        <h1>Quiz 10: Convolution</h1>
+        <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
+        <div id="quiz-questions">
+            <div class="quiz-question" data-q="0">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the key difference between true convolution and correlation?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Convolution flips the kernel 180 degrees before sliding it; correlation does not</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Correlation only works on grayscale images</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Convolution requires a square kernel; correlation does not</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">There is no difference; the terms are interchangeable in all cases</button>
+                </div>
+                <p class="quiz-explanation">Convolution flips the kernel before sliding; for symmetric kernels this makes no difference, but for asymmetric kernels (like Sobel) it does.</p>
+            </div>
+            <div class="quiz-question" data-q="1">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Does <code>cv2.filter2D</code> compute convolution or correlation?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">Convolution</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">Correlation</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Neither -- it computes a Fourier transform</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It alternates depending on kernel size</button>
+                </div>
+                <p class="quiz-explanation">Most image libraries, including OpenCV's <code>cv2.filter2D</code>, actually implement correlation despite being casually called "convolution".</p>
+            </div>
+            <div class="quiz-question" data-q="2">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does it mean for a 2D kernel to be separable?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">It can only be applied to separate color channels</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">It can be written as the outer product of two 1D kernels, turning O(n^2) work into O(2n)</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">It must be split into two passes regardless of its structure</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">It has no effect on the image</button>
+                </div>
+                <p class="quiz-explanation">A separable kernel like the Gaussian can be applied as a 1D pass along x then a 1D pass along y, which is much cheaper than the full 2D kernel.</p>
+            </div>
+            <div class="quiz-question" data-q="3">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the Sobel edge-detection example, why does the convolution-vs-correlation distinction actually matter?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 2)">Because Sobel only works with correlation</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 2)">Because the Sobel kernel is symmetric</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 2)">Because the Sobel kernel is asymmetric, so flipping it changes the result (typically a sign flip)</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 2)">It never matters for any kernel</button>
+                </div>
+                <p class="quiz-explanation">For symmetric kernels (box, Gaussian) flipping changes nothing, but asymmetric kernels like Sobel give different results under convolution vs. correlation.</p>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="quiz09.html">&larr; Lesson 9 Quiz</a></div>
+            <div class="lesson-nav-next"><a href="quiz11.html">Lesson 11 Quiz &rarr;</a></div>
+        </div>
+    </div>
+    <script>
+    let score = 0;
+    const answered = new Set();
+
+    function shuffleChildren(container) {
+        const children = Array.from(container.children);
+        for (let i = children.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [children[i], children[j]] = [children[j], children[i]];
+        }
+        children.forEach(child => container.appendChild(child));
+        return children;
+    }
+
+    function shuffleQuiz() {
+        const container = document.getElementById('quiz-questions');
+        const questions = shuffleChildren(container);
+        questions.forEach((q, i) => {
+            q.querySelector('.quiz-q-number').textContent = i + 1;
+            shuffleChildren(q.querySelector('.quiz-choices'));
+        });
+    }
+    shuffleQuiz();
+
+    function checkAnswer(qIndex, choiceIndex, correctIndex) {
+        if (answered.has(qIndex)) return;
+        answered.add(qIndex);
+
+        const buttons = document.querySelectorAll(`[data-q="${qIndex}"] .quiz-choice`);
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            const c = parseInt(btn.dataset.c, 10);
+            if (c === correctIndex) btn.classList.add('quiz-correct');
+            else if (c === choiceIndex) btn.classList.add('quiz-incorrect');
+        });
+
+        document.querySelector(`[data-q="${qIndex}"] .quiz-explanation`).style.display = 'block';
+
+        if (choiceIndex === correctIndex) score += 1;
+        document.getElementById('quiz-score').textContent = `Score: ${score} / 4`;
+    }
+    </script>
+</body>
+</html>

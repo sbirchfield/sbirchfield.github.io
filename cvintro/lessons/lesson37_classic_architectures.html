@@ -320,7 +320,7 @@ output shape: (4, 16, 20, 20)  (unchanged — a residual block preserves shape, 
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=ea5a9164"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>In <code>PlainDeepNet</code>/<code>ResidualDeepNet</code> above, change the activation from <code>torch.sigmoid</code> to <code>torch.relu</code> (ReLU's derivative is 1 for any positive input, not capped at 0.25 like sigmoid's) and rerun the gradient-norm comparison. Does the plain network's vanishing problem get better, worse, or stay about the same?</li>
 <li>Change the residual net's scale factor from <code>0.3</code> to <code>1.0</code> (i.e. <code>x + torch.sigmoid(layer(x))</code> with no damping) and rerun. Does the gradient ratio change much? What does that suggest about <em>why</em> the residual connection works — is it the scale factor, or the <code>+ x</code> shortcut itself?</li>
 <li><code>ResidualBlock</code> above requires the input and output to have the same number of channels, since they're added directly. Real ResNets sometimes need to change channel count between blocks (e.g. 16 → 32). Sketch (in words, or in code) what the shortcut path would need to do in that case for the addition to still make sense.</li>
@@ -329,6 +329,9 @@ output shape: (4, 16, 20, 20)  (unchanged — a residual block preserves shape, 
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz37.html" class="quiz-button">Take the Lesson 37 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson36_image_classification_practice.html">&larr; Lesson 36: Image Classification in Practice</a></div>
             <div class="lesson-nav-next"><a href="lesson38_transfer_learning.html">Lesson 38: Transfer Learning &rarr;</a></div>

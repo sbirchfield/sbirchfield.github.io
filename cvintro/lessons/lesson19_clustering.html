@@ -406,7 +406,7 @@ DBSCAN accuracy on concentric rings: 100.0%
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Where-this-goes-next">Where this goes next<a class="anchor-link" href="#Where-this-goes-next">¶</a></h2><p>This is the end of Part 1. Many of the algorithms encountered so far operate directly on <strong>raw or hand-picked features</strong> — pixel color, <code>(x, y)</code> coordinates, texture — and rely on specific rules, such as the human-chosen distance functions used here. Future lessons revisit many of these problems using deep learning to automatically discover the features and the rules for combining them. For example, Lesson 43's instance segmentation uses a similar clustering idea, and Lesson 48's autoencoder learns the feature space itself, purely from reconstruction error, before any grouping is asked for at all. Where this lesson's methods assume a shape and fit it, the deep-learning methods later in this course learn a representation and let structure emerge from it.</p>
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Rerun the color-segmentation k-means with <code>k=3</code> and <code>k=6</code> instead of the true <code>4</code>. Since nothing in the algorithm can "know" the right number of clusters, how does the segmentation degrade in each direction, and can you tell purely from the output which <code>k</code> is likely wrong?</li>
 <li>The GMM above was evaluated only on the ring dataset, where it fails for the same reason k-means does. Construct a two-cluster dataset where the clusters are genuinely elliptical (e.g. <code>np.random.multivariate_normal</code> with a non-diagonal covariance) and compare GMM against k-means there. Does GMM's extra flexibility (fitting the shape, not just the center) show a real accuracy advantage this time?</li>
 <li>In the noisy-clutter DBSCAN demo, shrink <code>eps</code> from <code>0.6</code> to <code>0.3</code>. Does DBSCAN start mislabeling real ring points as noise, real clutter points as belonging to a ring, or both — and does that match the earlier warning about <code>eps</code> being a hand-tuned, dataset-specific choice rather than something the algorithm discovers?</li>
@@ -415,6 +415,9 @@ DBSCAN accuracy on concentric rings: 100.0%
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz19.html" class="quiz-button">Take the Lesson 19 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson18_color_spaces.html">&larr; Lesson 18: Color Spaces</a></div>
             <div class="lesson-nav-next"><a href="lesson20_feature_detection_matching.html">Lesson 20: Feature Detection and Matching &rarr;</a></div>

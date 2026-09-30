@@ -360,7 +360,7 @@ grass pixel (BGR), before -&gt; after: [72 94 75] -&gt; [72 94 75]
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=800dbca7"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Predict, then check, what <code>cv2.subtract(img, 150)</code> does to a pixel whose value is <code>100</code> — does it wrap around like the naive NumPy addition did, or saturate?</li>
 <li>Use <code>cv2.add</code> with its <code>mask</code> argument directly (instead of manually copying with boolean indexing as done above) to reproduce the masked-brightening result, and confirm the two approaches give identical output.</li>
 <li><code>cv2.addWeighted</code> does not require <code>alpha + beta</code> to sum to 1 (the <code>gamma</code> term is added on top of both). Try <code>cv2.addWeighted(img_a, 1.0, img_b, 1.0, 0)</code> (a plain saturating sum, not a blend) and describe what changes about the result compared to <code>alpha=0.5</code>.</li>
@@ -369,6 +369,9 @@ grass pixel (BGR), before -&gt; after: [72 94 75] -&gt; [72 94 75]
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz02.html" class="quiz-button">Take the Lesson 2 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson01_images_as_arrays.html">&larr; Lesson 1: Images as Arrays</a></div>
             <div class="lesson-nav-next"><a href="lesson03_thresholding_morphology.html">Lesson 3: Thresholding, Erosion, and Dilation &rarr;</a></div>

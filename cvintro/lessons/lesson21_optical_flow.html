@@ -567,7 +567,7 @@ mean flow, TEXTURED pixels: (5.00, -3.00)  &lt;- accurate
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=a569183c"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Rerun the sparse Lucas-Kanade comparison with <code>large_motion = (10.0, 8.0)</code>. Does <code>cv2.calcOpticalFlowPyrLK</code> still recover it accurately? At what point (try increasingly large motions) does it start to fail, and why would you expect a pyramid to help push that limit further out?</li>
 <li>Modify the synthetic scene so the circles move with <em>different</em> velocities (e.g. half moving one way, half another). Re-run the dense Farnebäck color visualization and confirm the two motions appear as two distinct colors.</li>
 <li>In the aperture-problem demo, construct a small textured (non-edge) patch instead of a straight edge, and show that <em>both</em> components of an arbitrary motion vector are recoverable from it — unlike the edge case, this should not have an invisible direction of motion.</li>
@@ -576,6 +576,9 @@ mean flow, TEXTURED pixels: (5.00, -3.00)  &lt;- accurate
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz21.html" class="quiz-button">Take the Lesson 21 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson20_feature_detection_matching.html">&larr; Lesson 20: Feature Detection and Matching</a></div>
             <div class="lesson-nav-next"><a href="lesson22_stereo_matching.html">Lesson 22: Stereo Matching &rarr;</a></div>

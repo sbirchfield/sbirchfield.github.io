@@ -737,7 +737,7 @@ accumulator peak:  center=(100, 100), radius=51
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=05e078d4"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Increase the noise standard deviation in <code>flat_noisy</code> and re-run the noise-robustness comparison. Does the relative ordering of the four kernels change?</li>
 <li><code>cv2.Canny</code> accepts an <code>apertureSize</code> parameter for its internal Sobel step (default 3). Try <code>apertureSize=5</code> and compare the result to the default on the noisy image.</li>
 <li>Canny's hysteresis step needs a <em>connected</em> path of above-low-threshold pixels between a weak edge and a strong one. Construct a small binary example (by hand, as a NumPy array) where a real edge is broken into two segments with a 1-pixel gap, and confirm that hysteresis fails to link them even though a human viewer would clearly see one edge.</li>
@@ -749,6 +749,9 @@ accumulator peak:  center=(100, 100), radius=51
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz12.html" class="quiz-button">Take the Lesson 12 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson11_smoothing_pyramids.html">&larr; Lesson 11: Smoothing and Gaussian Pyramids</a></div>
             <div class="lesson-nav-next"><a href="lesson13_laplacian_pyramids.html">Lesson 13: Second Derivatives and the Laplacian &rarr;</a></div>

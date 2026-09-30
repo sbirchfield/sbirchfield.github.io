@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 38 Quiz - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <p class="quiz-breadcrumb"><a href="../lessons/lesson38_transfer_learning.html">&larr; Back to Lesson 38</a></p>
+        <h1>Quiz 38: Transfer Learning</h1>
+        <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
+        <div id="quiz-questions">
+            <div class="quiz-question" data-q="0">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the key idea behind transfer learning, as motivated in this lesson?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 1)">Training a brand new network from scratch on the target task, but with more epochs</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 1)">Reusing a network already trained on a different, data-rich source task, since its early-layer features (edges, blobs, textures) are useful for almost any visual task</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 1)">Always using the largest possible batch size for the target task</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 1)">Manually copying weights between two unrelated tasks without any pretraining</button>
+                </div>
+                <p class="quiz-explanation">Transfer learning sidesteps data-starved target tasks by reusing generic low-level features learned on a data-rich source task, rather than learning everything from scratch.</p>
+            </div>
+            <div class="quiz-question" data-q="1">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the key difference between the 'frozen backbone' and 'fine-tuning' strategies in this lesson?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 0)">Frozen backbone trains a new classifier on fixed pretrained features; fine-tuning also updates the backbone itself, using a much smaller learning rate than the classifier head</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 0)">Fine-tuning never uses the pretrained weights at all</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 0)">Frozen backbone requires more target training images than fine-tuning</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 0)">There is no real difference between the two strategies</button>
+                </div>
+                <p class="quiz-explanation">Frozen backbone only trains the new head; fine-tuning also updates the backbone, but carefully, with a small backbone learning rate to avoid wrecking what it already learned.</p>
+            </div>
+            <div class="quiz-question" data-q="2">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does fine-tuning use a backbone learning rate roughly 30x smaller than the classifier head's learning rate?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">To make training run faster</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">A large backbone update from just 30 target examples would overfit those few images, discarding useful structure learned from the much larger source task -- the same catastrophic-forgetting failure as Lesson 35's overfitting curve</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">Because PyTorch requires different learning rates for different layers by default</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">Because the backbone has more parameters than the head</button>
+                </div>
+                <p class="quiz-explanation">A much smaller backbone learning rate protects the pretrained features from being wiped out by noisy updates from a tiny target dataset.</p>
+            </div>
+            <div class="quiz-question" data-q="3">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why is the comparison between the toy frozen backbone and the real ImageNet-pretrained ResNet-18 not a perfectly controlled experiment, according to the lesson's caveat?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">ResNet-18 was never actually trained on ImageNet</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">ImageNet's 1,000 classes already include cats and several vehicle types, unlike the toy source task (only airplanes/automobiles), so part of ResNet-18's edge comes from having directly seen the target classes</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">The toy backbone is actually larger than ResNet-18</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">The comparison uses different target images for each strategy</button>
+                </div>
+                <p class="quiz-explanation">Since ImageNet already contains cat and vehicle photos, some of ResNet-18's advantage is direct class overlap, not purely richer general-purpose pretraining.</p>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="quiz37.html">&larr; Lesson 37 Quiz</a></div>
+            <div class="lesson-nav-next"><a href="quiz39.html">Lesson 39 Quiz &rarr;</a></div>
+        </div>
+    </div>
+    <script>
+    let score = 0;
+    const answered = new Set();
+
+    function shuffleChildren(container) {
+        const children = Array.from(container.children);
+        for (let i = children.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [children[i], children[j]] = [children[j], children[i]];
+        }
+        children.forEach(child => container.appendChild(child));
+        return children;
+    }
+
+    function shuffleQuiz() {
+        const container = document.getElementById('quiz-questions');
+        const questions = shuffleChildren(container);
+        questions.forEach((q, i) => {
+            q.querySelector('.quiz-q-number').textContent = i + 1;
+            shuffleChildren(q.querySelector('.quiz-choices'));
+        });
+    }
+    shuffleQuiz();
+
+    function checkAnswer(qIndex, choiceIndex, correctIndex) {
+        if (answered.has(qIndex)) return;
+        answered.add(qIndex);
+
+        const buttons = document.querySelectorAll(`[data-q="${qIndex}"] .quiz-choice`);
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            const c = parseInt(btn.dataset.c, 10);
+            if (c === correctIndex) btn.classList.add('quiz-correct');
+            else if (c === choiceIndex) btn.classList.add('quiz-incorrect');
+        });
+
+        document.querySelector(`[data-q="${qIndex}"] .quiz-explanation`).style.display = 'block';
+
+        if (choiceIndex === correctIndex) score += 1;
+        document.getElementById('quiz-score').textContent = `Score: ${score} / 4`;
+    }
+    </script>
+</body>
+</html>

@@ -527,7 +527,7 @@ b2 max diff: 0.00e+00
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=3696d165"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>The capacity sweep above used ReLU. Rerun it with <code>tanh</code> instead (swap <code>forward</code>/<code>backward</code>'s activation and its derivative throughout <code>train_and_eval</code>, mirroring Exercise 2 below). Does the same $H=1$ ceiling and $H=3$-to-$H=4$ transition appear, or does a smooth activation change where the floor sits?</li>
 <li>Replace <code>relu</code>/<code>relu_deriv</code> with <code>tanh</code>/its derivative ($1 - \tanh^2$) throughout, and retrain. Does it still solve the problem? Compare the resulting loss curve's shape to the ReLU version's.</li>
 <li>Remove the nonlinearity entirely (replace <code>relu(z1)</code> with just <code>z1</code> in <code>forward</code>, and <code>relu_deriv(z1)</code> with an array of ones in <code>backward</code>). Confirm the network can no longer beat Lesson 31's ~50% ceiling — consistent with the collapse-to-a-single-projection argument above, now demonstrated on the actual training dynamics instead of just the static algebra.</li>
@@ -536,6 +536,9 @@ b2 max diff: 0.00e+00
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz32.html" class="quiz-button">Take the Lesson 32 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson31_neural_network_fundamentals.html">&larr; Lesson 31: Neural Network Fundamentals</a></div>
             <div class="lesson-nav-next"><a href="lesson33_optimization.html">Lesson 33: Optimization &rarr;</a></div>

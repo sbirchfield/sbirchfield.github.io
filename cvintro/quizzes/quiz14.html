@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 14 Quiz - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <p class="quiz-breadcrumb"><a href="../lessons/lesson14_nonlinear_filters.html">&larr; Back to Lesson 14</a></p>
+        <h1>Quiz 14: Nonlinear Filters</h1>
+        <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
+        <div id="quiz-questions">
+            <div class="quiz-question" data-q="0">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why is a median filter especially effective against salt-and-pepper noise, compared to Gaussian blur?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">A single extreme outlier barely moves the median, while it drags the mean toward it</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">The median filter is linear, so it averages noise away more precisely</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Median filtering only works on binary images</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Gaussian blur cannot process 8-bit images</button>
+                </div>
+                <p class="quiz-explanation">A wildly wrong outlier pixel skews a mean a lot but barely affects a median, since the median just picks the middle-ranked value.</p>
+            </div>
+            <div class="quiz-question" data-q="1">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. On a grayscale image, what operation does erosion correspond to in a neighborhood?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">Taking the maximum value in the neighborhood</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">Taking the minimum value in the neighborhood</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Taking the mean value in the neighborhood</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Taking the median value in the neighborhood</button>
+                </div>
+                <p class="quiz-explanation">Grayscale erosion generalizes binary erosion as a min filter: each pixel becomes the minimum value in its neighborhood.</p>
+            </div>
+            <div class="quiz-question" data-q="2">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the bilateral filter formula, what are the two factors each neighboring pixel is weighted by?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">Its row and column distance from the center, independently</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">How spatially close it is, and how similar its intensity is to the center pixel</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">Its intensity value and its position in the image (top vs. bottom)</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">Only how similar its intensity is to the center pixel</button>
+                </div>
+                <p class="quiz-explanation">The bilateral filter combines a spatial Gaussian (<code>G_sigma_s</code>) with a range/intensity Gaussian (<code>G_sigma_r</code>), so only neighbors that are both nearby and similar in intensity get high weight.</p>
+            </div>
+            <div class="quiz-question" data-q="3">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does the bilateral filter preserve a step edge while Gaussian blur smooths across it?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">The bilateral filter has a larger spatial radius than Gaussian blur</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">Pixels across the edge have very different intensity, so the range weight down-weights them almost to zero</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">The bilateral filter only operates on binary images</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">Gaussian blur always ignores pixel intensity entirely</button>
+                </div>
+                <p class="quiz-explanation">Even though pixels on the other side of an edge may be spatially close, their intensity difference makes the range weight near zero, so they contribute almost nothing to the output.</p>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="quiz13.html">&larr; Lesson 13 Quiz</a></div>
+            <div class="lesson-nav-next"><a href="quiz15.html">Lesson 15 Quiz &rarr;</a></div>
+        </div>
+    </div>
+    <script>
+    let score = 0;
+    const answered = new Set();
+
+    function shuffleChildren(container) {
+        const children = Array.from(container.children);
+        for (let i = children.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [children[i], children[j]] = [children[j], children[i]];
+        }
+        children.forEach(child => container.appendChild(child));
+        return children;
+    }
+
+    function shuffleQuiz() {
+        const container = document.getElementById('quiz-questions');
+        const questions = shuffleChildren(container);
+        questions.forEach((q, i) => {
+            q.querySelector('.quiz-q-number').textContent = i + 1;
+            shuffleChildren(q.querySelector('.quiz-choices'));
+        });
+    }
+    shuffleQuiz();
+
+    function checkAnswer(qIndex, choiceIndex, correctIndex) {
+        if (answered.has(qIndex)) return;
+        answered.add(qIndex);
+
+        const buttons = document.querySelectorAll(`[data-q="${qIndex}"] .quiz-choice`);
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            const c = parseInt(btn.dataset.c, 10);
+            if (c === correctIndex) btn.classList.add('quiz-correct');
+            else if (c === choiceIndex) btn.classList.add('quiz-incorrect');
+        });
+
+        document.querySelector(`[data-q="${qIndex}"] .quiz-explanation`).style.display = 'block';
+
+        if (choiceIndex === correctIndex) score += 1;
+        document.getElementById('quiz-score').textContent = `Score: ${score} / 4`;
+    }
+    </script>
+</body>
+</html>

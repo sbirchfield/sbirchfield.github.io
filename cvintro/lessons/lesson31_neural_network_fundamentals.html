@@ -479,7 +479,7 @@ trained single-neuron accuracy: 50.0%
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=02a906bd"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Increase <code>lr</code> in <code>train</code> well past a reasonable value (e.g. <code>lr=20</code>) on the two-blob dataset. What happens to the loss curve, and how does this relate to the step size overshooting the loss surface's curvature?</li>
 <li>Retrain on the two-blob dataset with several different random seeds. Does the learned direction always end up close to the hand-picked one from Lesson 30, or does it vary a lot? What does that suggest about how many good solutions exist for a well-separated dataset?</li>
 <li>Make the outer ring asymmetric instead of a full circle (e.g. <code>theta_out = rng.uniform(0, np.pi, 60)</code>, so the outer class only occupies half the ring). Retrain the single neuron. Does this genuinely broken symmetry change the final accuracy noticeably compared to the ~50% chance-level result on the full ring, and does that support the explanation above (that the <em>full</em> ring's symmetric pull on the gradient, not some fundamental inability to learn, is what stalled training near $w \approx 0$)? (Note: simply translating both classes together by the same offset would <em>not</em> break this symmetry, since the bias term $b$ can absorb any shared translation for free.)</li>
@@ -488,6 +488,9 @@ trained single-neuron accuracy: 50.0%
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz31.html" class="quiz-button">Take the Lesson 31 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson30_projection.html">&larr; Lesson 30: Projection &mdash; The Central Idea</a></div>
             <div class="lesson-nav-next"><a href="lesson32_multilayer_perceptrons.html">Lesson 32: Multi-Layer Perceptrons &rarr;</a></div>

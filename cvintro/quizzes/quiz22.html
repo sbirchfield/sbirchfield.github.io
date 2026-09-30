@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 22 Quiz - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <p class="quiz-breadcrumb"><a href="../lessons/lesson22_stereo_matching.html">&larr; Back to Lesson 22</a></p>
+        <h1>Quiz 22: Stereo Matching</h1>
+        <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
+        <div id="quiz-questions">
+            <div class="quiz-question" data-q="0">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does stereo matching on a rectified image pair only need a 1D search instead of a full 2D search?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 1)">Because stereo images are always grayscale</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 1)">Because for a rectified pair, the corresponding point for any pixel in the left image lies on the same row in the right image</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 1)">Because disparity is always zero for rectified pairs</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 1)">Because block matching is inherently limited to 1D</button>
+                </div>
+                <p class="quiz-explanation">Epipolar geometry for a rectified stereo pair guarantees the match lies on the same row, collapsing the search from 2D to a 1D scan.</p>
+            </div>
+            <div class="quiz-question" data-q="1">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. According to <code>Z = f * B / d</code>, what happens to estimated depth as disparity <code>d</code> increases?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">Depth increases proportionally</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">Depth decreases -- nearby objects have large disparity, distant objects have small disparity</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Depth is unrelated to disparity</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Depth becomes negative</button>
+                </div>
+                <p class="quiz-explanation">Depth is inversely proportional to disparity: nearer surfaces shift more (larger d) and so have smaller Z.</p>
+            </div>
+            <div class="quiz-question" data-q="2">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does the left-right consistency check do in stereo matching?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">It converts the disparity map to color for visualization</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">It matches both left-to-right and right-to-left, then keeps only pixels where the two results agree, discarding the rest as unreliable</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">It blurs the disparity map to remove noise</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">It doubles the disparity search range</button>
+                </div>
+                <p class="quiz-explanation">A pixel that disagrees between the two matching directions by more than about a pixel is flagged as unreliable, which is especially effective at catching occlusions.</p>
+            </div>
+            <div class="quiz-question" data-q="3">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the trade-off of increasing the block-matching window size in stereo matching?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">Larger windows are always strictly better with no downside</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">Larger windows are more robust to noise but blur across depth discontinuities; smaller windows preserve sharp boundaries but are more easily fooled by noise</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">Window size has no effect on the result</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">Larger windows only affect runtime, never the resulting disparity values</button>
+                </div>
+                <p class="quiz-explanation">A bigger window averages over more pixels (robust to noise) but mixes pixels from two different true depths near object edges (blurred boundaries); a smaller window has the opposite trade-off.</p>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="quiz21.html">&larr; Lesson 21 Quiz</a></div>
+            <div class="lesson-nav-next"><a href="quiz23.html">Lesson 23 Quiz &rarr;</a></div>
+        </div>
+    </div>
+    <script>
+    let score = 0;
+    const answered = new Set();
+
+    function shuffleChildren(container) {
+        const children = Array.from(container.children);
+        for (let i = children.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [children[i], children[j]] = [children[j], children[i]];
+        }
+        children.forEach(child => container.appendChild(child));
+        return children;
+    }
+
+    function shuffleQuiz() {
+        const container = document.getElementById('quiz-questions');
+        const questions = shuffleChildren(container);
+        questions.forEach((q, i) => {
+            q.querySelector('.quiz-q-number').textContent = i + 1;
+            shuffleChildren(q.querySelector('.quiz-choices'));
+        });
+    }
+    shuffleQuiz();
+
+    function checkAnswer(qIndex, choiceIndex, correctIndex) {
+        if (answered.has(qIndex)) return;
+        answered.add(qIndex);
+
+        const buttons = document.querySelectorAll(`[data-q="${qIndex}"] .quiz-choice`);
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            const c = parseInt(btn.dataset.c, 10);
+            if (c === correctIndex) btn.classList.add('quiz-correct');
+            else if (c === choiceIndex) btn.classList.add('quiz-incorrect');
+        });
+
+        document.querySelector(`[data-q="${qIndex}"] .quiz-explanation`).style.display = 'block';
+
+        if (choiceIndex === correctIndex) score += 1;
+        document.getElementById('quiz-score').textContent = `Score: ${score} / 4`;
+    }
+    </script>
+</body>
+</html>

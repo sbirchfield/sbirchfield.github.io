@@ -384,7 +384,7 @@ max reprojection error:  2.919 px
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=91673087"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Reduce the overlap between the two views (e.g. crop <code>view2</code> down to its rightmost quarter before matching). At what point does SIFT matching find too few good matches for <code>findHomography</code> to produce a reliable result?</li>
 <li>Replace the linear feather with a hard cutoff (no blending: just pick whichever image covers each pixel, splitting the overlap down the middle) and compare the visible seam quality to the feathered version.</li>
 <li><code>H</code> here is a mild general homography, not a pure translation, because the two photos were taken from slightly different positions rather than a pure sideways pan. Print the ratio of <code>H</code>'s last row to <code>[0, 0, 1]</code> as a rough measure of how much perspective distortion it captures, and compare it to what you'd get by forcing an affine fit (<code>cv2.estimateAffinePartial2D</code>) instead — how well does the affine approximation stitch the images compared to the full homography?</li>
@@ -393,6 +393,9 @@ max reprojection error:  2.919 px
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz25.html" class="quiz-button">Take the Lesson 25 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson24_projective_geometry.html">&larr; Lesson 24: Projective Geometry</a></div>
             <div class="lesson-nav-next"><a href="lesson26_image_formation.html">Lesson 26: Image Formation &rarr;</a></div>

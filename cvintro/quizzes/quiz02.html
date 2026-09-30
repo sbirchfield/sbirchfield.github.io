@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 2 Quiz - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <p class="quiz-breadcrumb"><a href="../lessons/lesson02_image_arithmetic.html">&larr; Back to Lesson 2</a></p>
+        <h1>Quiz 2: Image Arithmetic</h1>
+        <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
+        <div id="quiz-questions">
+            <div class="quiz-question" data-q="0">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. With NumPy's default <code>uint8</code> arithmetic, what happens when you add 80 to a pixel of value 220?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 1)">It saturates at 255</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 1)">It wraps around to a smaller value (<code>300 mod 256 = 44</code>)</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 1)">It raises an <code>OverflowError</code></button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 1)">NumPy automatically upgrades to a larger integer type</button>
+                </div>
+                <p class="quiz-explanation"><code>uint8</code> wraps around like an odometer: <code>220 + 80 = 300</code>, which overflows to <code>300 mod 256 = 44</code>.</p>
+            </div>
+            <div class="quiz-question" data-q="1">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does "saturating arithmetic" (as used by <code>cv2.add</code>) do differently from plain NumPy <code>uint8</code> addition?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">It wraps around instead of clamping</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">It clamps results to the valid range instead of wrapping</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">It converts to floating point automatically</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It's identical to NumPy's behavior</button>
+                </div>
+                <p class="quiz-explanation"><code>cv2.add</code> clamps (saturates) at 0 and 255 rather than silently wrapping around.</p>
+            </div>
+            <div class="quiz-question" data-q="2">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does difference imaging typically take the absolute value of the subtraction?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 0)">So the result is meaningful regardless of which image is brighter at a given pixel</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 0)">Because <code>cv2.subtract</code> requires positive inputs</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 0)">To artificially increase contrast</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 0)">Absolute value isn't actually used in difference imaging</button>
+                </div>
+                <p class="quiz-explanation">Without <code>abs()</code>, a pixel that got darker and one that got brighter by the same amount would look different, even though both changed.</p>
+            </div>
+            <div class="quiz-question" data-q="3">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does <code>cv2.addWeighted(a, alpha, b, beta, gamma)</code> compute?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 0)"><code>a*alpha + b*beta + gamma</code></button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 0)"><code>(a + b) / (alpha + beta) + gamma</code></button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 0)"><code>alpha*a - beta*b + gamma</code></button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 0)"><code>max(alpha*a, beta*b) + gamma</code></button>
+                </div>
+                <p class="quiz-explanation">It's a saturating weighted sum of the two images plus a constant offset <code>gamma</code>.</p>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="quiz01.html">&larr; Lesson 1 Quiz</a></div>
+            <div class="lesson-nav-next"><a href="quiz03.html">Lesson 3 Quiz &rarr;</a></div>
+        </div>
+    </div>
+    <script>
+    let score = 0;
+    const answered = new Set();
+
+    function shuffleChildren(container) {
+        const children = Array.from(container.children);
+        for (let i = children.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [children[i], children[j]] = [children[j], children[i]];
+        }
+        children.forEach(child => container.appendChild(child));
+        return children;
+    }
+
+    function shuffleQuiz() {
+        const container = document.getElementById('quiz-questions');
+        const questions = shuffleChildren(container);
+        questions.forEach((q, i) => {
+            q.querySelector('.quiz-q-number').textContent = i + 1;
+            shuffleChildren(q.querySelector('.quiz-choices'));
+        });
+    }
+    shuffleQuiz();
+
+    function checkAnswer(qIndex, choiceIndex, correctIndex) {
+        if (answered.has(qIndex)) return;
+        answered.add(qIndex);
+
+        const buttons = document.querySelectorAll(`[data-q="${qIndex}"] .quiz-choice`);
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            const c = parseInt(btn.dataset.c, 10);
+            if (c === correctIndex) btn.classList.add('quiz-correct');
+            else if (c === choiceIndex) btn.classList.add('quiz-incorrect');
+        });
+
+        document.querySelector(`[data-q="${qIndex}"] .quiz-explanation`).style.display = 'block';
+
+        if (choiceIndex === correctIndex) score += 1;
+        document.getElementById('quiz-score').textContent = `Score: ${score} / 4`;
+    }
+    </script>
+</body>
+</html>

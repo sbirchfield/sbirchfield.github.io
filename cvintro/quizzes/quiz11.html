@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 11 Quiz - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <p class="quiz-breadcrumb"><a href="../lessons/lesson11_smoothing_pyramids.html">&larr; Back to Lesson 11</a></p>
+        <h1>Quiz 11: Smoothing and Gaussian Pyramids</h1>
+        <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
+        <div id="quiz-questions">
+            <div class="quiz-question" data-q="0">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What artifact can occur when an image is downsampled by simply keeping every k-th pixel, without blurring first?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Aliasing -- fine periodic detail folds into a fake low-frequency pattern</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">The image becomes larger instead of smaller</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Color channels get swapped</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">The image is unaffected as long as k is even</button>
+                </div>
+                <p class="quiz-explanation">Fine regular detail (like brick mortar lines) that oscillates faster than the new pixel spacing can represent aliases into noisy-looking fake patterns.</p>
+            </div>
+            <div class="quiz-question" data-q="1">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does blurring before downsampling prevent aliasing?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">It randomly discards pixels instead of a fixed pattern</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">It removes fine detail before subsampling, rather than randomly keeping or dropping it pixel by pixel</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">It increases image contrast</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It converts the image to grayscale</button>
+                </div>
+                <p class="quiz-explanation">Smoothing away fine detail before subsampling avoids the fold-in effect that causes aliasing.</p>
+            </div>
+            <div class="quiz-question" data-q="2">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What happens if the Gaussian kernel size is too small for the requested <code>sigma</code>?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">OpenCV raises an error</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">The kernel is silently reshaped into something close to a plain box average, barely blurring at the requested strength</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">The image is blurred more strongly than requested</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">Nothing changes -- kernel size is irrelevant to sigma</button>
+                </div>
+                <p class="quiz-explanation">A too-small kernel can't represent a wide bell curve, so <code>cv2.getGaussianKernel</code> renormalizes it into something close to a box average.</p>
+            </div>
+            <div class="quiz-question" data-q="3">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is a Gaussian pyramid?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">A single blurred copy of an image</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">A stack of progressively smaller, blurrier versions of an image, made by repeatedly blurring and downsampling by 2</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">A histogram of pixel intensities</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">A stack of images at increasing resolution</button>
+                </div>
+                <p class="quiz-explanation">Each pyramid level is a properly anti-aliased, half-size version of the previous level, produced by blur-then-downsample.</p>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="quiz10.html">&larr; Lesson 10 Quiz</a></div>
+            <div class="lesson-nav-next"><a href="quiz12.html">Lesson 12 Quiz &rarr;</a></div>
+        </div>
+    </div>
+    <script>
+    let score = 0;
+    const answered = new Set();
+
+    function shuffleChildren(container) {
+        const children = Array.from(container.children);
+        for (let i = children.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [children[i], children[j]] = [children[j], children[i]];
+        }
+        children.forEach(child => container.appendChild(child));
+        return children;
+    }
+
+    function shuffleQuiz() {
+        const container = document.getElementById('quiz-questions');
+        const questions = shuffleChildren(container);
+        questions.forEach((q, i) => {
+            q.querySelector('.quiz-q-number').textContent = i + 1;
+            shuffleChildren(q.querySelector('.quiz-choices'));
+        });
+    }
+    shuffleQuiz();
+
+    function checkAnswer(qIndex, choiceIndex, correctIndex) {
+        if (answered.has(qIndex)) return;
+        answered.add(qIndex);
+
+        const buttons = document.querySelectorAll(`[data-q="${qIndex}"] .quiz-choice`);
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            const c = parseInt(btn.dataset.c, 10);
+            if (c === correctIndex) btn.classList.add('quiz-correct');
+            else if (c === choiceIndex) btn.classList.add('quiz-incorrect');
+        });
+
+        document.querySelector(`[data-q="${qIndex}"] .quiz-explanation`).style.display = 'block';
+
+        if (choiceIndex === correctIndex) score += 1;
+        document.getElementById('quiz-score').textContent = `Score: ${score} / 4`;
+    }
+    </script>
+</body>
+</html>

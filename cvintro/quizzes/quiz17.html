@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 17 Quiz - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <p class="quiz-breadcrumb"><a href="../lessons/lesson17_compression.html">&larr; Back to Lesson 17</a></p>
+        <h1>Quiz 17: Image Compression &mdash; Lossless and Lossy</h1>
+        <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
+        <div id="quiz-questions">
+            <div class="quiz-question" data-q="0">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What kind of image content does run-length encoding (RLE) compress well?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Images with large flat regions of constant value</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Photographs with fine-grained noise throughout</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Any image, regardless of content</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Only images that are already JPEG-compressed</button>
+                </div>
+                <p class="quiz-explanation">RLE stores (value, run length) pairs for consecutive identical pixels, so it shines on flat regions but does nothing useful when pixel values rarely repeat, as in noisy photographs.</p>
+            </div>
+            <div class="quiz-question" data-q="1">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does Shannon entropy represent in the context of lossless image compression?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">The exact number of bits Huffman coding will always achieve</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">The theoretical floor on average bits/pixel for any code based only on the value distribution</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">The maximum possible file size after compression</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">The number of unique pixel values in the image</button>
+                </div>
+                <p class="quiz-explanation">Entropy H = -sum(p_i * log2(p_i)) is the theoretical minimum average bits/pixel achievable by any prefix code based on the symbol probabilities; Huffman coding gets close to, but does not always exactly reach, this bound.</p>
+            </div>
+            <div class="quiz-question" data-q="2">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. In JPEG compression, what is the main effect of quantizing (dividing and rounding) the DCT coefficients of an 8x8 block?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">It converts the image to grayscale</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">It sets many coefficients, especially high-frequency ones, to exactly zero, discarding detail with little energy</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">It increases the resolution of the image</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">It removes the need for Huffman coding afterward</button>
+                </div>
+                <p class="quiz-explanation">Quantization divides coefficients by values from a quantization table and rounds, zeroing out many low-energy (mostly high-frequency) coefficients so they cost almost nothing to store.</p>
+            </div>
+            <div class="quiz-question" data-q="3">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why is JPEG generally a poor choice for compressing graphics like screenshots or text, compared to PNG?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">JPEG cannot encode images with sharp edges at all</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">Sharp edges spread energy across all DCT frequencies, so quantization causes visible ringing/blocking around edges and text</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">PNG is always a lossy format, so it looks better</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">JPEG only supports grayscale images</button>
+                </div>
+                <p class="quiz-explanation">A sharp edge's energy is spread across every DCT frequency (like the cross pattern in a Fourier spectrum), so the same quantization that photos tolerate produces visible ringing and blocking artifacts around graphics' edges and text.</p>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="quiz16.html">&larr; Lesson 16 Quiz</a></div>
+            <div class="lesson-nav-next"><a href="quiz18.html">Lesson 18 Quiz &rarr;</a></div>
+        </div>
+    </div>
+    <script>
+    let score = 0;
+    const answered = new Set();
+
+    function shuffleChildren(container) {
+        const children = Array.from(container.children);
+        for (let i = children.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [children[i], children[j]] = [children[j], children[i]];
+        }
+        children.forEach(child => container.appendChild(child));
+        return children;
+    }
+
+    function shuffleQuiz() {
+        const container = document.getElementById('quiz-questions');
+        const questions = shuffleChildren(container);
+        questions.forEach((q, i) => {
+            q.querySelector('.quiz-q-number').textContent = i + 1;
+            shuffleChildren(q.querySelector('.quiz-choices'));
+        });
+    }
+    shuffleQuiz();
+
+    function checkAnswer(qIndex, choiceIndex, correctIndex) {
+        if (answered.has(qIndex)) return;
+        answered.add(qIndex);
+
+        const buttons = document.querySelectorAll(`[data-q="${qIndex}"] .quiz-choice`);
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            const c = parseInt(btn.dataset.c, 10);
+            if (c === correctIndex) btn.classList.add('quiz-correct');
+            else if (c === choiceIndex) btn.classList.add('quiz-incorrect');
+        });
+
+        document.querySelector(`[data-q="${qIndex}"] .quiz-explanation`).style.display = 'block';
+
+        if (choiceIndex === correctIndex) score += 1;
+        document.getElementById('quiz-score').textContent = `Score: ${score} / 4`;
+    }
+    </script>
+</body>
+</html>

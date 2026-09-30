@@ -1,0 +1,87 @@
+/* Styling for the self-graded lesson quiz pages (quizzes/quizNN.html) */
+
+.quiz-breadcrumb {
+    margin-bottom: 4px;
+    font-size: 0.9em;
+}
+
+.quiz-breadcrumb a {
+    color: #7f8c8d;
+}
+
+.quiz-score {
+    font-weight: 700;
+    font-size: 1.1em;
+    color: #3498db;
+    position: sticky;
+    top: 60px;
+    background: #ffffff;
+    padding: 8px 0;
+    z-index: 10;
+}
+
+.quiz-question {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.quiz-question:last-child {
+    border-bottom: none;
+}
+
+.quiz-question-text {
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.quiz-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.quiz-choice {
+    text-align: left;
+    padding: 10px 14px;
+    border: 1px solid #cfd8dc;
+    border-radius: 6px;
+    background-color: #ffffff;
+    color: #2c3e50;
+    font-family: inherit;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s;
+}
+
+.quiz-choice:hover:not(:disabled) {
+    border-color: #3498db;
+    background-color: #f4f9fd;
+}
+
+.quiz-choice:disabled {
+    cursor: default;
+}
+
+.quiz-choice.quiz-correct {
+    border-color: #2e7d32;
+    background-color: #e8f5e9;
+    color: #1b5e20;
+    font-weight: 600;
+}
+
+.quiz-choice.quiz-incorrect {
+    border-color: #c62828;
+    background-color: #fdecea;
+    color: #b71c1c;
+}
+
+.quiz-explanation {
+    display: none;
+    margin-top: 12px;
+    padding: 10px 14px;
+    background-color: #f4f9fd;
+    border-left: 3px solid #3498db;
+    font-size: 0.92em;
+    color: #2c3e50;
+}

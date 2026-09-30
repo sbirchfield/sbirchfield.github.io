@@ -42,6 +42,26 @@
     text-indent: -1.5em;
 }
 
+.quiz-cta {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.quiz-button {
+    display: inline-block;
+    padding: 10px 22px;
+    background-color: #3498db;
+    color: #ffffff !important;
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none !important;
+    transition: background-color 0.2s;
+}
+
+.quiz-button:hover {
+    background-color: #2c81ba;
+}
+
 .lesson-nav {
     display: flex;
     justify-content: space-between;

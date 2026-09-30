@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 40 Quiz - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <p class="quiz-breadcrumb"><a href="../lessons/lesson40_object_detection_sliding_windows.html">&larr; Back to Lesson 40</a></p>
+        <h1>Quiz 40: Object Detection from Sliding Windows</h1>
+        <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
+        <div id="quiz-questions">
+            <div class="quiz-question" data-q="0">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the core idea of a sliding-window detector, as built in this lesson?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Run a classifier at every location (and scale) in the image, treating each window as its own yes/no classification problem</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Directly regress bounding box coordinates from the whole image in one forward pass</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Cluster pixels by color to find object boundaries</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Use only the image's frequency-domain representation to locate objects</button>
+                </div>
+                <p class="quiz-explanation">A window classifier answers 'face or not, at this exact window,' and sliding it across every position turns that per-window classifier into a detector.</p>
+            </div>
+            <div class="quiz-question" data-q="1">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. In this lesson's box convention, how is each detected face represented?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">By its top-left corner and width/height</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">By its center coordinates (cx, cy) and width/height</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">By the coordinates of all four corners</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">By a single pixel with no size information</button>
+                </div>
+                <p class="quiz-explanation">Boxes here are stored as (cx, cy, w, h), with the center reported directly rather than a top-left corner.</p>
+            </div>
+            <div class="quiz-question" data-q="2">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. After thresholding the sliding-window score map, why does a single true face typically produce a *cluster* of detections rather than one?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">Because the window classifier is applied only once per image</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">Because every window that overlaps a face heavily enough scores above threshold, not just the single best-centered one</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">Because faces are always detected twice due to a bug in the scoring function</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">Because thresholding always produces exactly one detection per object</button>
+                </div>
+                <p class="quiz-explanation">Many nearby, overlapping windows all score above threshold near a real face, producing a cluster of near-duplicate detections.</p>
+            </div>
+            <div class="quiz-question" data-q="3">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does non-maximum suppression (NMS) do to resolve duplicate detections?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">It averages all overlapping detections into one box</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">It repeatedly keeps the highest-scoring remaining detection and discards every other detection that overlaps it by more than an IoU threshold</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">It discards every detection above the score threshold</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">It requires the user to manually click the correct detection</button>
+                </div>
+                <p class="quiz-explanation">NMS greedily keeps the best-scoring box in each cluster and suppresses its highly-overlapping neighbors, collapsing duplicates down to one detection per object.</p>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="quiz39.html">&larr; Lesson 39 Quiz</a></div>
+            <div class="lesson-nav-next"><a href="quiz41.html">Lesson 41 Quiz &rarr;</a></div>
+        </div>
+    </div>
+    <script>
+    let score = 0;
+    const answered = new Set();
+
+    function shuffleChildren(container) {
+        const children = Array.from(container.children);
+        for (let i = children.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [children[i], children[j]] = [children[j], children[i]];
+        }
+        children.forEach(child => container.appendChild(child));
+        return children;
+    }
+
+    function shuffleQuiz() {
+        const container = document.getElementById('quiz-questions');
+        const questions = shuffleChildren(container);
+        questions.forEach((q, i) => {
+            q.querySelector('.quiz-q-number').textContent = i + 1;
+            shuffleChildren(q.querySelector('.quiz-choices'));
+        });
+    }
+    shuffleQuiz();
+
+    function checkAnswer(qIndex, choiceIndex, correctIndex) {
+        if (answered.has(qIndex)) return;
+        answered.add(qIndex);
+
+        const buttons = document.querySelectorAll(`[data-q="${qIndex}"] .quiz-choice`);
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            const c = parseInt(btn.dataset.c, 10);
+            if (c === correctIndex) btn.classList.add('quiz-correct');
+            else if (c === choiceIndex) btn.classList.add('quiz-incorrect');
+        });
+
+        document.querySelector(`[data-q="${qIndex}"] .quiz-explanation`).style.display = 'block';
+
+        if (choiceIndex === correctIndex) score += 1;
+        document.getElementById('quiz-score').textContent = `Score: ${score} / 4`;
+    }
+    </script>
+</body>
+</html>

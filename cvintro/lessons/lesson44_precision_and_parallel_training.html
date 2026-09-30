@@ -377,7 +377,7 @@ fraction exactly zero after casting to fp16: 100.0%
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=911e0212"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>In the fp16 underflow demo, change <code>DeepSigmoidNet</code>'s <code>depth</code> from 12 to 4. Does the first-layer gradient still underflow completely in fp16? Relate the answer back to Lesson 37's discussion of <em>why</em> depth and sigmoid activations together cause vanishing gradients.</li>
 <li>The loss-scaling table stops at <code>scale=2**28</code>. Keep increasing the scale (try <code>2**32</code>, <code>2**40</code>) -- at what point does the <em>scaled</em> gradient itself start to risk overflowing fp16's <code>max</code> of <code>65504</code> instead of underflowing? What does that imply about why dynamic loss scaling needs to search for a scale, rather than always using the largest one possible?</li>
 <li>Change <code>n_shards</code> in the data-parallelism demo from 4 to 3, with a batch size that doesn't divide evenly (try 65). Does the averaged-shard gradient still match the single-device gradient exactly, or does the mismatch reveal something about how real data-parallel training handles uneven shard sizes?</li>

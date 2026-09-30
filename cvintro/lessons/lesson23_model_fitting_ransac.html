@@ -378,7 +378,7 @@ RANSAC fit:  y = 2.05x + 4.94
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=33384aac"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Increase <code>ransac_line</code>'s outlier count until roughly 70% of the points are outliers. Does 200 iterations remain enough to reliably recover the true line? Use the <code>required_iterations</code> formula to check whether 200 is even theoretically sufficient at that contamination level.</li>
 <li>Lower <code>ransac_line</code>'s distance <code>threshold</code> from <code>2.0</code> to <code>0.5</code>. Does the number of found inliers change, and why might too-strict a threshold actually start rejecting <em>genuine</em> inliers (hint: think about what noise, not outliers, does to correct points)?</li>
 <li>Try <code>huber_reweighted_fit</code> with a much smaller <code>delta</code> (e.g. <code>0.5</code>) and a much larger one (e.g. <code>5.0</code>). How does <code>delta</code> trade off between OLS-like behavior (barely any downweighting) and RANSAC-like hard rejection (almost binary in/out)?</li>
@@ -387,6 +387,9 @@ RANSAC fit:  y = 2.05x + 4.94
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz23.html" class="quiz-button">Take the Lesson 23 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson22_stereo_matching.html">&larr; Lesson 22: Stereo Matching</a></div>
             <div class="lesson-nav-next"><a href="lesson24_projective_geometry.html">Lesson 24: Projective Geometry &rarr;</a></div>

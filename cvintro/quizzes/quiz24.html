@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 24 Quiz - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <p class="quiz-breadcrumb"><a href="../lessons/lesson24_projective_geometry.html">&larr; Back to Lesson 24</a></p>
+        <h1>Quiz 24: Projective Geometry</h1>
+        <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
+        <div id="quiz-questions">
+            <div class="quiz-question" data-q="0">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why can a homography (3x3 matrix on homogeneous coordinates) represent translation, while a plain 2x2 matrix cannot?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Homogeneous coordinates add a third coordinate, letting the matrix shift points via the extra row/column instead of needing a separate additive vector</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">3x3 matrices are always invertible while 2x2 matrices are not</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Translation is impossible to represent with any matrix, homogeneous or not</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">A homography only works on already-translated images</button>
+                </div>
+                <p class="quiz-explanation">Representing a 2D point as (x, y, 1) lets a 3x3 matrix encode translation directly, unlike a 2x2 matrix acting on (x, y) alone.</p>
+            </div>
+            <div class="quiz-question" data-q="1">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What specifically causes a homography to destroy parallelism, unlike an affine transform?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 0)">A nonzero bottom row (g, h) in the 3x3 matrix</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 0)">Using floating-point instead of integer coordinates</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 0)">Applying the transform more than once</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 0)">The presence of a nonzero translation term</button>
+                </div>
+                <p class="quiz-explanation">An affine transform's bottom row is always (0, 0, 1); a homography's nonzero (g, h) introduces the division effect that makes parallel lines converge.</p>
+            </div>
+            <div class="quiz-question" data-q="2">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. How does the point-at-infinity trick locate a vanishing point?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">By averaging the endpoints of all visible line segments</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">By applying the homography to the homogeneous point representing the lines' shared direction (e.g. (1, 0, 0)), which lands exactly on the vanishing point</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">By computing the image's centroid</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">It only works for vertical lines, never horizontal ones</button>
+                </div>
+                <p class="quiz-explanation">A point with zero third homogeneous coordinate represents a direction at infinity; transforming it by H lands exactly where the two parallel lines' images converge.</p>
+            </div>
+            <div class="quiz-question" data-q="3">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. In what two situations does a single homography exactly relate two photographs of a scene?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">Any two photos taken from any two camera positions of any scene</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">Photographing a flat surface from two different positions, or photographing any 3D scene from the same camera position while only rotating between shots</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">Only when the two photos are taken with the exact same camera settings</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">Only when the scene contains no straight lines</button>
+                </div>
+                <p class="quiz-explanation">A homography exactly models plane-to-plane relationships (a flat scene) or pure camera rotation about a fixed center; a translating camera viewing a genuinely 3D scene has no single exact homography relating the views.</p>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="quiz23.html">&larr; Lesson 23 Quiz</a></div>
+            <div class="lesson-nav-next"><a href="quiz25.html">Lesson 25 Quiz &rarr;</a></div>
+        </div>
+    </div>
+    <script>
+    let score = 0;
+    const answered = new Set();
+
+    function shuffleChildren(container) {
+        const children = Array.from(container.children);
+        for (let i = children.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [children[i], children[j]] = [children[j], children[i]];
+        }
+        children.forEach(child => container.appendChild(child));
+        return children;
+    }
+
+    function shuffleQuiz() {
+        const container = document.getElementById('quiz-questions');
+        const questions = shuffleChildren(container);
+        questions.forEach((q, i) => {
+            q.querySelector('.quiz-q-number').textContent = i + 1;
+            shuffleChildren(q.querySelector('.quiz-choices'));
+        });
+    }
+    shuffleQuiz();
+
+    function checkAnswer(qIndex, choiceIndex, correctIndex) {
+        if (answered.has(qIndex)) return;
+        answered.add(qIndex);
+
+        const buttons = document.querySelectorAll(`[data-q="${qIndex}"] .quiz-choice`);
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            const c = parseInt(btn.dataset.c, 10);
+            if (c === correctIndex) btn.classList.add('quiz-correct');
+            else if (c === choiceIndex) btn.classList.add('quiz-incorrect');
+        });
+
+        document.querySelector(`[data-q="${qIndex}"] .quiz-explanation`).style.display = 'block';
+
+        if (choiceIndex === correctIndex) score += 1;
+        document.getElementById('quiz-score').textContent = `Score: ${score} / 4`;
+    }
+    </script>
+</body>
+</html>

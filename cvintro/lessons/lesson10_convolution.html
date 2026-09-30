@@ -37,7 +37,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=3dcf84ac"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-10:-Convolution">Lesson 10: Convolution<a class="anchor-link" href="#Lesson-10:-Convolution">¶</a></h1><p>Convolution is the core operation behind blurring, sharpening, and edge detection — and it's also the operation at the heart of a convolutional neural network's convolution layers (Lesson 33). This lesson builds it from scratch, clarifies a common point of confusion (convolution vs. correlation), and shows a few classic filters.</p>
+<h1 id="Lesson-10:-Convolution">Lesson 10: Convolution<a class="anchor-link" href="#Lesson-10:-Convolution">¶</a></h1><p>Convolution is the core operation behind blurring, sharpening, and edge detection — and it's also the operation at the heart of a convolutional neural network's convolution layers (Lesson 34). This lesson builds it from scratch, clarifies a common point of confusion (convolution vs. correlation), and shows a few classic filters.</p>
 </div>
 </div>
 </div>
@@ -429,7 +429,7 @@ separable == full 2D convolution? True
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=5dc67665"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Verify that the box kernel is also separable, by writing it as an outer product of two 1D uniform kernels.</li>
 <li><code>sobel_x</code> above is not symmetric. Compute both the convolution and correlation of <code>photo_like</code> with it, and describe how the two outputs differ (hint: think about which direction of intensity change each responds to).</li>
 <li>Time <code>convolve2d</code> against <code>cv2.filter2D</code> on a 300x300 image with a 15x15 Gaussian kernel using <code>%timeit</code>. Then time the separable two-pass version against the full 2D version. How much faster is each speedup?</li>
@@ -438,6 +438,9 @@ separable == full 2D convolution? True
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz10.html" class="quiz-button">Take the Lesson 10 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson09_warping_interpolation.html">&larr; Lesson 9: Image Warping, Inverse Mapping, and Bilinear Interpolation</a></div>
             <div class="lesson-nav-next"><a href="lesson11_smoothing_pyramids.html">Lesson 11: Smoothing and Gaussian Pyramids &rarr;</a></div>

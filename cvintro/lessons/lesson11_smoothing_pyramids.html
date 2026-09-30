@@ -430,7 +430,7 @@ cv2.GaussianBlur pixel:    139
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=674259a6"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Repeat the brick-wall experiment with <code>factor = 2</code> instead of <code>4</code>. Does naive subsampling still show visible aliasing? Why might a smaller downsampling factor alias less?</li>
 <li>Gaussian pyramids are used for coarse-to-fine search (e.g. quickly finding an approximate object location at a small pyramid level, then refining at larger levels). Why would skipping the blur step and just subsampling directly break this strategy?</li>
 <li>Build a 6-level pyramid of a real photo-like image and measure how many levels it takes before the image becomes too small to recognize any shape at all. What real-world resolution would that correspond to for, say, a 1920x1080 photo?</li>
@@ -439,6 +439,9 @@ cv2.GaussianBlur pixel:    139
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz11.html" class="quiz-button">Take the Lesson 11 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson10_convolution.html">&larr; Lesson 10: Convolution</a></div>
             <div class="lesson-nav-next"><a href="lesson12_differentiation_edges.html">Lesson 12: Differentiation and Edge Detection &rarr;</a></div>

@@ -411,7 +411,7 @@ $$y_d = y(1 + k_1r^2 + k_2r^4 + k_3r^6) + p_1(r^2+2y^2) + 2p_2xy$$</p>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=5546eaca"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Add extra synthetic pixel noise (e.g. <code>rng.normal(0, 0.5, corners.shape)</code>) on top of the real detector noise, to each view's detected corners before calibrating. How much does the RMS reprojection error grow, and how does <code>K_estimated</code> drift further from <code>K_true</code>?</li>
 <li>This setup ends with only a handful of successfully-detected views (printed above). Try reducing <code>detected_object_points</code>/<code>detected_image_points</code> down to just 3 views before calibrating. Does the estimate noticeably degrade, especially for the distortion coefficients (which need corners spread widely across the frame, including near the edges, to be well constrained)?</li>
 <li>Set <code>dist_true = np.zeros(5)</code> (a perfect pinhole, no distortion) and rerun the whole notebook. Confirm the "distorted" and "ideal" grids become identical, and that calibration still recovers <code>K_true</code> reasonably well even with zero distortion to estimate.</li>
@@ -420,6 +420,9 @@ $$y_d = y(1 + k_1r^2 + k_2r^4 + k_3r^6) + p_1(r^2+2y^2) + 2p_2xy$$</p>
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz27.html" class="quiz-button">Take the Lesson 27 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson26_image_formation.html">&larr; Lesson 26: Image Formation</a></div>
             <div class="lesson-nav-next"><a href="lesson28_epipolar_geometry.html">Lesson 28: Epipolar Geometry &rarr;</a></div>

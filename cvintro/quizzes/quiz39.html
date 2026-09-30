@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 39 Quiz - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <p class="quiz-breadcrumb"><a href="../lessons/lesson39_visualizing_cnns.html">&larr; Back to Lesson 39</a></p>
+        <h1>Quiz 39: Visualizing and Understanding CNNs</h1>
+        <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
+        <div id="quiz-questions">
+            <div class="quiz-question" data-q="0">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does a saliency map visualize?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">The gradient of the predicted class score with respect to every input pixel -- large-magnitude pixels are ones a small change to would most affect the prediction</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">The raw pixel values of the input image, unchanged</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">The convolutional kernel weights themselves</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">The class label the model predicts, overlaid as text</button>
+                </div>
+                <p class="quiz-explanation">A pixel with large gradient magnitude is one the network's prediction is most sensitive to -- a pixel it's 'looking at'.</p>
+            </div>
+            <div class="quiz-question" data-q="1">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why are Grad-CAM heatmaps coarser (lower-resolution) than saliency maps?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 0)">Grad-CAM operates on a convolutional layer's feature map, which has already been downsampled by pooling layers, rather than on individual input pixels</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 0)">Grad-CAM only works on grayscale images</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 0)">Grad-CAM intentionally blurs its output for aesthetic reasons</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 0)">Saliency maps are actually coarser, not Grad-CAM</button>
+                </div>
+                <p class="quiz-explanation">Grad-CAM's resolution matches whichever conv layer it uses, which is coarser than the full input resolution a saliency map operates at.</p>
+            </div>
+            <div class="quiz-question" data-q="2">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. On *clean* test images (no marker present), why does Grad-CAM still catch <code>model_shortcut</code>'s reliance on the marker far more reliably than raw saliency does?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 0)">Grad-CAM pools gradients over an entire feature-map channel before localizing, smoothing out pixel-level noise, while saliency is exactly as noisy as the raw per-pixel gradient</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 0)">Saliency maps cannot be computed on clean images at all</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 0)">Grad-CAM was specifically trained to detect markers</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 0)">There is actually no difference between the two methods on clean images</button>
+                </div>
+                <p class="quiz-explanation">The lesson reports Grad-CAM's peak lands in the marker region 92% of the time on clean images versus only 56% for saliency, attributed to Grad-CAM's channel-level pooling smoothing out pixel noise.</p>
+            </div>
+            <div class="quiz-question" data-q="3">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does t-SNE do differently from a linear projection like PCA (Lesson 6)?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">t-SNE requires labeled data while PCA does not</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">t-SNE explicitly optimizes to preserve local neighborhoods in the projection, rather than using a single linear projection</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">PCA can only be applied to images, never to feature vectors</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">t-SNE and PCA are mathematically identical operations</button>
+                </div>
+                <p class="quiz-explanation">t-SNE emphasizes preserving which points are close to which other points locally, which is why same-class images can end up visibly clustered even without ever seeing their labels.</p>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="quiz38.html">&larr; Lesson 38 Quiz</a></div>
+            <div class="lesson-nav-next"><a href="quiz40.html">Lesson 40 Quiz &rarr;</a></div>
+        </div>
+    </div>
+    <script>
+    let score = 0;
+    const answered = new Set();
+
+    function shuffleChildren(container) {
+        const children = Array.from(container.children);
+        for (let i = children.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [children[i], children[j]] = [children[j], children[i]];
+        }
+        children.forEach(child => container.appendChild(child));
+        return children;
+    }
+
+    function shuffleQuiz() {
+        const container = document.getElementById('quiz-questions');
+        const questions = shuffleChildren(container);
+        questions.forEach((q, i) => {
+            q.querySelector('.quiz-q-number').textContent = i + 1;
+            shuffleChildren(q.querySelector('.quiz-choices'));
+        });
+    }
+    shuffleQuiz();
+
+    function checkAnswer(qIndex, choiceIndex, correctIndex) {
+        if (answered.has(qIndex)) return;
+        answered.add(qIndex);
+
+        const buttons = document.querySelectorAll(`[data-q="${qIndex}"] .quiz-choice`);
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            const c = parseInt(btn.dataset.c, 10);
+            if (c === correctIndex) btn.classList.add('quiz-correct');
+            else if (c === choiceIndex) btn.classList.add('quiz-incorrect');
+        });
+
+        document.querySelector(`[data-q="${qIndex}"] .quiz-explanation`).style.display = 'block';
+
+        if (choiceIndex === correctIndex) score += 1;
+        document.getElementById('quiz-score').textContent = `Score: ${score} / 4`;
+    }
+    </script>
+</body>
+</html>

@@ -293,7 +293,7 @@ mean abs difference = 0.56 gray levels
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=503d9da8"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Apply a median filter (instead of Gaussian or bilateral) to <code>noisy_big</code> and add its profile to the comparison. How does it compare to the bilateral filter at preserving the edge?</li>
 <li>In <code>bilateral_filter</code>, set <code>sigma_range</code> very large (e.g. 1000). What should this reduce to, and does your result confirm it?</li>
 <li>Bilateral filtering is much slower than Gaussian blur because the weights must be recomputed at every pixel (they depend on local intensity, not just position). Time the from-scratch <code>bilateral_filter</code> against <code>cv2.bilateralFilter</code> on a 100x100 image with <code>%timeit</code>, and describe in words what OpenCV's implementation likely does differently to be faster.</li>
@@ -302,6 +302,9 @@ mean abs difference = 0.56 gray levels
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz14.html" class="quiz-button">Take the Lesson 14 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson13_laplacian_pyramids.html">&larr; Lesson 13: Second Derivatives and the Laplacian</a></div>
             <div class="lesson-nav-next"><a href="lesson15_fourier_frequency_filtering.html">Lesson 15: The Fourier Transform and Frequency-Domain Filtering &rarr;</a></div>

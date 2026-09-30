@@ -716,7 +716,7 @@ step decay:   mean loss over final 50 steps = 0.0025
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=0a900192"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Increase <code>momentum</code> from 0.9 to 0.99 on the narrow-bowl problem. Does it converge faster, or does it start to overshoot the minimum and oscillate on the <em>shallow</em> axis now?</li>
 <li>Try initializing the MLP's weights identically but <em>nonzero</em> (e.g. <code>np.full((2, H), 0.3)</code> for both layers) instead of all-zero. Does symmetry still fail to break? Why would you expect the same failure mode from any initialization where every hidden unit starts identical, not just an all-zero one?</li>
 <li>Adam's <code>adam_lr</code> (0.3) is much larger than plain SGD's <code>lr</code> (0.15) in this notebook, yet Adam remains stable while a plain SGD run with <code>lr=0.3</code> would diverge wildly on the steep axis. Try it and confirm. What does that suggest about <em>why</em> Adam is often described as being more forgiving of the learning-rate choice?</li>
@@ -727,6 +727,9 @@ step decay:   mean loss over final 50 steps = 0.0025
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz33.html" class="quiz-button">Take the Lesson 33 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson32_multilayer_perceptrons.html">&larr; Lesson 32: Multi-Layer Perceptrons</a></div>
             <div class="lesson-nav-next"><a href="lesson34_convolutional_neural_networks.html">Lesson 34: Convolutional Neural Networks (CNNs) &rarr;</a></div>

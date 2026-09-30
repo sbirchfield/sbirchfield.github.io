@@ -3,8 +3,9 @@
 HTML in lessons/, wrapped so it matches the site's look and feel.
 
 Usage:
-    python build.py               # build every notebook
-    python build.py lesson31      # build only notebooks matching this substring
+    python build.py               # build every notebook, then all quiz pages
+    python build.py lesson31      # build only notebooks matching this substring, then all quiz pages
+    python build.py --quizzes-only  # skip notebook execution; just regenerate quizzes/*.html
 """
 import pathlib
 import re
@@ -16,10 +17,12 @@ from pygments.formatters import HtmlFormatter
 import nbformat
 
 from references_data import REFERENCES
+from quizzes_data import QUIZZES
 
 ROOT = pathlib.Path(__file__).parent
 NOTEBOOKS_DIR = ROOT / "notebooks"
 LESSONS_DIR = ROOT / "lessons"
+QUIZZES_DIR = ROOT / "quizzes"
 CSS_DIR = ROOT / "css"
 
 GITHUB_REPO = "sbirchfield/sbirchfield.github.io"
@@ -63,6 +66,7 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
             </a>
         </div>
 {body}
+{quiz_button}
         <div class="lesson-nav">
             <div class="lesson-nav-prev">{prev_link}</div>
             <div class="lesson-nav-next">{next_link}</div>
@@ -71,6 +75,10 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 </body>
 </html>
 """
+
+QUIZ_BUTTON_TEMPLATE = """        <div class="quiz-cta">
+            <a href="../quizzes/quiz{lesson_num:02d}.html" class="quiz-button">Take the Lesson {lesson_num} Quiz &rarr;</a>
+        </div>"""
 
 
 def lesson_title(nb_path: pathlib.Path) -> str:
@@ -111,10 +119,16 @@ def build_notebook(nb_path: pathlib.Path, sequence=None):
         next_path = sequence[idx + 1]
         next_link = f'<a href="{next_path.stem}.html">{lesson_title(next_path)} &rarr;</a>'
 
+    quiz_button = ""
+    m = re.match(r"lesson(\d+)_", nb_path.stem)
+    if m and int(m.group(1)) in QUIZZES:
+        quiz_button = QUIZ_BUTTON_TEMPLATE.format(lesson_num=int(m.group(1)))
+
     title = nb_path.stem.replace("_", " ").title()
     page = PAGE_TEMPLATE.format(
         title=title,
         body=body,
+        quiz_button=quiz_button,
         repo=GITHUB_REPO,
         branch=GITHUB_BRANCH,
         nb_repo_path=NOTEBOOK_REPO_PATH,
@@ -126,6 +140,149 @@ def build_notebook(nb_path: pathlib.Path, sequence=None):
     out_path = LESSONS_DIR / (nb_path.stem + ".html")
     out_path.write_text(page, encoding="utf-8")
     print(f"  -> {out_path.relative_to(ROOT)}")
+
+
+QUIZ_PAGE_TEMPLATE = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson {lesson_num} Quiz - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <p class="quiz-breadcrumb"><a href="{lesson_href}">&larr; Back to Lesson {lesson_num}</a></p>
+        <h1>{quiz_heading}</h1>
+        <p class="quiz-score" id="quiz-score">Score: 0 / {num_questions}</p>
+        <div id="quiz-questions">
+{questions_html}
+        </div>
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev">{prev_quiz_link}</div>
+            <div class="lesson-nav-next">{next_quiz_link}</div>
+        </div>
+    </div>
+    <script>
+    let score = 0;
+    const answered = new Set();
+
+    function shuffleChildren(container) {{
+        const children = Array.from(container.children);
+        for (let i = children.length - 1; i > 0; i--) {{
+            const j = Math.floor(Math.random() * (i + 1));
+            [children[i], children[j]] = [children[j], children[i]];
+        }}
+        children.forEach(child => container.appendChild(child));
+        return children;
+    }}
+
+    function shuffleQuiz() {{
+        const container = document.getElementById('quiz-questions');
+        const questions = shuffleChildren(container);
+        questions.forEach((q, i) => {{
+            q.querySelector('.quiz-q-number').textContent = i + 1;
+            shuffleChildren(q.querySelector('.quiz-choices'));
+        }});
+    }}
+    shuffleQuiz();
+
+    function checkAnswer(qIndex, choiceIndex, correctIndex) {{
+        if (answered.has(qIndex)) return;
+        answered.add(qIndex);
+
+        const buttons = document.querySelectorAll(`[data-q="${{qIndex}}"] .quiz-choice`);
+        buttons.forEach(btn => {{
+            btn.disabled = true;
+            const c = parseInt(btn.dataset.c, 10);
+            if (c === correctIndex) btn.classList.add('quiz-correct');
+            else if (c === choiceIndex) btn.classList.add('quiz-incorrect');
+        }});
+
+        document.querySelector(`[data-q="${{qIndex}}"] .quiz-explanation`).style.display = 'block';
+
+        if (choiceIndex === correctIndex) score += 1;
+        document.getElementById('quiz-score').textContent = `Score: ${{score}} / {num_questions}`;
+    }}
+    </script>
+</body>
+</html>
+"""
+
+QUIZ_QUESTION_TEMPLATE = """            <div class="quiz-question" data-q="{q_index}">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. {question}</p>
+                <div class="quiz-choices">
+{choices_html}
+                </div>
+                <p class="quiz-explanation">{explanation}</p>
+            </div>"""
+
+QUIZ_CHOICE_TEMPLATE = """                    <button class="quiz-choice" data-c="{c_index}" onclick="checkAnswer({q_index}, {c_index}, {correct_index})">{choice}</button>"""
+
+
+def build_quiz_page(lesson_num: int, questions: list, sequence, quiz_lesson_nums: list):
+    """Generate quizzes/quizNN.html for one lesson's question bank."""
+    nb_path = next(p for p in sequence if p.stem.startswith(f"lesson{lesson_num:02d}_"))
+    title = lesson_title(nb_path)
+    # "Lesson N: Subtitle" -> "Quiz N: Subtitle"
+    subtitle = title.split(":", 1)[1].strip() if ":" in title else title
+    quiz_heading = f"Quiz {lesson_num}: {subtitle}"
+
+    questions_html = []
+    for q_index, q in enumerate(questions):
+        choices_html = "\n".join(
+            QUIZ_CHOICE_TEMPLATE.format(q_index=q_index, c_index=c_index, correct_index=q["correct"], choice=choice)
+            for c_index, choice in enumerate(q["choices"])
+        )
+        questions_html.append(QUIZ_QUESTION_TEMPLATE.format(
+            q_index=q_index,
+            question=q["question"],
+            choices_html=choices_html,
+            explanation=q["explanation"],
+        ))
+
+    idx = quiz_lesson_nums.index(lesson_num)
+    prev_quiz_link = ""
+    if idx > 0:
+        prev_num = quiz_lesson_nums[idx - 1]
+        prev_quiz_link = f'<a href="quiz{prev_num:02d}.html">&larr; Lesson {prev_num} Quiz</a>'
+    next_quiz_link = ""
+    if idx < len(quiz_lesson_nums) - 1:
+        next_num = quiz_lesson_nums[idx + 1]
+        next_quiz_link = f'<a href="quiz{next_num:02d}.html">Lesson {next_num} Quiz &rarr;</a>'
+
+    page = QUIZ_PAGE_TEMPLATE.format(
+        lesson_num=lesson_num,
+        lesson_title=title,
+        quiz_heading=quiz_heading,
+        lesson_href=f"../lessons/{nb_path.stem}.html",
+        num_questions=len(questions),
+        questions_html="\n".join(questions_html),
+        prev_quiz_link=prev_quiz_link,
+        next_quiz_link=next_quiz_link,
+    )
+    out_path = QUIZZES_DIR / f"quiz{lesson_num:02d}.html"
+    out_path.write_text(page, encoding="utf-8")
+    print(f"  -> {out_path.relative_to(ROOT)}")
+
+
+def build_quizzes():
+    QUIZZES_DIR.mkdir(exist_ok=True)
+    sequence = get_lesson_sequence()
+    quiz_lesson_nums = sorted(QUIZZES)
+    for lesson_num, questions in QUIZZES.items():
+        build_quiz_page(lesson_num, questions, sequence, quiz_lesson_nums)
 
 
 REFERENCES_PAGE_TEMPLATE = """<!DOCTYPE html>
@@ -210,19 +367,25 @@ def build_pygments_css():
 
 
 def main():
+    args = sys.argv[1:]
+    if "--quizzes-only" in args:
+        build_quizzes()
+        return
+
     LESSONS_DIR.mkdir(exist_ok=True)
     build_pygments_css()
     build_references_page()
     sequence = get_lesson_sequence()
     notebooks = sequence
-    if len(sys.argv) > 1:
-        needle = sys.argv[1]
+    if args:
+        needle = args[0]
         notebooks = [p for p in notebooks if needle in p.stem]
     if not notebooks:
         print("No matching notebooks found in notebooks/")
         return
     for nb_path in notebooks:
         build_notebook(nb_path, sequence=sequence)
+    build_quizzes()
 
 
 if __name__ == "__main__":

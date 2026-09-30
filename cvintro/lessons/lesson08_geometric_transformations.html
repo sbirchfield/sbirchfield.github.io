@@ -348,7 +348,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=748e57d8"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Only the affine square stops looking like a (possibly resized) square — its corners are no longer 90 degrees, because affine transforms allow shear. All three keep opposite sides parallel.  (The more general projective transforms, e.g., camera perspective, are covered in Lesson 23).</p>
+<p>Only the affine square stops looking like a (possibly resized) square — its corners are no longer 90 degrees, because affine transforms allow shear. All three keep opposite sides parallel.  (The more general projective transforms, e.g., camera perspective, are covered in Lesson 24).</p>
 </div>
 </div>
 </div>
@@ -426,7 +426,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=66de1eef"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li><code>cv2.flip</code> is not part of the affine family we wrote in matrix form above (rotation matrices $R$ always have determinant $+1$). What determinant does a flip's $2\times2$ matrix have? Construct the $2\times2$ matrix for <code>flip(1)</code> and check.</li>
 <li>Build a similarity transform matrix with $s=1$ and confirm it matches a pure Euclidean transform — i.e. similarity is a strict generalization of Euclidean, not a different family.</li>
 <li>Modify the affine matrix in the unit-square example so that opposite sides are <em>not</em> parallel. What has to break for that to happen? (Hint: this is exactly the boundary that separates affine from projective transforms.)</li>
@@ -435,6 +435,9 @@
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz08.html" class="quiz-button">Take the Lesson 8 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson07_distance_measures.html">&larr; Lesson 7: Distance Measures</a></div>
             <div class="lesson-nav-next"><a href="lesson09_warping_interpolation.html">Lesson 9: Image Warping, Inverse Mapping, and Bilinear Interpolation &rarr;</a></div>

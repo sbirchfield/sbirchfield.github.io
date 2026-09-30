@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 23 Quiz - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <p class="quiz-breadcrumb"><a href="../lessons/lesson23_model_fitting_ransac.html">&larr; Back to Lesson 23</a></p>
+        <h1>Quiz 23: Model Fitting, Robust Estimation, and RANSAC</h1>
+        <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
+        <div id="quiz-questions">
+            <div class="quiz-question" data-q="0">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does ordinary least squares (OLS) give a biased line fit when both x and y coordinates are noisy?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 1)">OLS can only be used with integer coordinates</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 1)">OLS measures error only vertically, which is the right choice only when x is known exactly and y alone is noisy</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 1)">OLS requires at least 100 data points to work correctly</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 1)">OLS always overestimates the slope regardless of noise direction</button>
+                </div>
+                <p class="quiz-explanation">Total least squares (TLS) measures perpendicular distance and treats both coordinates symmetrically, which is more appropriate when both x and y carry comparable noise.</p>
+            </div>
+            <div class="quiz-question" data-q="1">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does ordinary least-squares fitting break catastrophically under outliers?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 0)">It minimizes the sum of squared residuals, so a single far-away outlier contributes an enormous amount to the total error and drags the whole fit toward it</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 0)">Least squares cannot be computed when outliers are present -- it simply errors out</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 0)">Outliers only affect the intercept, never the slope</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 0)">Squaring residuals makes outliers contribute less, not more</button>
+                </div>
+                <p class="quiz-explanation">Squaring a large residual makes it dominate the total cost, so the fit moves away from the correct points to reduce that one huge squared term.</p>
+            </div>
+            <div class="quiz-question" data-q="2">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the core strategy RANSAC uses to fit a model in the presence of outliers?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">It averages every possible model over all the data</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">It repeatedly picks the smallest possible random subset needed to define a candidate model, counts how many other points agree, and keeps the model with the most agreement</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">It removes the single most extreme data point and reruns least squares</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">It requires the user to manually label which points are outliers</button>
+                </div>
+                <p class="quiz-explanation">RANSAC fits from minimal random samples and picks whichever candidate has the largest consensus set, then does a final least-squares refit on just the inliers.</p>
+            </div>
+            <div class="quiz-question" data-q="3">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. According to the RANSAC iteration-count formula, why does fitting a homography (minimal sample size 4) require many more iterations than fitting a line (minimal sample size 2) at the same outlier rate?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">Homographies are inherently slower to evaluate on a computer</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">The probability of drawing an all-inlier sample is <code>w^n</code>, which shrinks rapidly as the minimal sample size n grows</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">Lines require more iterations than homographies, not fewer</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">The iteration count does not depend on the minimal sample size at all</button>
+                </div>
+                <p class="quiz-explanation">Since the chance of an all-inlier sample is w raised to the sample size, a larger minimal sample (4 vs. 2) makes an all-inlier draw far less likely, requiring many more trials for the same confidence.</p>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="quiz22.html">&larr; Lesson 22 Quiz</a></div>
+            <div class="lesson-nav-next"><a href="quiz24.html">Lesson 24 Quiz &rarr;</a></div>
+        </div>
+    </div>
+    <script>
+    let score = 0;
+    const answered = new Set();
+
+    function shuffleChildren(container) {
+        const children = Array.from(container.children);
+        for (let i = children.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [children[i], children[j]] = [children[j], children[i]];
+        }
+        children.forEach(child => container.appendChild(child));
+        return children;
+    }
+
+    function shuffleQuiz() {
+        const container = document.getElementById('quiz-questions');
+        const questions = shuffleChildren(container);
+        questions.forEach((q, i) => {
+            q.querySelector('.quiz-q-number').textContent = i + 1;
+            shuffleChildren(q.querySelector('.quiz-choices'));
+        });
+    }
+    shuffleQuiz();
+
+    function checkAnswer(qIndex, choiceIndex, correctIndex) {
+        if (answered.has(qIndex)) return;
+        answered.add(qIndex);
+
+        const buttons = document.querySelectorAll(`[data-q="${qIndex}"] .quiz-choice`);
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            const c = parseInt(btn.dataset.c, 10);
+            if (c === correctIndex) btn.classList.add('quiz-correct');
+            else if (c === choiceIndex) btn.classList.add('quiz-incorrect');
+        });
+
+        document.querySelector(`[data-q="${qIndex}"] .quiz-explanation`).style.display = 'block';
+
+        if (choiceIndex === correctIndex) score += 1;
+        document.getElementById('quiz-score').textContent = `Score: ${score} / 4`;
+    }
+    </script>
+</body>
+</html>

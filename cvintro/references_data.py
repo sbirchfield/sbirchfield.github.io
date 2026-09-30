@@ -139,6 +139,15 @@ REFERENCES = [
         "landmark": True,
     },
     {
+        "id": "wu-2023-yunet",
+        "authors": "Wu, W., Peng, H., & Yu, S.",
+        "sort_name": "Wu",
+        "year": 2023,
+        "title": "YuNet: A Tiny Millisecond-level Face Detector",
+        "url": "http://doi.org/10.1007/s11633-023-1423-y",
+        "landmark": False,
+    },
+    {
         "id": "he-2017-maskrcnn",
         "authors": "He, K., Gkioxari, G., Dollár, P., & Girshick, R.",
         "sort_name": "He",

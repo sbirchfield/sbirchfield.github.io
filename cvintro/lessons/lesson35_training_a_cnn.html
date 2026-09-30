@@ -679,7 +679,7 @@ dropout(0.5):   mean val acc = 70.2%  (+/- 8.0%, 8 seeds)
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=e1262fcf"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Try <code>weight_decay</code> values of <code>0.001</code>, <code>0.05</code>, and <code>1.0</code>. Is there a point where it starts to <em>hurt</em> training accuracy along with (eventually) validation accuracy? What does an excessively large weight decay do to the model's capacity to fit anything at all?</li>
 <li>Sweep <code>dropout_p</code> over <code>[0.0, 0.2, 0.4, 0.6, 0.8]</code> in <code>val_acc_for</code>, averaging over the same 8 seeds at each value. Is there a value that's clearly best, or does the mean stay within one standard deviation across most of the range given how little data there is?</li>
 <li>Increase the augmentation multiplier from 20 to 100 copies per base image. Does validation accuracy keep improving, or does it plateau — and if it plateaus, what does that suggest about the fundamental limit of augmenting a dataset that only contains 12 <em>underlying</em> examples to begin with?</li>
@@ -688,6 +688,9 @@ dropout(0.5):   mean val acc = 70.2%  (+/- 8.0%, 8 seeds)
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz35.html" class="quiz-button">Take the Lesson 35 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson34_convolutional_neural_networks.html">&larr; Lesson 34: Convolutional Neural Networks (CNNs)</a></div>
             <div class="lesson-nav-next"><a href="lesson36_image_classification_practice.html">Lesson 36: Image Classification in Practice &rarr;</a></div>

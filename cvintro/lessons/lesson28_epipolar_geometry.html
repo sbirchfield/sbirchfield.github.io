@@ -468,7 +468,7 @@ recovered translation direction:  [ 0.9806 -0.      0.1961]
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=b5962a05"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Add pixel noise (e.g. std 0.5) to <code>x1</code> and <code>x2</code> before running the 8-point algorithm. How much does the mean epipolar residual grow, and does normalizing coordinates (as <code>eight_point_algorithm</code> does) actually matter here — try skipping the normalization step and compare.</li>
 <li>The epipole in image 2 is the projection of camera 1's center, and satisfies $F e_1 = 0$ for the epipole $e_1$ in image 1 (and $F^\top e_2 = 0$ for the epipole $e_2$ in image 2). Compute both epipoles as the null space of $F$ (via SVD) and check whether they fall inside or outside the visible image region for this camera configuration.</li>
 <li>Increase the rotation angle between the two cameras to 60 degrees and rerun the pose recovery. Does <code>cv2.recoverPose</code> still find the correct rotation? At what point would you expect correspondence matching itself (Lesson 20) to become the bottleneck rather than the geometry?</li>
@@ -477,6 +477,9 @@ recovered translation direction:  [ 0.9806 -0.      0.1961]
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz28.html" class="quiz-button">Take the Lesson 28 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson27_camera_calibration.html">&larr; Lesson 27: Camera Calibration</a></div>
             <div class="lesson-nav-next"><a href="lesson29_structure_from_motion.html">Lesson 29: Structure from Motion &rarr;</a></div>

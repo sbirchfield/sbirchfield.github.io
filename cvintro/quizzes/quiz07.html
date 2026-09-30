@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 7 Quiz - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <p class="quiz-breadcrumb"><a href="../lessons/lesson07_distance_measures.html">&larr; Back to Lesson 7</a></p>
+        <h1>Quiz 7: Distance Measures</h1>
+        <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
+        <div id="quiz-questions">
+            <div class="quiz-question" data-q="0">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Which point-to-point distance metric produces diamond-shaped equal-distance contours?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Manhattan / city-block (<code>D4</code>)</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Chessboard (<code>D8</code>)</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Euclidean</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Chamfer</button>
+                </div>
+                <p class="quiz-explanation">Manhattan distance (<code>|dx| + |dy|</code>) forms diamonds; chessboard forms squares; Euclidean forms circles.</p>
+            </div>
+            <div class="quiz-question" data-q="1">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does the plain Freeman chain-code estimate <code>L = N_e + sqrt(2)*N_o</code> systematically overestimate a smooth curve's true length?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 0)">The digitized boundary zig-zags through many short staircase steps that add up to more than the true arc length</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 0)">Because it double-counts every boundary pixel</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 0)">Because <code>sqrt(2)</code> is too small a weight</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 0)">It actually underestimates, not overestimates</button>
+                </div>
+                <p class="quiz-explanation">A digitized circle's boundary alternates through many short zig-zag steps, which sum to more length than the smooth true arc.</p>
+            </div>
+            <div class="quiz-question" data-q="2">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the key computational advantage of the chamfer distance transform over an exact Euclidean distance transform?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 0)">It approximates the result with two fast raster-scan passes instead of comparing every pixel against every foreground pixel</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 0)">It only works on already-thresholded color images</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 0)">It ignores background pixels entirely</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 0)">It requires no distance function of any kind</button>
+                </div>
+                <p class="quiz-explanation">The chamfer transform propagates local distances in two raster-scan passes, a fast approximation to the more expensive exact Euclidean distance transform.</p>
+            </div>
+            <div class="quiz-question" data-q="3">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does the chessboard distance <code>D8</code> correspond to physically?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 0)">The number of king moves on a chessboard between two squares</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 0)">The ordinary straight-line distance</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 0)">The area of the smallest enclosing square</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 0)">The number of pawn moves between two squares</button>
+                </div>
+                <p class="quiz-explanation"><code>D8 = max(|dx|, |dy|)</code> is the shortest path length when diagonal (8-connected) moves are allowed, like a chess king.</p>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="quiz06.html">&larr; Lesson 6 Quiz</a></div>
+            <div class="lesson-nav-next"><a href="quiz08.html">Lesson 8 Quiz &rarr;</a></div>
+        </div>
+    </div>
+    <script>
+    let score = 0;
+    const answered = new Set();
+
+    function shuffleChildren(container) {
+        const children = Array.from(container.children);
+        for (let i = children.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [children[i], children[j]] = [children[j], children[i]];
+        }
+        children.forEach(child => container.appendChild(child));
+        return children;
+    }
+
+    function shuffleQuiz() {
+        const container = document.getElementById('quiz-questions');
+        const questions = shuffleChildren(container);
+        questions.forEach((q, i) => {
+            q.querySelector('.quiz-q-number').textContent = i + 1;
+            shuffleChildren(q.querySelector('.quiz-choices'));
+        });
+    }
+    shuffleQuiz();
+
+    function checkAnswer(qIndex, choiceIndex, correctIndex) {
+        if (answered.has(qIndex)) return;
+        answered.add(qIndex);
+
+        const buttons = document.querySelectorAll(`[data-q="${qIndex}"] .quiz-choice`);
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            const c = parseInt(btn.dataset.c, 10);
+            if (c === correctIndex) btn.classList.add('quiz-correct');
+            else if (c === choiceIndex) btn.classList.add('quiz-incorrect');
+        });
+
+        document.querySelector(`[data-q="${qIndex}"] .quiz-explanation`).style.display = 'block';
+
+        if (choiceIndex === correctIndex) score += 1;
+        document.getElementById('quiz-score').textContent = `Score: ${score} / 4`;
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 21 Quiz - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <p class="quiz-breadcrumb"><a href="../lessons/lesson21_optical_flow.html">&larr; Back to Lesson 21</a></p>
+        <h1>Quiz 21: Optical Flow and Motion Estimation</h1>
+        <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
+        <div id="quiz-questions">
+            <div class="quiz-question" data-q="0">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the aperture problem?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 1)">A camera lens defect that blurs moving objects</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 1)">Motion along an edge (rather than perpendicular to it) produces no visible local change, so it can't be recovered from a small local window</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 1)">The fact that optical flow only works on grayscale video</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 1)">A limitation that only appears in Horn-Schunck, not Lucas-Kanade</button>
+                </div>
+                <p class="quiz-explanation">Looking through a small window at a moving edge, only the motion perpendicular to the edge is visible; motion along the edge is invisible locally.</p>
+            </div>
+            <div class="quiz-question" data-q="1">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. In Lucas-Kanade, why does the flow estimate at a corner tend to be reliable while at an edge it is not?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">Corners are always brighter than edges</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">The same matrix M (the structure tensor) must be well-conditioned to solve the flow system, and a corner has two large eigenvalues while an edge has only one</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Edges move faster than corners in real video</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Lucas-Kanade cannot process edges at all, only corners</button>
+                </div>
+                <p class="quiz-explanation">Solving the Lucas-Kanade system requires M to be invertible; a corner (two large eigenvalues) is well-conditioned, while an edge (one small eigenvalue) is ill-conditioned -- the aperture problem again.</p>
+            </div>
+            <div class="quiz-question" data-q="2">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does <code>cv2.calcOpticalFlowPyrLK</code> use an image pyramid and iterate, rather than solving once?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">To save memory only, with no accuracy benefit</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">Because the underlying linear (Taylor) approximation is only valid for small motions, so large motions are estimated coarse-to-fine and refined</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">Because color images require multiple passes</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">Pyramids are only used for display purposes, not for the actual flow computation</button>
+                </div>
+                <p class="quiz-explanation">Estimating coarsely on a small, blurry pyramid level first, then refining level by level, lets large motions be recovered even though the linear approximation only holds locally, one small step at a time.</p>
+            </div>
+            <div class="quiz-question" data-q="3">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does the Horn-Schunck smoothness term let flow estimates do that Lucas-Kanade's purely local windows cannot?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">Run faster than Lucas-Kanade in every case</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">Propagate reliable flow from edges into flat, textureless regions with no local information of their own</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">Avoid the aperture problem entirely, even at a single edge pixel</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">Work without any brightness constancy assumption</button>
+                </div>
+                <p class="quiz-explanation">The smoothness term couples every pixel's flow to its neighbors', letting information spread from regions with strong gradients into flat regions that have no data term of their own.</p>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="quiz20.html">&larr; Lesson 20 Quiz</a></div>
+            <div class="lesson-nav-next"><a href="quiz22.html">Lesson 22 Quiz &rarr;</a></div>
+        </div>
+    </div>
+    <script>
+    let score = 0;
+    const answered = new Set();
+
+    function shuffleChildren(container) {
+        const children = Array.from(container.children);
+        for (let i = children.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [children[i], children[j]] = [children[j], children[i]];
+        }
+        children.forEach(child => container.appendChild(child));
+        return children;
+    }
+
+    function shuffleQuiz() {
+        const container = document.getElementById('quiz-questions');
+        const questions = shuffleChildren(container);
+        questions.forEach((q, i) => {
+            q.querySelector('.quiz-q-number').textContent = i + 1;
+            shuffleChildren(q.querySelector('.quiz-choices'));
+        });
+    }
+    shuffleQuiz();
+
+    function checkAnswer(qIndex, choiceIndex, correctIndex) {
+        if (answered.has(qIndex)) return;
+        answered.add(qIndex);
+
+        const buttons = document.querySelectorAll(`[data-q="${qIndex}"] .quiz-choice`);
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            const c = parseInt(btn.dataset.c, 10);
+            if (c === correctIndex) btn.classList.add('quiz-correct');
+            else if (c === choiceIndex) btn.classList.add('quiz-incorrect');
+        });
+
+        document.querySelector(`[data-q="${qIndex}"] .quiz-explanation`).style.display = 'block';
+
+        if (choiceIndex === correctIndex) score += 1;
+        document.getElementById('quiz-score').textContent = `Score: ${score} / 4`;
+    }
+    </script>
+</body>
+</html>

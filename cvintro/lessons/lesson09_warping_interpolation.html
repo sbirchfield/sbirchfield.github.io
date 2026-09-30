@@ -349,7 +349,7 @@ mean pixel difference = 0.092
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=a63d87f0"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Why doesn't the forward-mapping holes problem happen when the transform only <em>shrinks</em> the image? Try a scale of <code>0.5</code> instead of <code>1.6</code> in the forward-mapping example and see what fraction of destination pixels get filled.</li>
 <li>Extend <code>bilinear_sample</code> to bicubic interpolation conceptually: instead of a 2x2 neighborhood, what neighborhood size would you need, and what property would you want the weights to satisfy at the sample points?</li>
 <li>Time your <code>bilinear_sample</code> against <code>cv2.warpAffine</code> on a larger image (e.g. 800x800) using <code>%timeit</code>. By how much faster is the OpenCV version, and why?</li>
@@ -358,6 +358,9 @@ mean pixel difference = 0.092
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz09.html" class="quiz-button">Take the Lesson 9 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson08_geometric_transformations.html">&larr; Lesson 8: Geometric Transformations</a></div>
             <div class="lesson-nav-next"><a href="lesson10_convolution.html">Lesson 10: Convolution &rarr;</a></div>

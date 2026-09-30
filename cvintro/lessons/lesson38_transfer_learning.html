@@ -390,7 +390,7 @@
 <p>Frozen ImageNet features push accuracy well past either toy strategy above, using nothing but a new linear layer trained on the same 30 target images — no backbone training at all.</p>
 <p><strong>A caveat on this comparison:</strong> some of that gap is an unfair advantage, not just richer pretraining. ImageNet's 1,000 classes already include photos of cats and several vehicle types, unlike the toy source task, which only saw airplanes and automobiles — so this isn't a perfectly controlled comparison of "big general pretraining" versus "tiny 2-class pretraining" in isolation; part of ResNet-18's edge comes from having directly seen the target classes during pretraining.</p>
 <p>Nevertheless, the qualitative point holds, and it's the actual reason ImageNet-pretrained backbones are the default starting point in practice: a network trained on 1.2 million images learns far richer, more broadly transferable features than one trained on a couple thousand images of two categories ever could — which is exactly what Lesson 37's architectures, and the vastly larger datasets they were trained on, are built to produce.</p>
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Try <code>backbone_lr=0.01</code> (i.e. no learning-rate difference between backbone and head) in the fine-tuning call. Does fine-tuned accuracy get better or worse, and does that match the catastrophic-forgetting explanation above?</li>
 <li>Try freezing <em>most</em> of the backbone but fine-tuning only its last conv layer (hint: set <code>requires_grad = False</code> on the first <code>Conv2d</code>'s parameters only). Where does that land relative to fully-frozen and fully-fine-tuned?</li>
 <li>Swap the target task's classes from cat/truck to dog/automobile — a target pair that overlaps the source task's <em>domain</em> (vehicles) even more closely than cat/truck did. Does frozen-backbone accuracy improve further, and does that match the intuition that transfer works best when source and target share more underlying visual structure?</li>
@@ -400,6 +400,9 @@
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz38.html" class="quiz-button">Take the Lesson 38 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson37_classic_architectures.html">&larr; Lesson 37: Classic Architectures</a></div>
             <div class="lesson-nav-next"><a href="lesson39_visualizing_cnns.html">Lesson 39: Visualizing and Understanding CNNs &rarr;</a></div>

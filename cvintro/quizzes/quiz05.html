@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 5 Quiz - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <p class="quiz-breadcrumb"><a href="../lessons/lesson05_moments.html">&larr; Back to Lesson 5</a></p>
+        <h1>Quiz 5: Image Moments</h1>
+        <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
+        <div id="quiz-questions">
+            <div class="quiz-question" data-q="0">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does the raw moment <code>m00</code> represent for a binary image?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">The area (foreground pixel count)</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">The x-coordinate of the centroid</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">The shape's orientation angle</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Always zero, by definition</button>
+                </div>
+                <p class="quiz-explanation"><code>m00 = sum I(x,y)</code> over all pixels, which for a binary image is just a count of foreground pixels.</p>
+            </div>
+            <div class="quiz-question" data-q="1">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why are central moments <code>mu_pq</code> preferred over raw moments <code>m_pq</code> for describing a shape's spread?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 0)">Central moments are measured around the shape's own centroid, so they don't change if the shape is translated</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 0)">Central moments are always integers</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 0)">Central moments are faster to compute than raw moments</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 0)">There is no real difference between them</button>
+                </div>
+                <p class="quiz-explanation">Raw moments (except <code>m00</code>) depend on where the shape sits in the image; central moments are translation-invariant.</p>
+            </div>
+            <div class="quiz-question" data-q="2">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What property makes Hu moments useful for comparing shapes?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 0)">They are (nearly) invariant to the shape's translation, scale, and rotation</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 0)">They uniquely determine the shape's color</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 0)">They only work on convex shapes</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 0)">They are always exactly equal to 1</button>
+                </div>
+                <p class="quiz-explanation">The lesson shows a translated and a rotated+scaled version of the same shape produce similar Hu moments, while a different shape does not.</p>
+            </div>
+            <div class="quiz-question" data-q="3">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. The orientation formula <code>theta = 0.5 * atan2(2*mu11, mu20 - mu02)</code> is computed from which moments?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">The raw moments <code>m10</code>, <code>m01</code></button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">The central second-order moments <code>mu20</code>, <code>mu02</code>, <code>mu11</code></button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">The Hu moments</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)"><code>m00</code> alone</button>
+                </div>
+                <p class="quiz-explanation">The second-order central moments describe the shape's spread around its centroid, from which the major-axis angle is derived.</p>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="quiz04.html">&larr; Lesson 4 Quiz</a></div>
+            <div class="lesson-nav-next"><a href="quiz06.html">Lesson 6 Quiz &rarr;</a></div>
+        </div>
+    </div>
+    <script>
+    let score = 0;
+    const answered = new Set();
+
+    function shuffleChildren(container) {
+        const children = Array.from(container.children);
+        for (let i = children.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [children[i], children[j]] = [children[j], children[i]];
+        }
+        children.forEach(child => container.appendChild(child));
+        return children;
+    }
+
+    function shuffleQuiz() {
+        const container = document.getElementById('quiz-questions');
+        const questions = shuffleChildren(container);
+        questions.forEach((q, i) => {
+            q.querySelector('.quiz-q-number').textContent = i + 1;
+            shuffleChildren(q.querySelector('.quiz-choices'));
+        });
+    }
+    shuffleQuiz();
+
+    function checkAnswer(qIndex, choiceIndex, correctIndex) {
+        if (answered.has(qIndex)) return;
+        answered.add(qIndex);
+
+        const buttons = document.querySelectorAll(`[data-q="${qIndex}"] .quiz-choice`);
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            const c = parseInt(btn.dataset.c, 10);
+            if (c === correctIndex) btn.classList.add('quiz-correct');
+            else if (c === choiceIndex) btn.classList.add('quiz-incorrect');
+        });
+
+        document.querySelector(`[data-q="${qIndex}"] .quiz-explanation`).style.display = 'block';
+
+        if (choiceIndex === correctIndex) score += 1;
+        document.getElementById('quiz-score').textContent = `Score: ${score} / 4`;
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 30 Quiz - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <p class="quiz-breadcrumb"><a href="../lessons/lesson30_projection.html">&larr; Back to Lesson 30</a></p>
+        <h1>Quiz 30: Projection &mdash; The Central Idea</h1>
+        <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
+        <div id="quiz-questions">
+            <div class="quiz-question" data-q="0">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. According to this lesson, what do PCA (Lesson 6) and camera projection (P = K[R|t]) have in common?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Both are examples of the same underlying operation: y = w^T x + b, a linear projection</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Both require labeled training data to compute</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Neither one involves any matrix multiplication</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">PCA and camera projection are unrelated operations with no shared structure</button>
+                </div>
+                <p class="quiz-explanation">Both compute a projection via a dot product between a fixed direction and the input coordinates; they differ only in how that direction was chosen.</p>
+            </div>
+            <div class="quiz-question" data-q="1">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What single operation does the lesson show convolution, the Fourier transform, and a homography all secretly are?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">Nonlinear activation functions</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">A matrix multiplication, i.e. a bank of simultaneous linear projections</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Gradient descent updates</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Random sampling procedures</button>
+                </div>
+                <p class="quiz-explanation">Each output value in all three is a dot product between the input and a fixed row/kernel/basis function, which is exactly what one row of a matrix multiply computes.</p>
+            </div>
+            <div class="quiz-question" data-q="2">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What can a single linear projection classifier never do, regardless of how w and b are chosen?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">Separate two classes that are linearly separable</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">Separate a ring of points from a disk of points it surrounds</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">Compute a dot product</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">Be visualized in 1D after projection</button>
+                </div>
+                <p class="quiz-explanation">A single projection can only produce a straight-line (hyperplane) decision boundary, and no straight line can separate a ring from the disk it encloses.</p>
+            </div>
+            <div class="quiz-question" data-q="3">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the classification example, what determines which side of the decision boundary a point falls on?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">The point's distance from the image origin only</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">The sign of the projected score w^T x + b</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">Which class has more training examples</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">The point's color channel values</button>
+                </div>
+                <p class="quiz-explanation">Points are classified by thresholding the projected score at zero: positive score means one class, negative means the other.</p>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="quiz29.html">&larr; Lesson 29 Quiz</a></div>
+            <div class="lesson-nav-next"><a href="quiz31.html">Lesson 31 Quiz &rarr;</a></div>
+        </div>
+    </div>
+    <script>
+    let score = 0;
+    const answered = new Set();
+
+    function shuffleChildren(container) {
+        const children = Array.from(container.children);
+        for (let i = children.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [children[i], children[j]] = [children[j], children[i]];
+        }
+        children.forEach(child => container.appendChild(child));
+        return children;
+    }
+
+    function shuffleQuiz() {
+        const container = document.getElementById('quiz-questions');
+        const questions = shuffleChildren(container);
+        questions.forEach((q, i) => {
+            q.querySelector('.quiz-q-number').textContent = i + 1;
+            shuffleChildren(q.querySelector('.quiz-choices'));
+        });
+    }
+    shuffleQuiz();
+
+    function checkAnswer(qIndex, choiceIndex, correctIndex) {
+        if (answered.has(qIndex)) return;
+        answered.add(qIndex);
+
+        const buttons = document.querySelectorAll(`[data-q="${qIndex}"] .quiz-choice`);
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            const c = parseInt(btn.dataset.c, 10);
+            if (c === correctIndex) btn.classList.add('quiz-correct');
+            else if (c === choiceIndex) btn.classList.add('quiz-incorrect');
+        });
+
+        document.querySelector(`[data-q="${qIndex}"] .quiz-explanation`).style.display = 'block';
+
+        if (choiceIndex === correctIndex) score += 1;
+        document.getElementById('quiz-score').textContent = `Score: ${score} / 4`;
+    }
+    </script>
+</body>
+</html>

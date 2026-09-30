@@ -416,7 +416,7 @@ mean reconstruction error = 0.0000 gray levels
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=c6e101e8"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Try <code>threshold=1.0</code> and <code>threshold=15.0</code> in <code>zero_crossings</code>. How does the number of detected edge pixels change, and why does a <em>higher</em> threshold on a <em>second</em>-derivative sign-change criterion behave differently than a magnitude threshold on a first derivative?</li>
 <li>Increase the noise level in <code>noisy_disk</code> and see how large <code>sigma</code> needs to be before the zero-crossing edge map stops being dominated by spurious noise loops.</li>
 <li>Laplacian pyramids are the classic tool behind seamless image blending (e.g. blending two photos along a mask, level by level). Sketch out — in words or code — how you'd blend two Laplacian pyramids (e.g. average them with a spatially-varying weight per level) before reconstructing, and why blending in this representation avoids sharp seams that blending the original images directly would produce.</li>
@@ -425,6 +425,9 @@ mean reconstruction error = 0.0000 gray levels
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz13.html" class="quiz-button">Take the Lesson 13 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson12_differentiation_edges.html">&larr; Lesson 12: Differentiation and Edge Detection</a></div>
             <div class="lesson-nav-next"><a href="lesson14_nonlinear_filters.html">Lesson 14: Nonlinear Filters &rarr;</a></div>

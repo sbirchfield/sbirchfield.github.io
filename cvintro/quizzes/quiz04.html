@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 4 Quiz - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <link rel="stylesheet" href="../css/quiz.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <p class="quiz-breadcrumb"><a href="../lessons/lesson04_floodfill_connected_components.html">&larr; Back to Lesson 4</a></p>
+        <h1>Quiz 4: Flood Fill and Connected Components</h1>
+        <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
+        <div id="quiz-questions">
+            <div class="quiz-question" data-q="0">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the main difference between flood fill and connected-component labeling?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Flood fill grows a region from a single seed point; connected components find all separate regions in the image at once</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">They do exactly the same thing, just with different function names</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Connected components only work on color images</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Flood fill labels every blob with a unique ID simultaneously</button>
+                </div>
+                <p class="quiz-explanation">Flood fill needs one seed per region, while <code>cv2.connectedComponentsWithStats</code> scans the whole image and labels every blob at once.</p>
+            </div>
+            <div class="quiz-question" data-q="1">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the classic stack-based <code>flood_fill_stack</code> algorithm, what happens when a pixel is popped from the stack?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">It's colored immediately, regardless of whether it was visited before</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">If it's foreground and not yet filled, it's marked filled and its 4-connected neighbors are pushed onto the stack</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">The algorithm terminates immediately</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It's deleted from the image array</button>
+                </div>
+                <p class="quiz-explanation">Popped pixels that are background or already filled are simply skipped; otherwise they're marked filled and their neighbors are added to the frontier.</p>
+            </div>
+            <div class="quiz-question" data-q="2">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does <code>cv2.connectedComponentsWithStats</code> label as component <code>0</code>?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">The largest blob</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">The background</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">The smallest blob</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">An error code meaning no blobs were found</button>
+                </div>
+                <p class="quiz-explanation">Label 0 is always the background, so the number of actual blobs is <code>num_labels - 1</code>.</p>
+            </div>
+            <div class="quiz-question" data-q="3">
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What extra information does <code>cv2.connectedComponentsWithStats</code> provide alongside the labels, at almost no extra computational cost?</p>
+                <div class="quiz-choices">
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 0)">Bounding box, area, and centroid for each blob</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 0)">A trained classifier for each blob's shape</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 0)">The Hu moments of each blob</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 0)">The original unthresholded grayscale image</button>
+                </div>
+                <p class="quiz-explanation">The lesson notes these stats come essentially free as part of the same labeling pass.</p>
+            </div>
+        </div>
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="quiz03.html">&larr; Lesson 3 Quiz</a></div>
+            <div class="lesson-nav-next"><a href="quiz05.html">Lesson 5 Quiz &rarr;</a></div>
+        </div>
+    </div>
+    <script>
+    let score = 0;
+    const answered = new Set();
+
+    function shuffleChildren(container) {
+        const children = Array.from(container.children);
+        for (let i = children.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [children[i], children[j]] = [children[j], children[i]];
+        }
+        children.forEach(child => container.appendChild(child));
+        return children;
+    }
+
+    function shuffleQuiz() {
+        const container = document.getElementById('quiz-questions');
+        const questions = shuffleChildren(container);
+        questions.forEach((q, i) => {
+            q.querySelector('.quiz-q-number').textContent = i + 1;
+            shuffleChildren(q.querySelector('.quiz-choices'));
+        });
+    }
+    shuffleQuiz();
+
+    function checkAnswer(qIndex, choiceIndex, correctIndex) {
+        if (answered.has(qIndex)) return;
+        answered.add(qIndex);
+
+        const buttons = document.querySelectorAll(`[data-q="${qIndex}"] .quiz-choice`);
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            const c = parseInt(btn.dataset.c, 10);
+            if (c === correctIndex) btn.classList.add('quiz-correct');
+            else if (c === choiceIndex) btn.classList.add('quiz-incorrect');
+        });
+
+        document.querySelector(`[data-q="${qIndex}"] .quiz-explanation`).style.display = 'block';
+
+        if (choiceIndex === correctIndex) score += 1;
+        document.getElementById('quiz-score').textContent = `Score: ${score} / 4`;
+    }
+    </script>
+</body>
+</html>

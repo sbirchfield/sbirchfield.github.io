@@ -536,7 +536,7 @@ graphic          60000 B      1920 B      3594 B    (PNG is smaller than JPEG by
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=617f2677"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Run the RLE experiment on <code>photo_like</code> (which has Gaussian noise) instead of <code>flat_regions_img</code>. How many runs does it produce, and what does that say about RLE's suitability for noisy natural images?</li>
 <li><code>keep_top_left</code> is a deliberately crude stand-in for real quantization (which shrinks <em>all</em> coefficients gradually rather than hard-zeroing a block of them). Replace it with <code>np.round(dct_block / step) * step</code> for a few different <code>step</code> values, and compare the visual artifacts to the top-left-corner version.</li>
 <li>At very low JPEG quality, you may notice a visible grid pattern aligned with the 8x8 block boundaries ("blocking artifacts"). Given what block boundaries have to do with the DCT, explain why quantizing each block <em>independently</em> would produce exactly this kind of artifact.</li>
@@ -545,6 +545,9 @@ graphic          60000 B      1920 B      3594 B    (PNG is smaller than JPEG by
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz17.html" class="quiz-button">Take the Lesson 17 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson16_wavelets_gabor.html">&larr; Lesson 16: Wavelets and Gabor Filters</a></div>
             <div class="lesson-nav-next"><a href="lesson18_color_spaces.html">Lesson 18: Color Spaces &rarr;</a></div>

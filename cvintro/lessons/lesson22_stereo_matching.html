@@ -608,7 +608,7 @@ newly marked invalid:           264
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=d0f0011d"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Replace the random-texture <code>left</code> image with a flat gray region for the background (keeping the two rectangles textured). Run <code>cv2.StereoBM</code> again and describe what happens to the disparity estimate over the flat area — this is the aperture problem from Lesson 21, now in a stereo-matching context.</li>
 <li>Try <code>cv2.StereoSGBM_create</code> (semi-global block matching, which enforces smoothness across neighboring disparities rather than matching each pixel completely independently) in place of <code>StereoBM</code>. Compare the amount of speckle noise in flat/background regions between the two methods.</li>
 <li>Increase <code>baseline_m</code> in the depth conversion. How does the estimated depth map change, and why would a wider-baseline stereo rig give more precise depth estimates for distant objects (at the cost of a larger minimum-distance blind spot, due to disparity ranges and occlusion, near the cameras)?</li>
@@ -617,6 +617,9 @@ newly marked invalid:           264
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz22.html" class="quiz-button">Take the Lesson 22 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson21_optical_flow.html">&larr; Lesson 21: Optical Flow and Motion Estimation</a></div>
             <div class="lesson-nav-next"><a href="lesson23_model_fitting_ransac.html">Lesson 23: Model Fitting, Robust Estimation, and RANSAC &rarr;</a></div>

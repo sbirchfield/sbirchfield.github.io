@@ -376,7 +376,7 @@ automobile       0.51     0.89      150
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Truck — the class starved to 90 training images, versus 400 for each other class — has high precision but very low recall: when the model does say "truck," it's usually right, but it fails to recognize the overwhelming majority of actual trucks, defaulting instead to whichever classes it saw plenty of during training (mostly "automobile," the visually closest well-represented class). That is the standard signature of class imbalance, and it is completely invisible in the single overall-accuracy number from before. Cat and dog, by contrast, are both well-represented in training but get confused <em>with each other</em> far more than with automobile or truck — a different failure mode entirely, caused by genuine visual similarity between the two animals rather than by a lack of data. Automobile ends up with unusually high recall but only middling precision, for the same reason truck's recall suffered: it's absorbing the starved truck class's misclassifications, since "wheeled vehicle" is an easy fallback guess once the model can't tell trucks apart from automobiles.</p>
 <p>The practical lesson: always inspect the confusion matrix and per-class metrics before trusting a single accuracy figure, especially on any dataset where classes aren't naturally balanced.</p>
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Increase the truck training count from 90 to 400 (matching the other three classes) and rerun. Does truck recall recover? Does the cat/dog confusion also improve, or does it persist — and why would more data not fix a problem caused by genuine visual similarity rather than data scarcity?</li>
 <li>Try weighting the loss by inverse class frequency (<code>F.cross_entropy(logits, yt, weight=class_weights)</code>, where <code>class_weights[i] = 1 / count(class i)</code>) instead of collecting more truck images. Does it recover truck recall, and at what cost to the other classes' precision?</li>
 <li>Compute the <strong>F1 score</strong> (the harmonic mean of precision and recall, <code>2 * p * r / (p + r)</code>) for each class. Why might F1 be a better single number to track per-class than accuracy, when accuracy is only meaningful in aggregate?</li>
@@ -385,6 +385,9 @@ automobile       0.51     0.89      150
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz36.html" class="quiz-button">Take the Lesson 36 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson35_training_a_cnn.html">&larr; Lesson 35: Training a CNN</a></div>
             <div class="lesson-nav-next"><a href="lesson37_classic_architectures.html">Lesson 37: Classic Architectures &rarr;</a></div>

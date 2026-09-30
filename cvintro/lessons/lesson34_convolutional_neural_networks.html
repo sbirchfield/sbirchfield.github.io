@@ -405,7 +405,7 @@ grad_bias max diff:   1.78e-15
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=adea55e0"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Replace <code>nn.AdaptiveMaxPool2d(1)</code> in <code>CNNClassifier</code> with <code>nn.Flatten()</code> directly on the conv features (removing the global pooling, so spatial position is preserved all the way to the final linear layer). Retrain and re-evaluate on the unseen-position test set. Does the CNN's generalization advantage survive?</li>
 <li>Increase the gap between train and test position ranges (e.g. train on <code>(5, 11)</code>, test on <code>(0, 3)</code>, right at the image border where shapes get clipped). Does the CNN's accuracy hold up, or does it degrade — and if it degrades, is that a translation-invariance failure or something else entirely (think about what happens to a shape's <em>appearance</em>, not just its position, right at an edge)?</li>
 <li><code>conv2d_forward</code> above pads nothing (<code>OH = H - KH + 1</code>), so the output shrinks with every layer. Modify it to support zero-padding (pad the input by <code>KH//2</code> on each side before sliding, matching PyTorch's <code>padding=</code> argument) and confirm the output size matches the input size, validated against <code>F.conv2d(..., padding=1)</code>.</li>
@@ -414,6 +414,9 @@ grad_bias max diff:   1.78e-15
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz34.html" class="quiz-button">Take the Lesson 34 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson33_optimization.html">&larr; Lesson 33: Optimization</a></div>
             <div class="lesson-nav-next"><a href="lesson35_training_a_cnn.html">Lesson 35: Training a CNN &rarr;</a></div>

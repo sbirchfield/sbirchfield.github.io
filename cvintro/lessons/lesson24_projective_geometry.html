@@ -450,7 +450,7 @@ mean reprojection error on the TRUE inliers:
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=4ffc2ada"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Add zero-mean Gaussian noise (e.g. std 2 pixels) to <code>pts2</code> before calling <code>cv2.findHomography</code>. How much does the estimated homography drift from <code>H_true</code>, and does increasing the number of correspondences (say, from 30 to 200) reduce that drift?</li>
 <li>Increase the number of injected bad matches (<code>pts1_bad</code>/<code>pts2_bad</code>) from 15 until RANSAC starts to fail. Using the iteration-count formula from Lesson 23 (minimal sample size 4 for a homography), roughly what outlier fraction is that, and how many iterations would it theoretically require to stay 99% confident of success?</li>
 <li>In the vanishing-point demo, change the two lines to be <em>vertical</em> instead of horizontal (e.g. <code>x=0</code> and <code>x=1</code>), and predict, then verify, where their vanishing point ends up using the point-at-infinity trick with direction <code>(0, 1, 0)</code>.</li>
@@ -459,6 +459,9 @@ mean reprojection error on the TRUE inliers:
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz24.html" class="quiz-button">Take the Lesson 24 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson23_model_fitting_ransac.html">&larr; Lesson 23: Model Fitting, Robust Estimation, and RANSAC</a></div>
             <div class="lesson-nav-next"><a href="lesson25_stitching_mosaicking.html">Lesson 25: Image Stitching and Mosaicking &rarr;</a></div>

@@ -609,7 +609,7 @@ mean abs pixel error after correction:  7.43
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=957d3388"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Change <code>strength</code> in <code>defocus_kernel_size</code> to make the depth-of-field effect much shallower (larger <code>strength</code>) or much deeper (smaller <code>strength</code>). At <code>strength=0</code>, what should happen, and does the code produce that?</li>
 <li>Modify <code>make_bayer_rggb</code> and the <code>Rmask</code>/<code>Gmask</code>/<code>Bmask</code> assignments in <code>demosaick_bilinear_rggb</code> to build and decode a BGGR mosaic instead of RGGB (swap which corner is red vs. blue). Find the matching OpenCV code by trying each of <code>cv2.COLOR_BayerBG2BGR</code>, <code>cv2.COLOR_BayerGB2BGR</code>, <code>cv2.COLOR_BayerGR2BGR</code>, <code>cv2.COLOR_BayerRG2BGR</code> and checking which one drops the MAE back down to the noise floor — OpenCV's naming convention for these codes is notoriously easy to get backwards, which is itself a small demonstration of this lesson's point about silent pattern-mismatch errors.</li>
 <li>Repeat the gamma-blending experiment, but blend <code>0.2</code> and <code>0.8</code> (instead of pure black and white) in both the naive and correct ways. Is the discrepancy between them larger or smaller than the black/white case, and why might that make sense given the shape of the gamma curve?</li>
@@ -619,6 +619,9 @@ mean abs pixel error after correction:  7.43
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz26.html" class="quiz-button">Take the Lesson 26 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson25_stitching_mosaicking.html">&larr; Lesson 25: Image Stitching and Mosaicking</a></div>
             <div class="lesson-nav-next"><a href="lesson27_camera_calibration.html">Lesson 27: Camera Calibration &rarr;</a></div>

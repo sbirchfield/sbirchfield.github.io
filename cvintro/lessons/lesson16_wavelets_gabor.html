@@ -259,7 +259,13 @@ perfect reconstruction? True
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>max reconstruction error: 1.4210854715202004e-13
+<pre>max reconstruction error:</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre> 1.4210854715202004e-13
 </pre>
 </div>
 </div>
@@ -409,7 +415,7 @@ each filter peaks at its own bar orientation? True
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=1cfa437b"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Try <code>db4</code> (<code>pywt.Wavelet('db4')</code>) instead of <code>db2</code> for the 2D image decomposition. How does the LH/HL/HL subband appearance change, given <code>db4</code>'s longer, smoother filters?</li>
 <li>Apply <code>pywt.dwt2</code> a second time to the <code>LL</code> subband from the image decomposition above, to get a second, coarser level — this is a <strong>wavelet pyramid</strong>, directly analogous to the Gaussian/Laplacian pyramids of Lessons 10 and 12.</li>
 <li>Increase <code>lambd</code> (the sinusoid's wavelength) in the Gabor kernel while keeping <code>sigma</code> fixed. What happens to the number of visible stripes inside the Gaussian envelope, and how would you expect that to change which real-image texture scale the filter responds to?</li>
@@ -418,6 +424,9 @@ each filter peaks at its own bar orientation? True
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz16.html" class="quiz-button">Take the Lesson 16 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson15_fourier_frequency_filtering.html">&larr; Lesson 15: The Fourier Transform and Frequency-Domain Filtering</a></div>
             <div class="lesson-nav-next"><a href="lesson17_compression.html">Lesson 17: Image Compression &mdash; Lossless and Lossy &rarr;</a></div>

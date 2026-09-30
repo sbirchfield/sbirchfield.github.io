@@ -496,7 +496,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=exercise39"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Exercise">Exercise<a class="anchor-link" href="#Exercise">¶</a></h3><ol>
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Grad-CAM here uses the <em>last</em> conv layer. Modify <code>grad_cam</code> to instead use the intermediate feature map after <code>conv1</code> (before the pool and <code>conv2</code>). Does the resulting heatmap get sharper (closer to pixel-perfect, like the saliency map) or coarser, and why would an earlier layer behave that way?</li>
 <li>Shrink the marker from 5x5 to 2x2, or dim it from pure white (<code>1.0</code>) to a faint gray (<code>0.6</code>). Does <code>model_shortcut</code> still learn to rely on it as strongly (check the clean-vs-marked accuracy gap), and does Grad-CAM still catch it as reliably?</li>
 <li>The saliency-map gradient in this lesson is taken with respect to the raw logit (<code>score</code>), not the sigmoid probability. Try computing it with respect to <code>torch.sigmoid(score)</code> instead — does the resulting map look meaningfully different, and can you explain why using the chain rule?</li>
@@ -506,6 +506,9 @@
 </div>
 </div>
 
+        <div class="quiz-cta">
+            <a href="../quizzes/quiz39.html" class="quiz-button">Take the Lesson 39 Quiz &rarr;</a>
+        </div>
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson38_transfer_learning.html">&larr; Lesson 38: Transfer Learning</a></div>
             <div class="lesson-nav-next"><a href="lesson40_object_detection_sliding_windows.html">Lesson 40: Object Detection from Sliding Windows &rarr;</a></div>
