@@ -26,40 +26,40 @@
             <div class="quiz-question" data-q="0">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. On the narrow, steep-in-y bowl loss surface, why does plain gradient descent zigzag instead of converging smoothly?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">A step size that makes progress along the shallow x-axis overshoots along the steep y-axis, and vice versa</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Plain gradient descent cannot handle 2D loss surfaces at all</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">The loss function has no minimum</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">The learning rate was set to exactly zero</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">A step size that makes progress along the shallow x-axis overshoots along the steep y-axis</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Plain gradient descent cannot handle any 2D loss surface at all, by mathematical necessity</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">The loss function being minimized has no minimum to converge to anywhere</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">The learning rate was mistakenly set to exactly zero for this particular run</button>
                 </div>
                 <p class="quiz-explanation">A single shared step size can't be simultaneously right for a shallow and a steep direction at once, causing the characteristic zigzag.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the key mechanism behind momentum's benefit on the narrow bowl?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">It sets the learning rate to zero after a fixed number of steps</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">It accumulates a running velocity so consistent gradients (the shallow axis) compound into a larger effective step, accelerating progress</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">It removes the need for a loss function entirely</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It only ever slows down training, never speeds it up</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">It sets the learning rate to exactly zero after a fixed number of steps</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">It accumulates a running velocity so consistent gradients</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">It removes the need for a loss function entirely during training</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It only ever slows down training progress, never speeds it up</button>
                 </div>
                 <p class="quiz-explanation">Momentum's real benefit is acceleration along consistently-pointing directions, not damping oscillation, since a single beta can't be tuned per-axis.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. How does Adam differ from momentum in how it handles the steep vs. shallow axes of the bowl?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">Adam ignores gradient direction entirely and only uses magnitude</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">Adam divides the step by a running estimate of each parameter's squared gradient, independently rescaling each axis instead of sharing one coefficient</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">Adam is identical to momentum with a different name</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">Adam only works on 1-dimensional loss surfaces</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">Adam ignores gradient direction entirely, using only its magnitude at each step</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">Adam is functionally identical to momentum, just under a different name and notation</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Adam divides the step by a running estimate of each parameter's squared gradient</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Adam only works correctly on strictly 1-dimensional loss surfaces, unlike momentum</button>
                 </div>
                 <p class="quiz-explanation">Dividing by sqrt(v) per-parameter automatically shrinks steps on the steep axis and boosts them on the shallow one, unlike momentum's single shared coefficient.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does initializing all weights to exactly zero fail catastrophically for a hidden layer with more than one unit?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">Zero weights cause a runtime crash in PyTorch</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">Every hidden unit computes the identical function and receives the identical gradient, so they never differentiate from each other -- the symmetry never breaks</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">Zero-initialized networks train faster than randomly-initialized ones</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">Zero initialization only fails when using the Adam optimizer</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">Zero weights cause an immediate runtime crash in PyTorch</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">Zero-initialized networks actually train faster than randomly-initialized ones</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">Zero initialization only fails specifically when using the Adam optimizer</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Every hidden unit computes the identical function and receives the identical gradient</button>
                 </div>
                 <p class="quiz-explanation">With identical weights and identical gradients, every unit updates identically forever, so the model is stuck computing a single trivial function no matter how long it trains.</p>
             </div>

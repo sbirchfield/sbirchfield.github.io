@@ -26,40 +26,40 @@
             <div class="quiz-question" data-q="0">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does the lesson prefer <code>Y = 0.299 R + 0.587 G + 0.114 B</code> over a plain average <code>(R + G + B)/3</code> for grayscale conversion?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 1)">The plain average is not mathematically valid for 8-bit images</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 1)">The human visual system is more sensitive to green, so weighting it more matches perceived brightness</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 1)">The plain average only works on already-grayscale images</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 1)">There is no real difference between the two formulas</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">The human visual system is more sensitive to green</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">The plain average is not mathematically valid for 8-bit image arrays</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">The plain average only produces correct results on already-grayscale images</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">There is no real difference between the two formulas in practice</button>
                 </div>
                 <p class="quiz-explanation">A plain average can't tell green and blue apart perceptually; weighting toward green (as human vision does) gives a much better brightness estimate.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In HSV, which channel should you threshold on to segment an object by color robustly, even under a lighting gradient across its surface?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 2)">Value</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 2)">Saturation</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 2)">Hue</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 2)">All three channels equally</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">Value, since it captures brightness directly</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">Hue, since it captures which color something is, independent of brightness</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Saturation, since it captures how vivid or washed-out the color is</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">All three channels equally, averaged together</button>
                 </div>
                 <p class="quiz-explanation">Hue captures which color something is, independent of how bright or washed-out it appears, so it stays consistent even as brightness varies across the object.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does video/JPEG compression discard resolution from the chroma channels (<code>Cb</code>, <code>Cr</code>) more aggressively than from luma (<code>Y</code>)?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">Chroma channels take up more storage than luma by default</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">The human visual system resolves fine spatial detail in luma far better than in chroma, so chroma loss is less noticeable</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">Luma cannot be compressed at all</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">Cb and Cr are redundant copies of Y</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">Chroma channels take up more storage space than luma by default, before any subsampling</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">Luma cannot be compressed at all under any circumstances, unlike chroma</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">The human visual system resolves fine spatial detail in luma far better than in chroma</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)"><code>Cb</code> and <code>Cr</code> are simply redundant copies of <code>Y</code>, carrying no new information</button>
                 </div>
                 <p class="quiz-explanation">Chroma subsampling exploits the fact that losing the same amount of detail is far less objectionable in color than in brightness.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why was the L*a*b* color space designed the way it was?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 0)">So that Euclidean distance between two Lab colors approximates perceived color difference consistently</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 0)">So that it uses less memory per pixel than RGB</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 0)">So that it is faster to convert to grayscale than RGB</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 0)">So that hue and brightness are always identical</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">So that it uses noticeably less memory per pixel than RGB requires</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">So that converting to grayscale is faster computationally than from RGB</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">So that hue and brightness channels are always numerically identical to each other</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">So that Euclidean distance between two Lab colors approximates perceived color difference</button>
                 </div>
                 <p class="quiz-explanation">Equal RGB distances can correspond to wildly different perceived differences depending on where they fall in color space; Lab was designed so Euclidean distance tracks perception much more consistently.</p>
             </div>

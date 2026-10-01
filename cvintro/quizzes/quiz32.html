@@ -26,40 +26,40 @@
             <div class="quiz-question" data-q="0">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does stacking two purely linear layers (no nonlinearity in between) fail to add any representational power over one layer?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 1)">Two linear layers always train slower than one</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 1)">The composition of two linear projections is algebraically just one combined linear projection (w2^T W1 collapses to a single matrix)</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 1)">PyTorch does not allow stacking linear layers</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 1)">Linear layers can only be stacked if they have the same width</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">The composition of two linear projections is algebraically just one combined linear projection</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Two linear layers always train measurably slower than a single one, due to extra matrix multiplies</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">PyTorch does not technically allow stacking two linear layers without an activation between them</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Linear layers can only be stacked if they share the exact same width at every layer</button>
                 </div>
                 <p class="quiz-explanation">Without a nonlinearity, z = w2^T(W1 x + b1) + b2 simplifies algebraically into a single w'^T x + b', exactly Lesson 31's single neuron again.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What role does the ReLU nonlinearity play in an MLP's hidden layer?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">It has no real effect and is included only by convention</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">It breaks the algebraic collapse that would otherwise reduce stacked linear layers back into one linear projection</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">It converts the network into an unsupervised model</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It only affects the bias terms, not the weights</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">It has no real effect and is included only by convention, not necessity</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">It breaks the collapse that would reduce stacked linear layers into one projection</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">It converts the entire network into an unsupervised learning model with no labels</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It only affects the bias terms, never the weight matrices themselves, during backprop</button>
                 </div>
                 <p class="quiz-explanation">Because ReLU is not a linear function, w2^T ReLU(W1 x + b1) + b2 cannot be rewritten as any single linear projection, unlike the all-linear case.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the capacity sweep, what does H=1 (a single hidden unit) achieve on the ring-vs-disk problem, no matter how long it trains?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">Consistently 100% accuracy</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">A ceiling near Lesson 30's ~74% linear limit, since one hidden unit is just a single cut</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">Exactly 0% accuracy every time</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">Accuracy that improves without bound given enough epochs</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">Consistently 100% accuracy, no matter the random seed</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">Exactly 0% accuracy every single time it is trained</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">A ceiling near Lesson 30's ~74% linear limit</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Accuracy that improves without bound given enough training epochs</button>
                 </div>
                 <p class="quiz-explanation">One hidden unit provides only a single straight-line cut, so it inherits the same representational ceiling a lone linear projection has -- a capacity limit, not an optimization failure.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. When the trained hidden layer's 4D output is projected to 2D with PCA for visualization, what does the lesson observe about the two classes?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">They remain just as tangled as in the original input space</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">They are pulled apart into something close to linearly separable, even in this lossy 2D snapshot</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">They collapse into a single overlapping cluster</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">The visualization is identical to the raw input space plot</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">They remain exactly as tangled as they were in the original input space, unchanged</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">They collapse together into a single overlapping cluster, losing all class structure</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">The visualization turns out identical to the raw input-space plot, pixel for pixel</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">They are pulled apart into something close to linearly separable, even in this lossy 2D snapshot</button>
                 </div>
                 <p class="quiz-explanation">The hidden layer reshapes the space so the classes become nearly linearly separable, illustrating that each layer's job is to make the next layer's job easier.</p>
             </div>

@@ -26,8 +26,8 @@
             <div class="quiz-question" data-q="0">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the key difference between true convolution and correlation?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Convolution flips the kernel 180 degrees before sliding it; correlation does not</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Correlation only works on grayscale images</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Convolution flips the kernel 180 degrees before sliding it</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Correlation only works correctly on grayscale images, never color</button>
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Convolution requires a square kernel; correlation does not</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">There is no difference; the terms are interchangeable in all cases</button>
                 </div>
@@ -36,30 +36,30 @@
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Does <code>cv2.filter2D</code> compute convolution or correlation?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">Convolution</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">Correlation</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Neither -- it computes a Fourier transform</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It alternates depending on kernel size</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">Convolution, flipping the kernel before sliding it across the image</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">Correlation, despite being casually called "convolution" in most image libraries</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Neither -- it actually computes a Fourier transform internally</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It alternates between the two depending on the kernel's size</button>
                 </div>
                 <p class="quiz-explanation">Most image libraries, including OpenCV's <code>cv2.filter2D</code>, actually implement correlation despite being casually called "convolution".</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does it mean for a 2D kernel to be separable?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">It can only be applied to separate color channels</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">It can be written as the outer product of two 1D kernels, turning O(n^2) work into O(2n)</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">It must be split into two passes regardless of its structure</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">It has no effect on the image</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">It can only be applied to separate color channels, never to grayscale</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">It must always be split into two passes, regardless of its internal structure</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">It can be written as the outer product of two 1D kernels, turning O(n^2) work into O(2n)</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">It has no measurable effect on the resulting image</button>
                 </div>
                 <p class="quiz-explanation">A separable kernel like the Gaussian can be applied as a 1D pass along x then a 1D pass along y, which is much cheaper than the full 2D kernel.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the Sobel edge-detection example, why does the convolution-vs-correlation distinction actually matter?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 2)">Because Sobel only works with correlation</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 2)">Because the Sobel kernel is symmetric</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 2)">Because the Sobel kernel is asymmetric, so flipping it changes the result (typically a sign flip)</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 2)">It never matters for any kernel</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">Because Sobel only works correctly with correlation, never true convolution</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">Because the Sobel kernel is symmetric, so flipping it has no visible effect</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">It never matters for any kernel, symmetric or not</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Because the Sobel kernel is asymmetric</button>
                 </div>
                 <p class="quiz-explanation">For symmetric kernels (box, Gaussian) flipping changes nothing, but asymmetric kernels like Sobel give different results under convolution vs. correlation.</p>
             </div>

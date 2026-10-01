@@ -27,39 +27,39 @@
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does thresholding do to a grayscale image?</p>
                 <div class="quiz-choices">
                     <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Converts every pixel above a cutoff to white and at-or-below to black (or vice versa)</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Blurs the image to remove noise</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Converts the image to a different color space</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Computes the image's histogram</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Blurs the image with a low-pass filter to remove high-frequency noise, independent of any single pixel value</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Converts the image into a different color space such as HSV, preserving all original brightness information</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Computes a histogram of pixel intensities across the whole image, without modifying any pixel</button>
                 </div>
                 <p class="quiz-explanation">Thresholding is a per-pixel comparison against a cutoff value, producing a binary image.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What criterion does Otsu's method use to automatically choose a threshold?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">It picks the median pixel value</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">It picks the single pixel value closest to the image's median intensity</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">It minimizes within-class variance (equivalently, maximizes between-class variance)</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">It always picks 128</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It maximizes the number of white pixels</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">It always uses a fixed threshold of 128, regardless of the image</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It searches for the threshold that maximizes the number of white pixels</button>
                 </div>
                 <p class="quiz-explanation">Otsu searches every possible cutoff for the one that best separates the histogram into two low-variance classes.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What effect does erosion have on a white region in a binary image?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">Grows it, filling small holes</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">Shrinks it, removing small specks</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">Leaves it unchanged but smooths edges</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">Inverts black and white</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">Grows the white region outward, filling in small holes near its boundary</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">Leaves the region's size unchanged, only smoothing its edges</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Shrinks it, removing small specks</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Inverts black and white everywhere in the image</button>
                 </div>
                 <p class="quiz-explanation">Erosion only keeps a pixel white if the entire structuring element fits inside the white region, so regions shrink.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is "opening" (erosion followed by dilation) typically used for?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">Filling small black holes inside a white region</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">Removing small white specks while restoring the size of larger regions</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">Increasing image contrast</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">Detecting edges</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">Filling in small black holes that appear inside an otherwise solid white region</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">Increasing the overall contrast of the image before thresholding</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">Detecting edges by computing the image gradient magnitude</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Removing small white specks while restoring the size of larger regions</button>
                 </div>
                 <p class="quiz-explanation">Erosion first wipes out small specks entirely; the following dilation grows the surviving (larger) regions back toward their original size.</p>
             </div>

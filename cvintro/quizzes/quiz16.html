@@ -26,40 +26,40 @@
             <div class="quiz-question" data-q="0">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does the Fourier transform (Lesson 15) fail to tell you, that wavelets and Gabor filters are designed to capture?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 1)">The overall brightness of the image</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 1)">Which frequencies are present, without knowing where in the image they occur</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 1)">The image's color channels</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 1)">The size of the image in pixels</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Which frequencies are present, without knowing where in the image they occur</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">The overall average brightness of the image, summed across every pixel</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">The image's color channel values at each individual pixel location</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">The size of the image in pixels, both its width and its height</button>
                 </div>
                 <p class="quiz-explanation">Sine wave basis functions extend across the whole image, so the Fourier transform loses spatial localization; wavelets and Gabor filters use spatially localized oscillations instead.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the Haar wavelet transform, what do the approximation (<code>a_k</code>) and detail (<code>d_k</code>) coefficients represent?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">The maximum and minimum of each pair of samples</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">The maximum and minimum values of each pair of samples</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">A local average and a local difference of each pair of samples</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">The real and imaginary parts of a Fourier coefficient</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Two unrelated random projections of the signal</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">The real and imaginary parts of a single Fourier coefficient</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Two unrelated random projections of the input signal</button>
                 </div>
                 <p class="quiz-explanation"><code>a_k</code> is the (scaled) sum of a sample pair, i.e. a local average; <code>d_k</code> is the (scaled) difference, i.e. a local detail.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In a one-level 2D wavelet decomposition of an image, what does the LH subband respond to?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">A half-resolution blurred copy of the whole image</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">Horizontal edges</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">Vertical edges</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">Diagonal detail and corners</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">A half-resolution blurred copy of the whole image</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">Vertical edges, since it is high-pass along rows and low-pass along columns</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Horizontal edges, since it is low-pass along rows and high-pass along columns</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Diagonal detail and corners, since it is high-pass in both directions</button>
                 </div>
                 <p class="quiz-explanation">LH means low-pass along rows, high-pass along columns, which makes it sensitive to horizontal edges.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does a Gabor filter's response tell you when the filter is tuned to one orientation and applied to bars drawn at several different orientations?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">It responds equally to all orientations regardless of tuning</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">It responds most strongly to the bar whose orientation matches the filter's tuning</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">It only responds to bars drawn in color, not grayscale</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">It responds most strongly to the orientation perpendicular to its tuning, with no exceptions</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">It responds equally to all orientations, regardless of its tuning</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">It only responds to bars drawn in color, never in grayscale</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">It responds most strongly to the orientation perpendicular to its own tuning</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">It responds most strongly to the bar whose orientation matches the filter's tuning</button>
                 </div>
                 <p class="quiz-explanation">The response matrix in the lesson is diagonal-dominant: each filter's peak response lands on the bar matching its own tuned orientation, demonstrating orientation selectivity.</p>
             </div>

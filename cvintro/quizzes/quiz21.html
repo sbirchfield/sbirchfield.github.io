@@ -26,40 +26,40 @@
             <div class="quiz-question" data-q="0">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the aperture problem?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 1)">A camera lens defect that blurs moving objects</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 1)">Motion along an edge (rather than perpendicular to it) produces no visible local change, so it can't be recovered from a small local window</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 1)">The fact that optical flow only works on grayscale video</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 1)">A limitation that only appears in Horn-Schunck, not Lucas-Kanade</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Motion along an edge (rather than perpendicular to it) produces no visible local change</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">A camera lens defect that specifically blurs fast-moving objects in low light</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">The fact that optical flow only works correctly on grayscale video, never color</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">A limitation that only appears in Horn-Schunck, never in Lucas-Kanade's formulation</button>
                 </div>
                 <p class="quiz-explanation">Looking through a small window at a moving edge, only the motion perpendicular to the edge is visible; motion along the edge is invisible locally.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In Lucas-Kanade, why does the flow estimate at a corner tend to be reliable while at an edge it is not?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">Corners are always brighter than edges</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">The same matrix M (the structure tensor) must be well-conditioned to solve the flow system, and a corner has two large eigenvalues while an edge has only one</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Edges move faster than corners in real video</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Lucas-Kanade cannot process edges at all, only corners</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">Corners are always brighter in intensity than edges, regardless of gradient direction or local contrast</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">The same matrix M (the structure tensor) must be well-conditioned to solve the flow system</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Edges genuinely move faster than corners in real video sequences, due to their one-dimensional structure</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Lucas-Kanade cannot process edge pixels at all, only true corners, by explicit design in the algorithm</button>
                 </div>
                 <p class="quiz-explanation">Solving the Lucas-Kanade system requires M to be invertible; a corner (two large eigenvalues) is well-conditioned, while an edge (one small eigenvalue) is ill-conditioned -- the aperture problem again.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does <code>cv2.calcOpticalFlowPyrLK</code> use an image pyramid and iterate, rather than solving once?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">To save memory only, with no accuracy benefit</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">Because the underlying linear (Taylor) approximation is only valid for small motions, so large motions are estimated coarse-to-fine and refined</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">Because color images require multiple passes</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">Pyramids are only used for display purposes, not for the actual flow computation</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">To save memory only, with no accuracy benefit whatsoever</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">Because color images require multiple passes to process correctly</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Because the underlying linear (Taylor) approximation is only valid for small motions</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Pyramids are only used for display purposes, not for the actual flow computation</button>
                 </div>
                 <p class="quiz-explanation">Estimating coarsely on a small, blurry pyramid level first, then refining level by level, lets large motions be recovered even though the linear approximation only holds locally, one small step at a time.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does the Horn-Schunck smoothness term let flow estimates do that Lucas-Kanade's purely local windows cannot?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">Run faster than Lucas-Kanade in every case</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">Propagate reliable flow from edges into flat, textureless regions with no local information of their own</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">Avoid the aperture problem entirely, even at a single edge pixel</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">Work without any brightness constancy assumption</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">Run strictly faster than Lucas-Kanade in every situation, regardless of image content</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">Avoid the aperture problem entirely, even for a single isolated edge pixel with no neighbors</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">Work without relying on any brightness constancy assumption at all, unlike every other method here</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Propagate reliable flow from edges into flat, textureless regions with no local information of their own</button>
                 </div>
                 <p class="quiz-explanation">The smoothness term couples every pixel's flow to its neighbors', letting information spread from regions with strong gradients into flat regions that have no data term of their own.</p>
             </div>

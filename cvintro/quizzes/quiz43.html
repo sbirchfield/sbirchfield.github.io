@@ -26,40 +26,40 @@
             <div class="quiz-question" data-q="0">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What can semantic segmentation not distinguish, that instance segmentation adds?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 1)">The color of each object</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 1)">Which pixels belong to *this specific* object versus another object of the same class — two touching same-class instances are just one blob in a semantic mask</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 1)">Whether an object is moving or stationary</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 1)">The exact class name of each pixel</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Which pixels belong to *this specific* object versus another object of the same class</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">The precise color of each object in the scene, down to the exact RGB value</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Whether a given object is moving or stationary, frame to frame</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">The exact class name assigned to each pixel, with no instance information</button>
                 </div>
                 <p class="quiz-explanation">Semantic segmentation only assigns a class per pixel; it has no notion of separate identity, so two touching objects of the same class merge into one labeled region.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. How does this lesson turn Lesson 42's segmentation network into an instance segmentation network?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">By training a completely new, unrelated architecture from scratch</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">By adding a second output head that predicts, for every foreground pixel, an offset pointing toward its own instance's center — then clustering those votes</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">By simply running the semantic network twice</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">By increasing the number of semantic classes</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">By training a completely new, entirely unrelated architecture from scratch, with no reuse</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">By adding a second head predicting, per pixel, an offset toward its instance's center</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">By simply running the same semantic network twice in a row, on the same input</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">By increasing the total number of semantic classes the network predicts, nothing more</button>
                 </div>
                 <p class="quiz-explanation">The network keeps its original semantic head and gains a second head trained to regress a per-pixel offset to the instance center; clustering the resulting votes (Hough-style) recovers individual instances.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the toy mask head experiment, why can the mask head reach high per-instance IoU even though every test crop contains a visible neighboring circle?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">Because the crops are too small to contain a neighbor</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">Because detection already solved 'where are the objects' — the mask head only has to answer the strictly easier, local question of which pixels in this one box belong to this one instance</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">Because the neighboring circle is always erased before cropping</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">Because the mask head secretly sees the ground-truth instance mask at test time</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">Because the crops used are simply too small to ever contain a neighbor, by design choice</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">Because the neighboring circle is always erased before the crop is taken, in preprocessing</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Because detection already solved 'where' — the mask head only answers a simpler, local question</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Because the mask head secretly sees the ground-truth instance mask at test time, as a shortcut</button>
                 </div>
                 <p class="quiz-explanation">Given a box already centered on one instance, the mask head's job narrows to a local same-box question, which is why Mask R-CNN's real mask branch can be small and fast — a good box already does most of the work.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the one new piece Mask R-CNN adds on top of Faster R-CNN (Lesson 41), and what other change does it require?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">A completely new region proposal network, plus a bigger backbone</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">A parallel mask-prediction branch on every detected box, plus replacing RoIPool with RoIAlign so per-pixel masks stay aligned with the box instead of being blurred by coordinate quantization</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">A third detection stage, plus doubling the number of anchor boxes</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">Nothing — Mask R-CNN is Faster R-CNN with a different loss function</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">A completely new region proposal network, plus a substantially bigger backbone, from scratch</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">A third detection stage, plus doubling the total number of anchor boxes used</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">Nothing at all — Mask R-CNN is just Faster R-CNN with a different loss function, unchanged otherwise</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">A parallel mask-prediction branch on every detected box, plus replacing RoIPool with RoIAlign</button>
                 </div>
                 <p class="quiz-explanation">Mask R-CNN keeps Faster R-CNN's RPN, classifier, and box regression unchanged, adds a mask branch per box, and swaps RoIPool for RoIAlign because coordinate quantization that barely hurts classification visibly misaligns pixel-accurate masks.</p>
             </div>

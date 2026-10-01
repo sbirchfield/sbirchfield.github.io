@@ -27,39 +27,39 @@
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does the 2D Fourier transform decompose an image into?</p>
                 <div class="quiz-choices">
                     <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">A sum of 2D sinusoidal gratings at different frequencies and orientations</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">A set of non-overlapping rectangular blocks</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">A set of non-overlapping rectangular blocks, like JPEG's 8x8 grid</button>
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">A pyramid of progressively blurred and downsampled copies</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">A single average brightness value per row</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">A single average brightness value computed per row</button>
                 </div>
                 <p class="quiz-explanation">The 2D DFT re-expresses the image as a sum of sinusoidal gratings, each with its own frequency, orientation, magnitude, and phase.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does a real-valued sinusoidal grating produce two bright spots (not one) in its Fourier spectrum?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">Because of numerical rounding error in the FFT</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">Because of accumulated numerical rounding error in the FFT implementation</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">A real sine wave is a sum of two complex exponentials at +f and -f, by Euler's formula</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Because the image was captured with two cameras</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">cv2 always duplicates spectrum peaks for display purposes</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Because the image was captured using two separate cameras</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)"><code>cv2</code> always duplicates spectrum peaks purely for display purposes</button>
                 </div>
                 <p class="quiz-explanation">By Euler's formula, a real sinusoid decomposes into two complex exponentials at frequencies +f and -f, so its spectrum shows two symmetric spikes.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What causes the visible ringing artifacts when applying an ideal (sharp-cutoff) low-pass filter in the frequency domain?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">The image was not converted to grayscale first</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">A sharp frequency cutoff corresponds to convolving with a spatial sinc kernel, which has infinite ripples (the Gibbs phenomenon)</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">np.fft.fft2 always introduces rounding artifacts</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">The mask was not centered correctly</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">The image was not converted to grayscale before transforming</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)"><code>np.fft.fft2</code> always introduces significant rounding artifacts</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">A sharp frequency cutoff corresponds to convolving with a spatial sinc kernel</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">The frequency-domain mask was not centered correctly before multiplying</button>
                 </div>
                 <p class="quiz-explanation">By the convolution theorem, an ideal sharp cutoff in frequency corresponds to a sinc function in space, whose infinite ripples cause the Gibbs phenomenon.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. According to the convolution theorem, multiplying two images' Fourier transforms elementwise and inverse-transforming is equivalent to what operation in the spatial domain?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">Cropping the two images to the same size</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">Convolving the two images</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">Subtracting the two images</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">Stacking the two images as separate channels</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">Cropping the two images down to the same shared size</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">Subtracting the two images from each other, pixel by pixel</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">Stacking the two images together as separate channels</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Convolving the two images in the spatial domain</button>
                 </div>
                 <p class="quiz-explanation">The convolution theorem states that convolution in the spatial domain equals elementwise multiplication in the frequency domain, and vice versa.</p>
             </div>

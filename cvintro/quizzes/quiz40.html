@@ -26,40 +26,40 @@
             <div class="quiz-question" data-q="0">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the core idea of a sliding-window detector, as built in this lesson?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Run a classifier at every location (and scale) in the image, treating each window as its own yes/no classification problem</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Directly regress bounding box coordinates from the whole image in one forward pass</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Cluster pixels by color to find object boundaries</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Use only the image's frequency-domain representation to locate objects</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Run a classifier at every location and scale, treating each window as its own classification problem</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Directly regress bounding box coordinates from the whole image in a single forward pass</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Cluster pixels together by color alone to find object boundaries directly</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Use only the image's frequency-domain representation to locate objects precisely</button>
                 </div>
                 <p class="quiz-explanation">A window classifier answers 'face or not, at this exact window,' and sliding it across every position turns that per-window classifier into a detector.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In this lesson's box convention, how is each detected face represented?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">By its top-left corner and width/height</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">By its center coordinates (cx, cy) and width/height</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">By the coordinates of all four corners</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">By a single pixel with no size information</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">By its top-left corner coordinates and width/height</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">By its center coordinates <code>(cx, cy)</code> and width/height</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">By the pixel coordinates of all four of its corners</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">By a single pixel location, with no size information at all</button>
                 </div>
                 <p class="quiz-explanation">Boxes here are stored as (cx, cy, w, h), with the center reported directly rather than a top-left corner.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. After thresholding the sliding-window score map, why does a single true face typically produce a *cluster* of detections rather than one?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">Because the window classifier is applied only once per image</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">Because every window that overlaps a face heavily enough scores above threshold, not just the single best-centered one</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">Because faces are always detected twice due to a bug in the scoring function</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">Because thresholding always produces exactly one detection per object</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">Because the window classifier is applied only a single time per image</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">Because faces are always detected exactly twice, due to a scoring bug</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Because every window that overlaps a face heavily enough scores above threshold</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Because thresholding always produces exactly one detection per object</button>
                 </div>
                 <p class="quiz-explanation">Many nearby, overlapping windows all score above threshold near a real face, producing a cluster of near-duplicate detections.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does non-maximum suppression (NMS) do to resolve duplicate detections?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">It averages all overlapping detections into one box</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">It repeatedly keeps the highest-scoring remaining detection and discards every other detection that overlaps it by more than an IoU threshold</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">It discards every detection above the score threshold</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">It requires the user to manually click the correct detection</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">It averages all overlapping detections together into a single box, blending their scores</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">It discards every single detection that lies above the score threshold immediately</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">It requires the user to manually click on the correct detection every single time</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">It keeps the highest-scoring detection and discards overlapping ones above an IoU threshold</button>
                 </div>
                 <p class="quiz-explanation">NMS greedily keeps the best-scoring box in each cluster and suppresses its highly-overlapping neighbors, collapsing duplicates down to one detection per object.</p>
             </div>

@@ -27,39 +27,39 @@
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the main difference between flood fill and connected-component labeling?</p>
                 <div class="quiz-choices">
                     <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Flood fill grows a region from a single seed point; connected components find all separate regions in the image at once</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">They do exactly the same thing, just with different function names</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Connected components only work on color images</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Flood fill labels every blob with a unique ID simultaneously</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">They do exactly the same thing under the hood, just exposed through different function names and documentation</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Connected components only work correctly on color images, never grayscale, due to a hard OpenCV restriction</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Flood fill labels every blob in the image with a unique ID simultaneously, without a seed, in a single pass</button>
                 </div>
                 <p class="quiz-explanation">Flood fill needs one seed per region, while <code>cv2.connectedComponentsWithStats</code> scans the whole image and labels every blob at once.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the classic stack-based <code>flood_fill_stack</code> algorithm, what happens when a pixel is popped from the stack?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">It's colored immediately, regardless of whether it was visited before</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">It's colored immediately and pushed back onto the stack, regardless of whether it was visited before</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">If it's foreground and not yet filled, it's marked filled and its 4-connected neighbors are pushed onto the stack</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">The algorithm terminates immediately</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It's deleted from the image array</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">The algorithm terminates immediately, since popping a pixel always means the fill is complete</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It's deleted from the image array and treated as background from then on</button>
                 </div>
                 <p class="quiz-explanation">Popped pixels that are background or already filled are simply skipped; otherwise they're marked filled and their neighbors are added to the frontier.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does <code>cv2.connectedComponentsWithStats</code> label as component <code>0</code>?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">The largest blob</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">The background</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">The smallest blob</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">An error code meaning no blobs were found</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">The largest blob in the image by pixel area</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">The smallest blob in the image by pixel area</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">The background</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">An error code meaning no blobs were found in the image</button>
                 </div>
                 <p class="quiz-explanation">Label 0 is always the background, so the number of actual blobs is <code>num_labels - 1</code>.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What extra information does <code>cv2.connectedComponentsWithStats</code> provide alongside the labels, at almost no extra computational cost?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 0)">Bounding box, area, and centroid for each blob</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 0)">A trained classifier for each blob's shape</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 0)">The Hu moments of each blob</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 0)">The original unthresholded grayscale image</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">A trained classifier that predicts each blob's shape category</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">The Hu moments of each blob, which are rotation- and scale-invariant</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">The original unthresholded grayscale image, unchanged</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Bounding box, area, and centroid for each blob</button>
                 </div>
                 <p class="quiz-explanation">The lesson notes these stats come essentially free as part of the same labeling pass.</p>
             </div>

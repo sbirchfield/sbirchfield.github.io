@@ -26,40 +26,40 @@
             <div class="quiz-question" data-q="0">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What two categories of parameters does camera calibration recover, according to this lesson?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 1)">Focal length and image resolution only</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 1)">Intrinsics (K) and distortion coefficients</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 1)">Rotation and translation of the checkerboard only</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 1)">Color balance and exposure settings</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Intrinsics (K) and distortion coefficients</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Focal length and image resolution only, nothing else</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">The checkerboard's rotation and translation only</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Color balance and exposure settings used by the camera</button>
                 </div>
                 <p class="quiz-explanation">Calibration recovers the ideal pinhole intrinsics matrix <code>K</code> plus the radial/tangential distortion coefficients that describe how a real lens deviates from that ideal.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does the lesson generate many synthetic checkerboard views from different angles rather than just one?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">A single view is always sufficient to recover K and distortion exactly</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">More views from a wider variety of angles provide more constraints, averaging out detector noise and better constraining the estimate</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">OpenCV's calibrateCamera function requires exactly 40 views to run</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Multiple views are only needed to estimate the checkerboard's physical size</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">A single view is always sufficient to recover K and distortion exactly, with zero noise</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">More views from a wider variety of angles provide more constraints, averaging out detector noise</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">OpenCV's <code>calibrateCamera</code> function requires exactly 40 views to run at all</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Multiple views are only needed to estimate the checkerboard's physical size, nothing else</button>
                 </div>
                 <p class="quiz-explanation">With noisy corner detections, a single view underconstrains the problem; many diverse views average out noise and better pin down both K and distortion.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does <code>k1</code> and <code>k2</code> radial distortion do to straight lines in a scene, when captured through a real lens?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">Nothing -- radial distortion only affects color, not geometry</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">It bows them into curves (barrel or pincushion, depending on sign)</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">It always makes them longer without curving them</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">It removes them entirely from the image</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">Nothing -- radial distortion only affects color, never geometry</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">It always makes lines longer, without introducing any curve</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">It bows them into curves (barrel or pincushion, depending on sign)</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">It removes straight lines entirely from the captured image</button>
                 </div>
                 <p class="quiz-explanation">Radial distortion terms in the distortion model curve straight lines; the sign of <code>k1</code>/<code>k2</code> determines whether they bow outward (barrel) or inward (pincushion).</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. After applying <code>cv2.undistortPoints</code> with the *estimated* (not true) calibration, why don't the grid lines straighten out perfectly?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">Because undistortPoints only works on color images</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">Because the estimated K and distortion coefficients are themselves only approximately correct, due to detector noise</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">Because undistortPoints intentionally leaves a small amount of distortion for aesthetic reasons</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">Because the grid lines were never actually distorted in the first place</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">Because <code>undistortPoints</code> only works correctly on color images, never grayscale</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">Because <code>undistortPoints</code> intentionally leaves a small amount of distortion for aesthetic reasons</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">Because the grid lines were never actually distorted in the first place, by construction</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Because the estimated K and distortion coefficients are themselves only approximately correct</button>
                 </div>
                 <p class="quiz-explanation">Calibration from noisy corner detections only approximates the true K/distortion, so undoing distortion with the estimate leaves a faint residual bow.</p>
             </div>

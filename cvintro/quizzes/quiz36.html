@@ -26,40 +26,40 @@
             <div class="quiz-question" data-q="0">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does an overall accuracy of just over 50% on this lesson's 4-class CIFAR-10 task hide something important?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 1)">Because 50% is actually below chance for 4 classes</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 1)">Because it doesn't reveal that the model is not equally good at all four classes -- truck, in particular, is barely recognized</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 1)">Because accuracy can only be computed for binary classifiers</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 1)">Because the test set itself is imbalanced</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Because it doesn't reveal that the model is not equally good at all four classes</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Because 50% accuracy is actually below chance level for 4 classes</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Because accuracy can only ever be computed for binary classifiers</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Because the test set itself turns out to be imbalanced</button>
                 </div>
                 <p class="quiz-explanation">A single overall-accuracy number averages away per-class differences; here it hides that the truck class (starved to 90 training images) is rarely predicted correctly.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In a confusion matrix where row <code>i</code>, column <code>j</code> counts examples of true class <code>i</code> predicted as class <code>j</code>, what does a perfect classifier's matrix look like?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 2)">All zeros</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 2)">Uniform across every cell</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 2)">All the mass on the diagonal (row i, column i for every i)</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 2)">All the mass in the top-right corner</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">All zeros, with no predictions recorded anywhere</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">All the mass on the diagonal (row i, column i for every i)</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Spread perfectly uniformly across every cell of the matrix</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">All the mass concentrated in the top-right corner of the matrix</button>
                 </div>
                 <p class="quiz-explanation">A correct prediction means predicted class equals true class, i.e. j = i, which is exactly the diagonal.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does <code>recall</code> measure for a given class?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">Of everything the model called this class, what fraction actually was</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">Of everything that really was this class, what fraction the model caught</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">The total number of training examples for this class</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">How fast the model runs on this class's images</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">Of everything the model called this class, what fraction actually was</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">The total number of training examples available for this class</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Of everything that really was this class, what fraction the model caught</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">How fast the model runs inference on this class's images</button>
                 </div>
                 <p class="quiz-explanation">Recall = TP / (TP + FN): low recall means the model misses that class often, regardless of what it says about other classes.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does the starved <code>truck</code> class end up with high precision but very low recall?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">Because trucks are visually identical to automobiles in every image</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">When the model does say 'truck' it's usually right, but it fails to recognize most actual trucks, defaulting to well-represented classes like automobile instead</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">Because the test set has no truck images at all</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">Precision and recall are always equal for any class</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">Because trucks are visually identical to automobiles in every single image, pixel for pixel</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">Because the test set has no truck images in it at all, unlike the training set</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">Precision and recall are mathematically always equal for any class, by definition</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">It fails to recognize most actual trucks, defaulting to well-represented classes like automobile instead</button>
                 </div>
                 <p class="quiz-explanation">This is the standard signature of class imbalance: the model rarely guesses the rare class, but when it does, it's confident and usually correct.</p>
             </div>

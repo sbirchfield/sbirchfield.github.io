@@ -27,8 +27,8 @@
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. According to this lesson, what do PCA (Lesson 6) and camera projection (P = K[R|t]) have in common?</p>
                 <div class="quiz-choices">
                     <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Both are examples of the same underlying operation: y = w^T x + b, a linear projection</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Both require labeled training data to compute</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Neither one involves any matrix multiplication</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Both require labeled training data in order to be computed</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Neither one involves any matrix multiplication at any step</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">PCA and camera projection are unrelated operations with no shared structure</button>
                 </div>
                 <p class="quiz-explanation">Both compute a projection via a dot product between a fixed direction and the input coordinates; they differ only in how that direction was chosen.</p>
@@ -36,30 +36,30 @@
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What single operation does the lesson show convolution, the Fourier transform, and a homography all secretly are?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">Nonlinear activation functions</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">Nonlinear activation functions applied elementwise to each output</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">A matrix multiplication, i.e. a bank of simultaneous linear projections</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Gradient descent updates</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Random sampling procedures</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Gradient descent updates applied to each learnable parameter</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Random sampling procedures used to initialize the weights</button>
                 </div>
                 <p class="quiz-explanation">Each output value in all three is a dot product between the input and a fixed row/kernel/basis function, which is exactly what one row of a matrix multiply computes.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What can a single linear projection classifier never do, regardless of how w and b are chosen?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">Separate two classes that are linearly separable</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">Separate a ring of points from a disk of points it surrounds</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">Compute a dot product</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">Be visualized in 1D after projection</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">Separate two classes that are already linearly separable</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">Compute a simple dot product between two vectors</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Separate a ring of points from a disk of points it surrounds</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Be visualized in 1D after projecting the data down</button>
                 </div>
                 <p class="quiz-explanation">A single projection can only produce a straight-line (hyperplane) decision boundary, and no straight line can separate a ring from the disk it encloses.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the classification example, what determines which side of the decision boundary a point falls on?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">The point's distance from the image origin only</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">The sign of the projected score w^T x + b</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">Which class has more training examples</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">The point's color channel values</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">The point's distance from the image origin alone</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">Whichever class happens to have more training examples</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">The point's raw color channel values, unrelated to w or b</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">The sign of the projected score <code>w^T x + b</code></button>
                 </div>
                 <p class="quiz-explanation">Points are classified by thresholding the projected score at zero: positive score means one class, negative means the other.</p>
             </div>

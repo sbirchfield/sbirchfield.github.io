@@ -29,37 +29,37 @@
                     <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Flips the image horizontally (left-right)</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Flips the image vertically (top-bottom)</button>
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Flips the image both horizontally and vertically</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Leaves the image unchanged</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Leaves the image completely unchanged</button>
                 </div>
                 <p class="quiz-explanation"><code>code=1</code> is a horizontal flip, <code>code=0</code> is vertical, and <code>code=-1</code> flips both.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Which of the three transform types (Euclidean, similarity, affine) is capable of shearing a square into a parallelogram?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 2)">Euclidean only</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 2)">Similarity only</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 2)">Affine</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 2)">None of them can shear a square</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">Euclidean transforms only, since they include rotation</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">Affine transforms, since they allow any invertible 2x2 matrix including shear</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Similarity transforms only, since they allow non-uniform scaling</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">None of them can shear a square into a parallelogram</button>
                 </div>
                 <p class="quiz-explanation">Affine transforms allow any invertible 2x2 matrix, including shear, which neither Euclidean nor similarity transforms permit.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does a similarity transform preserve that a general affine transform does not necessarily preserve?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 0)">Angles (and ratios of lengths)</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 0)">Nothing -- they preserve exactly the same properties</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 0)">Parallelism of lines</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 0)">Exact pixel values</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">Nothing -- they preserve exactly the same properties as each other</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">Parallelism of lines, which general affine transforms can destroy</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Angles (and ratios of lengths) between corresponding line segments</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">The exact pixel values at every location in the image</button>
                 </div>
                 <p class="quiz-explanation">Similarity transforms preserve angles and length ratios; affine transforms give up angle preservation in exchange for allowing shear.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. How many point correspondences does <code>cv2.getAffineTransform</code> require to solve for all 6 affine parameters?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">2</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">3</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">4</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">6</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">2 point correspondences</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">4 point correspondences</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">6 point correspondences</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">3 point correspondences</button>
                 </div>
                 <p class="quiz-explanation">3 point correspondences give exactly 6 equations, matching the 6 free parameters of an affine transform.</p>
             </div>

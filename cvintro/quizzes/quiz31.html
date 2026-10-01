@@ -26,40 +26,40 @@
             <div class="quiz-question" data-q="0">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does the lesson use the sigmoid function instead of directly thresholding the raw score z = w^T x + b for training?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 1)">Sigmoid makes the model run faster</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 1)">Raw accuracy is flat almost everywhere and has no useful gradient; sigmoid gives a smooth, differentiable output gradient descent can follow</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 1)">Sigmoid is required to compute a dot product</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 1)">Thresholding directly would make predictions always equal to 1</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Raw accuracy is flat almost everywhere and has no useful gradient</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Sigmoid makes the model run measurably faster during training, by skipping the derivative step</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Sigmoid is strictly required in order to compute a dot product between weights and inputs</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Thresholding directly would make every prediction always equal to 1, regardless of the input</button>
                 </div>
                 <p class="quiz-explanation">Hard accuracy jumps discontinuously at the boundary with zero gradient almost everywhere, so gradient descent has nothing to follow; sigmoid squashes the score into a smooth probability instead.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In binary cross-entropy, what happens to the loss when the true label is 1 but the predicted probability p is close to 0?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">The loss approaches zero</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">The loss approaches zero, rewarding the confident wrong guess</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">The loss explodes toward infinity -- confidently wrong is punished severely</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">The loss is unaffected by how confident the wrong prediction was</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">The loss becomes negative</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">The loss is completely unaffected by how confident the wrong prediction was</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">The loss becomes negative, canceling out other terms in the batch</button>
                 </div>
                 <p class="quiz-explanation">The penalty for true label 1 is -log(p), which grows without bound as p approaches 0.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What two independent methods does the lesson use to verify the hand-derived backprop gradient formulas are correct?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">Running the model twice and comparing outputs</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">Numerical finite-difference gradient checking, and comparing against PyTorch's autograd</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">Checking that the loss is always positive</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">Comparing training accuracy to a random baseline</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">Running the model twice in a row and comparing the two outputs for consistency</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">Checking only that the computed loss is always positive throughout training</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Numerical finite-difference gradient checking, and comparing against PyTorch's autograd</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Comparing training accuracy against a random chance baseline at every epoch</button>
                 </div>
                 <p class="quiz-explanation">The lesson perturbs each parameter by a tiny amount to estimate the gradient numerically, and separately lets PyTorch's .backward() compute it automatically -- both agree with the hand-derived formula.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does gradient descent do *worse* than exhaustive search on the ring-vs-disk dataset, converging to near-chance accuracy?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">Gradient descent always fails on datasets with fewer than 1000 points</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">The dataset is roughly symmetric around the origin, so the average gradient pull nearly cancels out in every direction, settling the weights near zero</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">The learning rate was too small to move the weights at all</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">Sigmoid cannot be used with more than 60 data points</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">Gradient descent always fails on any dataset with fewer than 1000 points</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">The learning rate was simply too small to move the weights at all</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">Sigmoid activations cannot be used with more than 60 data points</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">The dataset is roughly symmetric around the origin</button>
                 </div>
                 <p class="quiz-explanation">Because the ring and disk are both centered at the origin, the training signal from all points nearly cancels in every direction, so the optimizer settles near w=0 instead of finding an asymmetric corner-case solution.</p>
             </div>

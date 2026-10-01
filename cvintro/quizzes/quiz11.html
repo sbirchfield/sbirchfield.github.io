@@ -27,39 +27,39 @@
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What artifact can occur when an image is downsampled by simply keeping every k-th pixel, without blurring first?</p>
                 <div class="quiz-choices">
                     <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Aliasing -- fine periodic detail folds into a fake low-frequency pattern</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">The image becomes larger instead of smaller</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Color channels get swapped</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">The image is unaffected as long as k is even</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">The image becomes larger instead of smaller after the operation</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Color channels get swapped unpredictably during subsampling</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">The image is unaffected as long as the step size k is even</button>
                 </div>
                 <p class="quiz-explanation">Fine regular detail (like brick mortar lines) that oscillates faster than the new pixel spacing can represent aliases into noisy-looking fake patterns.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does blurring before downsampling prevent aliasing?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">It randomly discards pixels instead of a fixed pattern</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">It randomly discards pixels instead of following a fixed, predictable sampling pattern</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">It removes fine detail before subsampling, rather than randomly keeping or dropping it pixel by pixel</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">It increases image contrast</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It converts the image to grayscale</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">It increases the image's overall contrast before subsampling, independent of frequency content</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It converts the image to grayscale before subsampling, discarding all color information</button>
                 </div>
                 <p class="quiz-explanation">Smoothing away fine detail before subsampling avoids the fold-in effect that causes aliasing.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What happens if the Gaussian kernel size is too small for the requested <code>sigma</code>?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">OpenCV raises an error</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">The kernel is silently reshaped into something close to a plain box average, barely blurring at the requested strength</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">The image is blurred more strongly than requested</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">Nothing changes -- kernel size is irrelevant to sigma</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">OpenCV raises an error and refuses to construct the kernel at all, halting execution</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">The image ends up blurred far more strongly than the requested sigma value specifies</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">The kernel is silently reshaped into something close to a plain box average</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Nothing changes -- kernel size has no real relationship to sigma in OpenCV's implementation</button>
                 </div>
                 <p class="quiz-explanation">A too-small kernel can't represent a wide bell curve, so <code>cv2.getGaussianKernel</code> renormalizes it into something close to a box average.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is a Gaussian pyramid?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">A single blurred copy of an image</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">A stack of progressively smaller, blurrier versions of an image, made by repeatedly blurring and downsampling by 2</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">A histogram of pixel intensities</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">A stack of images at increasing resolution</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">A single blurred copy of an image, saved at one fixed resolution with no further processing</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">A histogram of pixel intensities computed across multiple scales of the same image</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">A stack of images at increasing, rather than decreasing, resolution level by level</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">A stack of progressively smaller, blurrier versions made by repeated blurring and downsampling</button>
                 </div>
                 <p class="quiz-explanation">Each pyramid level is a properly anti-aliased, half-size version of the previous level, produced by blur-then-downsample.</p>
             </div>

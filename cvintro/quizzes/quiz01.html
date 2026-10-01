@@ -26,40 +26,40 @@
             <div class="quiz-question" data-q="0">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What are the three dimensions of a color image array, in order?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 1)"><code>(channels, height, width)</code></button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 1)"><code>(height, width, channels)</code></button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 1)"><code>(width, height, channels)</code></button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 1)"><code>(channels, width, height)</code></button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)"><code>(height, width, channels)</code></button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)"><code>(channels, height, width)</code></button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)"><code>(width, height, channels)</code></button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)"><code>(channels, width, height)</code></button>
                 </div>
                 <p class="quiz-explanation"><code>array.shape</code> for a color image is <code>(height, width, channels)</code> -- rows first, then columns, then color channel.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In NumPy indexing <code>img[row, col]</code>, what does <code>row</code> correspond to?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">x, the horizontal position</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">x, the horizontal position, since row is just another name for column index</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">y, the vertical position</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">the color channel</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Nothing -- row indexes color depth</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">The color channel, since row indexes depth in a 3D array</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Nothing meaningful -- row and col are interchangeable in NumPy</button>
                 </div>
                 <p class="quiz-explanation">The first array axis is the row, which moves down the image -- that's y, not x.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. <code>cv2.imread</code> loads a color image with channels in what order?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">RGB</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">BGR</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">Grayscale by default</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">Alphabetical</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">RGB, the same order Matplotlib and most other libraries use</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">Grayscale by default, requiring an explicit color flag</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">BGR</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Alphabetical order of the channel names</button>
                 </div>
                 <p class="quiz-explanation">OpenCV uses BGR order, the opposite of RGB that Matplotlib and most other libraries expect.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Passing a <code>cv2.imread</code>-loaded image straight to <code>plt.imshow</code> without converting typically produces what?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 2)">An identical image to what OpenCV shows</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 2)">A grayscale image</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 2)">An image with red and blue channels swapped</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 2)">An error, since Matplotlib can't read OpenCV arrays</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">An identical image to what OpenCV shows, since both libraries assume the same channel order</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">A grayscale image, since Matplotlib discards color information by default</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">A runtime error, since Matplotlib refuses arrays it doesn't recognize as RGB</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">An image with red and blue channels swapped</button>
                 </div>
                 <p class="quiz-explanation">Matplotlib interprets the array as RGB, so a BGR array renders with red and blue reversed.</p>
             </div>

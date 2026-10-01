@@ -26,40 +26,40 @@
             <div class="quiz-question" data-q="0">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What made the ILSVRC benchmark (built on a subset of ImageNet) so important for comparing architectures?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 1)">It was the first dataset to include color images</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 1)">Every group trained on the same data and was scored on the same held-out test set, making results directly, objectively comparable at unprecedented scale</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 1)">It only allowed one submission per architecture, ever</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 1)">It required all models to have exactly the same number of parameters</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Every group trained on the same data and was scored on the same held-out test set</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">It was the first dataset ever to include color images, unlike earlier benchmarks</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">It only ever allowed one submission per architecture, forever, with no resubmission</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">It required all models to have exactly the same number of parameters, by rule</button>
                 </div>
                 <p class="quiz-explanation">A shared, standardized competition -- not just a big labeled dataset -- is what let different architectures be compared fairly and drove rapid progress.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. According to the lesson, why does stacking more layers make a *plain* (non-residual) deep network worse, not better?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">More layers always increase training time only, with no effect on accuracy</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">Backprop multiplies the gradient by every layer's local Jacobian on the way back, and if those factors are consistently smaller than 1 (as with saturating activations), the gradient reaching early layers vanishes</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Deeper networks always overfit regardless of the dataset size</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">GPUs cannot execute more than 20 sequential layers</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">More layers always increase training time only, with no effect on accuracy whatsoever</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">Backprop multiplies the gradient by each layer's Jacobian, so small factors shrink it to nothing</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Deeper networks always overfit, regardless of the dataset's size, by construction</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">GPUs are physically incapable of executing more than 20 sequential layers in sequence</button>
                 </div>
                 <p class="quiz-explanation">This is the vanishing-gradient problem: repeated multiplication by small per-layer factors drives the gradient toward zero, so early layers stop learning.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Structurally, why does a residual connection (<code>x_{l+1} = x_l + F(x_l)</code>) prevent the gradient from vanishing across many layers?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">It removes the need for any activation function</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">Its Jacobian is <code>I + dF/dx_l</code>, so an identity term always survives the multiplication chain, giving the gradient an unobstructed shortcut back to the input</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">It doubles the learning rate automatically</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">It replaces backpropagation with a different optimization algorithm entirely</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">It removes the need for any activation function whatsoever, anywhere in the network</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">It automatically doubles the learning rate during training, independent of the optimizer</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Its Jacobian is I + dF/dx_l, so an identity term always survives the multiplication chain</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">It replaces backpropagation entirely with a different optimization algorithm, like RANSAC</button>
                 </div>
                 <p class="quiz-explanation">The identity matrix in the Jacobian is never shrunk by a small activation derivative, unlike a plain network where every layer's Jacobian is purely <code>dF/dx_l</code>.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What do the two learnable parameters <code>gamma</code> and <code>beta</code> do in batch normalization, after a channel's activations are normalized to mean 0 and standard deviation 1?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 1)">They discard the normalized values and recompute them from scratch</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 1)">They let the network rescale and shift the normalized activations, so normalization is a starting point the network can undo if useful, not a hard constraint</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 1)">They control the batch size used during training</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 1)">They convert the activations back into 8-bit integers</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">They discard the normalized values entirely and recompute them from scratch</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">They control the mini-batch size used during training</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">They convert the normalized activations back into 8-bit integers</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">They let the network rescale and shift the normalized activations</button>
                 </div>
                 <p class="quiz-explanation">gamma (scale) and beta (shift) are applied on top of the 0/1-normalized activations, so the network can still recover a different mean/scale if that's actually useful.</p>
             </div>
