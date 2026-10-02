@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=e363923a"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=d57014c8"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-59:-Feed-Forward-Camera-Pose-Estimation">Lesson 59: Feed-Forward Camera Pose Estimation<a class="anchor-link" href="#Lesson-59:-Feed-Forward-Camera-Pose-Estimation">¶</a></h1><p>Lesson 23's RANSAC and Lesson 29's structure from motion recover camera geometry through an iterative pipeline: detect features, match them, run RANSAC to reject outliers, solve for the essential matrix, decompose it into rotation and translation. Each stage is a separate, hand-designed algorithm. <strong>VGGT</strong> (Visual Geometry Grounded Transformer, <a href="../references.html#wang-2024-vggt">Wang et al., 2025</a>) replaces the entire pipeline with a single feed-forward network: feed it correspondences (or even raw images) from multiple views, and it directly regresses camera poses in one forward pass, with no explicit RANSAC step anywhere. This lesson builds a small version of that idea and compares it against the classical pipeline it replaces — including exactly where each one wins.</p>
@@ -322,6 +322,7 @@ outlier_frac=0.2:
 </div>
 </div>
 </div>
+
 
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson58_stereo_foundationstereo.html">&larr; Lesson 58: Stereo Depth and FoundationStereo</a></div>

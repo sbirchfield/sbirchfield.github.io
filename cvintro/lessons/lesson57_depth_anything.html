@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=7f91265c"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=26ac9960"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-57:-Depth-Anything">Lesson 57: Depth Anything<a class="anchor-link" href="#Lesson-57:-Depth-Anything">¶</a></h1><p>Lesson 56 showed monocular depth's central weakness: a network trained on a small, narrow dataset only learns priors valid <em>within</em> that dataset's distribution, and gets confidently fooled outside it. <strong>Depth Anything</strong> (<a href="../references.html#yang-2024-depthanything">Yang et al., 2024</a>) is a monocular depth foundation model built specifically to close that gap, using <strong>self-training on unlabeled data</strong>: a teacher model pseudo-labels a huge pool of unlabeled images, and a student trains on labeled data plus those pseudo-labels, at a scale (over 60 million unlabeled images) no manually-annotated depth dataset gets close to. This lesson builds that pipeline — and its result is a genuine, useful negative finding: pseudo-labeling from a biased teacher does not, by itself, fix the bias. Understanding <em>why</em> is what actually explains what Depth Anything gets right that a naive version of the same idea doesn't.</p>
@@ -230,6 +230,7 @@ test:      100 scenes, depth range [0.2, 0.9]
 </div>
 </div>
 </div>
+
 
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson56_monocular_depth_estimation.html">&larr; Lesson 56: Monocular Depth Estimation</a></div>

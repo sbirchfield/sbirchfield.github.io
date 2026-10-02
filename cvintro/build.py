@@ -12,7 +12,7 @@ import re
 import sys
 
 from nbconvert import HTMLExporter
-from nbconvert.preprocessors import ExecutePreprocessor
+from nbconvert.preprocessors import ExecutePreprocessor, TagRemovePreprocessor
 from pygments.formatters import HtmlFormatter
 import nbformat
 
@@ -106,6 +106,7 @@ def build_notebook(nb_path: pathlib.Path, sequence=None):
     )
 
     exporter = HTMLExporter(template_name="basic")
+    exporter.register_preprocessor(TagRemovePreprocessor(remove_cell_tags={"remove-cell"}), enabled=True)
     body, _ = exporter.from_notebook_node(nb)
 
     sequence = sequence if sequence is not None else get_lesson_sequence()

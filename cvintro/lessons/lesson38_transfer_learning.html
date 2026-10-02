@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=a5e103af"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=9e504e04"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-38:-Transfer-Learning">Lesson 38: Transfer Learning<a class="anchor-link" href="#Lesson-38:-Transfer-Learning">¶</a></h1><p>Training a good CNN from scratch (Lessons 34-35) took hundreds of labeled examples even for a toy task. Real target tasks are often data-starved: a handful of labeled medical scans, a new product category with 20 photos. <strong>Transfer learning</strong> sidesteps this by reusing a network already trained on a <em>different</em>, data-rich task, on the theory that early-layer features (edges, blobs, simple textures) are useful for almost any visual task, not just the one they were originally trained on. This lesson demonstrates it on real photos, using a CIFAR-10 subset (<a href="../references.html#krizhevsky-2009-cifar">Krizhevsky, 2009</a>).</p>
@@ -196,7 +196,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">feat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backbone</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">freeze_backbone</span><span class="p">:</span>
-            <span class="n">feat</span> <span class="o">=</span> <span class="n">feat</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>  <span class="c1"># frozen via detach() here; the real ResNet below freezes via requires_grad=False instead -- both stop gradients, detach() is just cheaper when the backbone is never going to be unfrozen later</span>
+            <span class="n">feat</span> <span class="o">=</span> <span class="n">feat</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>  <span class="c1"># freeze backbone so no gradient flows; below, ResNet freezes via requires_grad=False instead of detach() -- both stop gradients, but the latter is cheaper when the backbone is never going to be unfrozen later</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc</span><span class="p">(</span><span class="n">feat</span><span class="p">)</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">train_source</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">):</span>

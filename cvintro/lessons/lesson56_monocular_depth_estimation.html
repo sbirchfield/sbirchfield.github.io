@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=1323bc20"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=a0592bb8"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-56:-Monocular-Depth-Estimation">Lesson 56: Monocular Depth Estimation<a class="anchor-link" href="#Lesson-56:-Monocular-Depth-Estimation">¶</a></h1><p>Lesson 22's stereo matching recovered depth from <em>two</em> images by measuring disparity — a direct geometric signal. <strong>Monocular depth estimation</strong> asks for the same per-pixel depth map from a <em>single</em> image, with no disparity available at all. This is fundamentally <strong>ill-posed</strong>: infinitely many 3D scenes produce the exact same 2D image (a toy car photographed up close is indistinguishable, pixel-for-pixel, from a real car photographed from far away). Modern monocular depth networks work anyway, by learning statistical priors about the world — typical object sizes, perspective, occlusion — from massive training sets. This lesson builds a small depth network from one such prior (size/perspective cues), and then deliberately breaks the prior to show exactly where the ill-posedness the intro paragraph mentioned actually bites.</p>
@@ -288,6 +288,7 @@ predicted depth, oversized object (r=5, same true depth):     0.331
 </div>
 </div>
 </div>
+
 
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson55_open_vocabulary_detection.html">&larr; Lesson 55: Open-Vocabulary Detection</a></div>

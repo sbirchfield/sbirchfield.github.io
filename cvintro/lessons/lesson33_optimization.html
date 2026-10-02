@@ -443,9 +443,9 @@ all 4 hidden units still have identical weight vectors after 3000 steps of zero-
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>fixed weight std = 0.05, activation variance after 20 tanh layers:
-  width=  16: variance = 7.94e-28
-  width=  64: variance = 1.02e-16
-  width= 256: variance = 3.12e-05
+  width=  16: variance = 7.96e-29
+  width=  64: variance = 7.27e-17
+  width= 256: variance = 3.06e-05
 </pre>
 </div>
 </div>
@@ -492,17 +492,11 @@ all 4 hidden units still have identical weight vectors after 3000 steps of zero-
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Xavier std = sqrt(1/fan_in), activation variance after 20 tanh layers:
-  width=  16: variance = 0.026
-  width=  64: variance = 0.023
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>  width= 256: variance = 0.027
+  width=  16: variance = 0.052
+  width=  64: variance = 0.025
+  width= 256: variance = 0.026
 
-nn.init.xavier_normal_ weight std: 0.0627  (formula predicts 0.0625)
+nn.init.xavier_normal_ weight std: 0.0625  (formula predicts 0.0625)
 </pre>
 </div>
 </div>
@@ -548,8 +542,8 @@ nn.init.xavier_normal_ weight std: 0.0627  (formula predicts 0.0625)
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>ReLU net, Xavier scale (sqrt(1/fan_in), no ReLU correction): variance after 20 layers = 3.06e-07
-ReLU net, Kaiming scale (sqrt(2/fan_in)):                    variance after 20 layers = 1.324
+<pre>ReLU net, Xavier scale (sqrt(1/fan_in), no ReLU correction): variance after 20 layers = 4.44e-07
+ReLU net, Kaiming scale (sqrt(2/fan_in)):                    variance after 20 layers = 0.495
 
 nn.init.kaiming_normal_ weight std: 0.0887  (formula predicts 0.0884)
 </pre>

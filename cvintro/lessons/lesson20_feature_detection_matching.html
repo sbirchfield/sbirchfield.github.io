@@ -43,7 +43,7 @@
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=d86f3619">
 <div class="input">
-<div class="prompt input_prompt">In [1]:</div>
+<div class="prompt input_prompt">In [2]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -70,7 +70,7 @@
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=ad75f1cc">
 <div class="input">
-<div class="prompt input_prompt">In [2]:</div>
+<div class="prompt input_prompt">In [3]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
@@ -116,7 +116,7 @@
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=5053eef9">
 <div class="input">
-<div class="prompt input_prompt">In [3]:</div>
+<div class="prompt input_prompt">In [4]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mf">0.04</span>
@@ -169,7 +169,7 @@
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=bf4b74fb">
 <div class="input">
-<div class="prompt input_prompt">In [4]:</div>
+<div class="prompt input_prompt">In [5]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">discriminant</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">((</span><span class="n">trace_M</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">det_M</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
@@ -231,7 +231,7 @@
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=c876173a">
 <div class="input">
-<div class="prompt input_prompt">In [5]:</div>
+<div class="prompt input_prompt">In [6]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">textured</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">'../img/building.png'</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_GRAYSCALE</span><span class="p">)</span>
@@ -291,7 +291,7 @@
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=d3b08445">
 <div class="input">
-<div class="prompt input_prompt">In [6]:</div>
+<div class="prompt input_prompt">In [7]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">M</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">getRotationMatrix2D</span><span class="p">((</span><span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">),</span> <span class="n">angle</span><span class="o">=</span><span class="mi">35</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
@@ -332,7 +332,7 @@ good matches after Lowe ratio test: 191 / 723 candidate pairs
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=12669abf">
 <div class="input">
-<div class="prompt input_prompt">In [7]:</div>
+<div class="prompt input_prompt">In [8]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">correct</span> <span class="o">=</span> <span class="mi">0</span>
@@ -397,7 +397,7 @@ good matches after Lowe ratio test: 191 / 723 candidate pairs
             <a href="../quizzes/quiz20.html" class="quiz-button">Take the Lesson 20 Quiz &rarr;</a>
         </div>
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson18_color_spaces.html">&larr; Lesson 18: Color Spaces</a></div>
+            <div class="lesson-nav-prev"><a href="lesson19_clustering.html">&larr; Lesson 19: Clustering — k-Means, GMMs, and DBSCAN</a></div>
             <div class="lesson-nav-next"><a href="lesson21_optical_flow.html">Lesson 21: Optical Flow and Motion Estimation &rarr;</a></div>
         </div>
     </div>

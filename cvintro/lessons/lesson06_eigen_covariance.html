@@ -53,7 +53,7 @@
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=027ae1ea">
 <div class="input">
-<div class="prompt input_prompt">In [1]:</div>
+<div class="prompt input_prompt">In [2]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -119,7 +119,7 @@ eigenvectors (columns):
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=eb1dd6c7">
 <div class="input">
-<div class="prompt input_prompt">In [2]:</div>
+<div class="prompt input_prompt">In [3]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">P</span> <span class="o">=</span> <span class="n">eigvecs</span>
@@ -183,7 +183,7 @@ P.T @ A @ P (A in its own eigenbasis -- should be diagonal):
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=02fde223">
 <div class="input">
-<div class="prompt input_prompt">In [3]:</div>
+<div class="prompt input_prompt">In [4]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">covariance_from_moments</span><span class="p">(</span><span class="n">binary</span><span class="p">):</span>
@@ -208,7 +208,7 @@ P.T @ A @ P (A in its own eigenbasis -- should be diagonal):
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=5b688534">
 <div class="input">
-<div class="prompt input_prompt">In [4]:</div>
+<div class="prompt input_prompt">In [5]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">principal_axes</span><span class="p">(</span><span class="n">binary</span><span class="p">):</span>
@@ -247,7 +247,7 @@ P.T @ A @ P (A in its own eigenbasis -- should be diagonal):
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=542d925b">
 <div class="input">
-<div class="prompt input_prompt">In [5]:</div>
+<div class="prompt input_prompt">In [6]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">binary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
@@ -290,7 +290,7 @@ P.T @ A @ P (A in its own eigenbasis -- should be diagonal):
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=89fba3ca">
 <div class="input">
-<div class="prompt input_prompt">In [6]:</div>
+<div class="prompt input_prompt">In [7]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">im_glasses</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">'../img/glasses_outline.png'</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_GRAYSCALE</span><span class="p">)</span>
@@ -341,7 +341,7 @@ P.T @ A @ P (A in its own eigenbasis -- should be diagonal):
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=b063c9fb">
 <div class="input">
-<div class="prompt input_prompt">In [7]:</div>
+<div class="prompt input_prompt">In [8]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="s2">"shape"</span><span class="si">:</span><span class="s1">&gt;10</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="s2">"a"</span><span class="si">:</span><span class="s1">&gt;6</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="s2">"b"</span><span class="si">:</span><span class="s1">&gt;6</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="s2">"eccentricity"</span><span class="si">:</span><span class="s1">&gt;13</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>

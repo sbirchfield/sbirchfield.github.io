@@ -43,7 +43,7 @@
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=2a456224">
 <div class="input">
-<div class="prompt input_prompt">In [1]:</div>
+<div class="prompt input_prompt">In [2]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -64,7 +64,7 @@
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=62da61e5">
 <div class="input">
-<div class="prompt input_prompt">In [2]:</div>
+<div class="prompt input_prompt">In [3]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">brick_wall</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">'../img/brick_wall.jpg'</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_GRAYSCALE</span><span class="p">)</span>
@@ -122,7 +122,7 @@
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=482d3eb6">
 <div class="input">
-<div class="prompt input_prompt">In [3]:</div>
+<div class="prompt input_prompt">In [4]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -180,7 +180,7 @@ cv2.GaussianBlur pixel:    139
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=a7e1e9c7">
 <div class="input">
-<div class="prompt input_prompt">In [4]:</div>
+<div class="prompt input_prompt">In [5]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
@@ -221,7 +221,7 @@ cv2.GaussianBlur pixel:    139
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=7ef7c537">
 <div class="input">
-<div class="prompt input_prompt">In [5]:</div>
+<div class="prompt input_prompt">In [6]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">sigma</span> <span class="o">=</span> <span class="mf">5.0</span>
@@ -288,7 +288,7 @@ cv2.GaussianBlur pixel:    139
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=26f34a1f">
 <div class="input">
-<div class="prompt input_prompt">In [6]:</div>
+<div class="prompt input_prompt">In [7]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">gaussian_pyramid</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">num_levels</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
@@ -338,7 +338,7 @@ cv2.GaussianBlur pixel:    139
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=0f7f0829">
 <div class="input">
-<div class="prompt input_prompt">In [7]:</div>
+<div class="prompt input_prompt">In [8]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">cv_pyramid</span> <span class="o">=</span> <span class="p">[</span><span class="n">photo</span><span class="p">]</span>
@@ -380,7 +380,7 @@ cv2.GaussianBlur pixel:    139
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=8d599d12">
 <div class="input">
-<div class="prompt input_prompt">In [8]:</div>
+<div class="prompt input_prompt">In [9]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">level1</span> <span class="o">=</span> <span class="n">pyramid</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>                              <span class="c1"># 128x128, one pyrDown from the original</span>

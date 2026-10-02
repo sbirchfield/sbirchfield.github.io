@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=fab65992"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=ea2009da"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-48:-Autoencoders">Lesson 48: Autoencoders<a class="anchor-link" href="#Lesson-48:-Autoencoders">¶</a></h1><p>Every network up to this point learned from labeled examples: an image and its correct class, box, or mask. <strong>Autoencoders</strong> need none of that — they're a foundational example of <strong>unsupervised learning</strong>, where the only training signal comes from the data itself, never a human-provided label. Train a network to reconstruct its own input, through a deliberately narrow bottleneck, and the bottleneck is forced to discover a compressed, meaningful representation of the data — not because anyone labeled anything, but because reconstruction through a narrow-enough pipe is only solvable by throwing away what a shape looks like pixel-for-pixel and keeping what a shape <em>is</em>. This lesson builds one from scratch (<a href="../references.html#hinton-2006-autoencoder">Hinton &amp; Salakhutdinov, 2006</a>), compares it against the classical linear alternative (PCA), and shows what the bottleneck actually buys you: denoising, and a smoothly interpolable latent space.</p>
@@ -445,6 +445,7 @@ denoiser output vs. clean target MSE: 0.0151
 </div>
 </div>
 </div>
+
 
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson47_vision_transformers.html">&larr; Lesson 47: Vision Transformers (ViT)</a></div>

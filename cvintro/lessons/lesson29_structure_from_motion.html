@@ -43,7 +43,7 @@
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=2b93ecf4">
 <div class="input">
-<div class="prompt input_prompt">In [1]:</div>
+<div class="prompt input_prompt">In [2]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -77,7 +77,7 @@
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=07640a6a">
 <div class="input">
-<div class="prompt input_prompt">In [2]:</div>
+<div class="prompt input_prompt">In [3]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">583.2225</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">255.4034</span><span class="p">],</span>
@@ -136,7 +136,7 @@
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=323b120e">
 <div class="input">
-<div class="prompt input_prompt">In [3]:</div>
+<div class="prompt input_prompt">In [4]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">gray1</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">view1</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
@@ -195,7 +195,7 @@ good matches after ratio test: 64
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=f86ff230">
 <div class="input">
-<div class="prompt input_prompt">In [4]:</div>
+<div class="prompt input_prompt">In [5]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">E</span><span class="p">,</span> <span class="n">inlier_mask</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">findEssentialMat</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">RANSAC</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
@@ -252,7 +252,7 @@ true translation direction:      [-0.999   0.0125  0.0427]
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=8aba34b9">
 <div class="input">
-<div class="prompt input_prompt">In [5]:</div>
+<div class="prompt input_prompt">In [6]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">triangulate_dlt</span><span class="p">(</span><span class="n">P1</span><span class="p">,</span> <span class="n">P2</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
@@ -307,7 +307,13 @@ true translation direction:      [-0.999   0.0125  0.0427]
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>max diff vs. cv2.triangulatePoints: 1.79e-07
+<pre>max diff vs. cv2.triangulatePoints: 1.79e-07</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
 kept 47 / 48 inliers after cheirality check
 reprojection error using TRUE camera poses: mean 0.169 px, max 1.680 px
 </pre>
@@ -332,7 +338,7 @@ reprojection error using TRUE camera poses: mean 0.169 px, max 1.680 px
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=6db8e4fd">
 <div class="input">
-<div class="prompt input_prompt">In [6]:</div>
+<div class="prompt input_prompt">In [7]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">P2_estimated</span> <span class="o">=</span> <span class="n">K</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">R_estimated</span><span class="p">,</span> <span class="n">t_estimated</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
@@ -379,7 +385,7 @@ max 3D reconstruction error:                                     0.096
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=42b6c294">
 <div class="input">
-<div class="prompt input_prompt">In [7]:</div>
+<div class="prompt input_prompt">In [8]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">sift_dense</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">SIFT_create</span><span class="p">(</span><span class="n">contrastThreshold</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
@@ -428,7 +434,7 @@ max 3D reconstruction error:                                     0.096
 </div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=e9360d20">
 <div class="input">
-<div class="prompt input_prompt">In [8]:</div>
+<div class="prompt input_prompt">In [9]:</div>
 <div class="inner_cell">
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>

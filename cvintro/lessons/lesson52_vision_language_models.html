@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=fb028ef5"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=9e8c4759"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-52:-Vision-Language-Models-(VLMs)">Lesson 52: Vision-Language Models (VLMs)<a class="anchor-link" href="#Lesson-52:-Vision-Language-Models-(VLMs)">¶</a></h1><p>Every classifier so far has predicted one of a small, fixed set of classes baked in at training time (Lesson 36). <strong>CLIP</strong> ("Learning Transferable Visual Models From Natural Language Supervision", <a href="../references.html#radford-2021">Radford et al., 2021</a><span class="landmark-paper">★</span>) breaks that constraint by training an image encoder and a text encoder <em>jointly</em>, with a contrastive loss (Lesson 49) that pulls each image's embedding toward its caption's embedding and pushes it away from every other caption in the batch. The payoff: classification becomes a matter of writing down the class names as text prompts and checking similarity — no classifier head, no retraining, works on categories the model never saw labeled examples of.</p>
@@ -266,6 +266,7 @@ zero-shot accuracy, untrained encoders: 48.0%  (baseline)
 </div>
 </div>
 </div>
+
 
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson51_masked_autoencoders.html">&larr; Lesson 51: Masked Autoencoders</a></div>

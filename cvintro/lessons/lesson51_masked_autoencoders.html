@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=785dfdc8"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=5838d9f2"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-51:-Masked-Autoencoders">Lesson 51: Masked Autoencoders<a class="anchor-link" href="#Lesson-51:-Masked-Autoencoders">¶</a></h1><p>Lesson 48's autoencoder compressed a whole image through a narrow bottleneck vector. <strong>Masked autoencoders</strong> (MAE, <a href="../references.html#he-2021-mae">He et al., 2021</a>) create the information bottleneck a completely different way: chop the image into patches (Lesson 47's ViT patchify), hide most of them entirely — not noised, not blurred, just never shown to the encoder at all — and train the network to reconstruct the missing patches from whatever's left. This is the third self-supervised pretraining paradigm in this part, after contrastive learning (Lesson 49) and self-distillation (Lesson 50): no labels, no negative pairs, no teacher network — just a plausible-sounding fill-in-the-blank task invented directly from unlabeled images.</p>
@@ -435,6 +435,7 @@ linear probe on MAE-pretrained encoder:         40.3%  (+/- 0.3%)
 </div>
 </div>
 </div>
+
 
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson50_dino_self_distillation.html">&larr; Lesson 50: DINOv2 and Self-Distillation</a></div>

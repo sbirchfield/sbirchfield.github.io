@@ -34,14 +34,14 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=d44c3a0e"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=27247338"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-44:-Precision-and-Parallel-Training">Lesson 44: Precision and Parallel Training<a class="anchor-link" href="#Lesson-44:-Precision-and-Parallel-Training">¶</a></h1><p>Every network in Lessons 31-43 trained on a small, CPU-friendly toy problem in default 32-bit floating point (fp32), on a single process. Real training runs rarely look like that: models are trained in reduced precision to go faster and use less memory, and split across many GPUs because no single device holds a modern model plus its training data. This lesson closes out Part 3 with the engineering underneath <em>how</em> training actually happens at scale, building each mechanism in miniature and checking it against the real thing: <strong>floating-point precision</strong> and why reduced precision needs help to work at all, <strong>mixed-precision training</strong>'s specific fix for that, and the two ways of splitting work across devices, <strong>data parallelism</strong> and <strong>model parallelism</strong>.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=b026c2dd">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=57b92f51">
 <div class="input">
 <div class="prompt input_prompt">In [1]:</div>
 <div class="inner_cell">
@@ -57,14 +57,14 @@
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=6292329e"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=d6b326b7"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Floating-point-precision:-fp32-vs.-fp16">Floating-point precision: fp32 vs. fp16<a class="anchor-link" href="#Floating-point-precision:-fp32-vs.-fp16">¶</a></h2><p>A 32-bit float (fp32) and a 16-bit float (fp16) both use the same idea -- sign, exponent, mantissa -- but fp16 spends far fewer bits on the exponent, so it simply cannot represent very small or very large magnitudes. <code>torch.finfo</code> reports the smallest positive <em>normal</em> value each format can hold: about <code>1.2e-38</code> for fp32, but only <code>6.1e-5</code> for fp16 (fp16 subnormals stretch a little further, down to about <code>6e-8</code>, at the cost of losing precision entirely). Below that floor, a value doesn't round to something small -- it rounds to exactly zero.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=c434dff3">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=001fd2d2">
 <div class="input">
 <div class="prompt input_prompt">In [2]:</div>
 <div class="inner_cell">
@@ -99,14 +99,14 @@
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=3c0b1027"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=7a433d2e"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Values down to <code>1e-6</code> survive the cast intact; <code>1e-7</code> survives but loses precision (rounds to <code>1.2e-7</code>); <code>1e-8</code> and smaller vanish to exactly <code>0.0</code>. That's not a rounding error in the usual sense -- it's total information loss, and it matters enormously for training because gradients routinely take on exactly these magnitudes, especially in deep networks. Lessons 33 and 37 built and studied the vanishing-gradient problem in fp32, where early-layer gradients shrink but stay nonzero. In fp16, "shrink" can mean "disappear."</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=2790782e">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=d51d6118">
 <div class="input">
 <div class="prompt input_prompt">In [3]:</div>
 <div class="inner_cell">
@@ -156,14 +156,14 @@ fraction exactly zero after casting to fp16: 100.0%
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=35d824f4"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=de54492f"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>A 12-layer sigmoid network (deliberately deep and derivative-shrinking, the same vanishing-gradient setup Lesson 37 diagnosed) produces first-layer gradients around <code>1e-11</code> -- comfortably nonzero in fp32, but 100% zero the instant they're cast to fp16. Train this network directly in fp16 and the first layer would never update at all; the optimizer would faithfully apply a learning rate to a gradient of exactly zero, forever. This is the actual problem mixed-precision training has to solve, not a hypothetical one.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=5c8ff342"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=490f10b3"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Mixed-precision-training:-the-recipe">Mixed-precision training: the recipe<a class="anchor-link" href="#Mixed-precision-training:-the-recipe">¶</a></h2><p>Training entirely in fp16 hits the wall demonstrated above; training entirely in fp32 gives up the speed and memory savings that were the whole point. <strong>Mixed-precision training</strong> (<a href="../references.html#micikevicius-2017-mixedprecision">Micikevicius et al., 2017</a>) keeps both: the forward and backward pass run in fp16 for speed, but two safeguards protect against exactly the failure shown above:</p>
@@ -174,7 +174,7 @@ fraction exactly zero after casting to fp16: 100.0%
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=446ad27c">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=5b1faec8">
 <div class="input">
 <div class="prompt input_prompt">In [4]:</div>
 <div class="inner_cell">
@@ -212,21 +212,21 @@ fraction exactly zero after casting to fp16: 100.0%
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=c20df1a9"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=d56efd64"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>With no scaling (<code>scale=1</code>), every first-layer gradient underflows, exactly as before. Scaling by <code>65536</code> (<code>2**16</code>, a common real-world default) already rescues most of them, but over a third are still small enough to vanish. Only at <code>2**28</code> does the last gradient clear fp16's floor. This is precisely why real implementations (PyTorch's <code>torch.cuda.amp.GradScaler</code>) use <em>dynamic</em> loss scaling rather than a fixed constant: start with some scale, and increase it further whenever a step completes without producing an <code>inf</code>/<code>NaN</code> (a sign the scale could safely be larger), or back off whenever one appears (a sign the scale overflowed something). One more detail worth naming: <strong>bfloat16</strong> (bf16), an increasingly common alternative to fp16, sidesteps loss scaling entirely -- <code>torch.finfo</code> shows it has the <em>same</em> exponent range as fp32 (<code>smallest_normal</code> around <code>1.2e-38</code> for both), so it can't underflow the way fp16 does. What it gives up instead is precision (<code>eps</code> around <code>0.008</code> for bf16 versus <code>0.001</code> for fp16) -- a different trade-off along the same speed-versus-representable-range axis, not a free lunch.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=bf6cf6ab"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=d8e4ec2a"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Data-parallelism:-correctness-proven-in-miniature">Data parallelism: correctness proven in miniature<a class="anchor-link" href="#Data-parallelism:-correctness-proven-in-miniature">¶</a></h2><p>Precision controls how much work one device does per step; parallelism controls how many devices share that work. <strong>Data parallelism</strong> (the standard recipe behind large-batch training, e.g. <a href="../references.html#goyal-2017-imagenet1hour">Goyal et al., 2017</a>) splits a batch into shards, runs an identical copy of the model on each shard on its own device, and averages the resulting gradients before the update step. On one CPU there's no speedup to show, but the <em>correctness</em> of that recipe -- that averaging per-shard gradients gives the same answer as computing the gradient on the whole batch at once -- is exactly checkable, because MSE loss is itself an average, and the gradient of an average of per-shard averages is the average of the per-shard gradients.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=33a112f6">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=f3723cae">
 <div class="input">
 <div class="prompt input_prompt">In [5]:</div>
 <div class="inner_cell">
@@ -278,21 +278,21 @@ fraction exactly zero after casting to fp16: 100.0%
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=e82f9f52"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=20fd31c6"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Every parameter's averaged-shard gradient matches the single-device gradient to within floating-point roundoff (<code>~1e-8</code>, not a real discrepancy). This is the whole correctness argument for data parallelism in one demonstration: splitting the batch and averaging afterward is mathematically the same computation as never splitting it at all. What this toy version doesn't -- can't -- show is the actual cost real data-parallel training pays: the <strong>all-reduce</strong>, the communication step that sums/averages gradients across every device before any of them can proceed to the update. At small scale that communication is nearly free; at hundreds of GPUs it can dominate the step time, which is why large-scale training spends real engineering effort on overlapping communication with computation rather than doing them one after another.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=b0f629f6"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=bfb56a2c"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Model-parallelism:-shipping-activations-across-a-boundary">Model parallelism: shipping activations across a boundary<a class="anchor-link" href="#Model-parallelism:-shipping-activations-across-a-boundary">¶</a></h2><p>Data parallelism copies the whole model onto every device and splits the <em>data</em>. <strong>Model parallelism</strong> (<a href="../references.html#shoeybi-2019-megatron">Shoeybi et al., 2019</a>) does the opposite: split the <em>model</em> itself across devices, because it's too large to fit on one. In the simplest form (pipeline parallelism), each device holds a contiguous block of layers; the forward pass computes one block's output, hands that activation across the device boundary, and the next device picks up from there. The backward pass runs the same handoff in reverse: each device needs only the <em>gradient of the loss with respect to the activation it sent</em>, not anything about what happens on the other side of the boundary.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=42cb2ae1">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=4d4d8ca2">
 <div class="input">
 <div class="prompt input_prompt">In [6]:</div>
 <div class="inner_cell">
@@ -356,14 +356,14 @@ fraction exactly zero after casting to fp16: 100.0%
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=1d592a82"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=4cc31a9f"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Every gradient matches exactly -- <code>0.0</code> difference, not just roundoff, because the split-and-reattach mechanism (<code>detach()</code> at the boundary going forward, then manually resuming <code>.backward()</code> with the shipped-back gradient) is mathematically identical to autograd tracing straight through an unsplit model; it just makes the "device boundary" explicit as a place activations get detached and gradients get reattached by hand instead of automatically. Real pipeline parallelism adds one more concern this two-device, one-batch toy sidesteps entirely: while device B works on the tail of the pipeline for one batch, device A sits idle unless a <em>second</em> batch is already flowing in behind it -- the "pipeline bubble" that real implementations fight with careful scheduling (splitting each batch into smaller <em>microbatches</em> so every stage stays busy). Data parallelism's bottleneck is communication (the all-reduce above); model parallelism's is idle time.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=37432a3a"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=c4155b2c"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Two-more-practical-tricks">Two more practical tricks<a class="anchor-link" href="#Two-more-practical-tricks">¶</a></h2><p>Two more techniques round out the practical picture without needing their own full demonstration, because both are natural extensions of mechanisms already built above:</p>
