@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">It raises an <code>OverflowError</code> and halts execution</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">NumPy automatically upgrades the array to a larger integer type</button>
                 </div>
-                <p class="quiz-explanation"><code>uint8</code> wraps around like an odometer: <code>220 + 80 = 300</code>, which overflows to <code>300 mod 256 = 44</code>.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> <code>uint8</code> wraps around like an odometer: <code>220 + 80 = 300</code>, which overflows to <code>300 mod 256 = 44</code>.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does "saturating arithmetic" (as used by <code>cv2.add</code>) do differently from plain NumPy <code>uint8</code> addition?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">It silently converts both inputs to 32-bit floating point before adding</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It behaves identically to NumPy's default <code>uint8</code> addition, with no special handling</button>
                 </div>
-                <p class="quiz-explanation"><code>cv2.add</code> clamps (saturates) at 0 and 255 rather than silently wrapping around.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> <code>cv2.add</code> clamps (saturates) at 0 and 255 rather than silently wrapping around.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does difference imaging typically take the absolute value of the subtraction?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">So the result is meaningful regardless of which image is brighter at a given pixel</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Absolute value isn't actually used anywhere in difference imaging</button>
                 </div>
-                <p class="quiz-explanation">Without <code>abs()</code>, a pixel that got darker and one that got brighter by the same amount would look different, even though both changed.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Without <code>abs()</code>, a pixel that got darker and one that got brighter by the same amount would look different, even though both changed.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does <code>cv2.addWeighted(a, alpha, b, beta, gamma)</code> compute?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)"><code>max(alpha*a, beta*b) + gamma</code></button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)"><code>a*alpha + b*beta + gamma</code></button>
                 </div>
-                <p class="quiz-explanation">It's a saturating weighted sum of the two images plus a constant offset <code>gamma</code>.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> It's a saturating weighted sum of the two images plus a constant offset <code>gamma</code>.</p>
             </div>
         </div>
         <div class="lesson-nav">

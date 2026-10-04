@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">The fact that optical flow only works correctly on grayscale video, never color</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">A limitation that only appears in Horn-Schunck, never in Lucas-Kanade's formulation</button>
                 </div>
-                <p class="quiz-explanation">Looking through a small window at a moving edge, only the motion perpendicular to the edge is visible; motion along the edge is invisible locally.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Looking through a small window at a moving edge, only the motion perpendicular to the edge is visible; motion along the edge is invisible locally.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In Lucas-Kanade, why does the flow estimate at a corner tend to be reliable while at an edge it is not?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Edges genuinely move faster than corners in real video sequences, due to their one-dimensional structure</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Lucas-Kanade cannot process edge pixels at all, only true corners, by explicit design in the algorithm</button>
                 </div>
-                <p class="quiz-explanation">Solving the Lucas-Kanade system requires M to be invertible; a corner (two large eigenvalues) is well-conditioned, while an edge (one small eigenvalue) is ill-conditioned -- the aperture problem again.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Solving the Lucas-Kanade system requires M to be invertible; a corner (two large eigenvalues) is well-conditioned, while an edge (one small eigenvalue) is ill-conditioned -- the aperture problem again.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does <code>cv2.calcOpticalFlowPyrLK</code> use an image pyramid and iterate, rather than solving once?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Because the underlying linear (Taylor) approximation is only valid for small motions</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Pyramids are only used for display purposes, not for the actual flow computation</button>
                 </div>
-                <p class="quiz-explanation">Estimating coarsely on a small, blurry pyramid level first, then refining level by level, lets large motions be recovered even though the linear approximation only holds locally, one small step at a time.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Estimating coarsely on a small, blurry pyramid level first, then refining level by level, lets large motions be recovered even though the linear approximation only holds locally, one small step at a time.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does the Horn-Schunck smoothness term let flow estimates do that Lucas-Kanade's purely local windows cannot?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">Work without relying on any brightness constancy assumption at all, unlike every other method here</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Propagate reliable flow from edges into flat, textureless regions with no local information of their own</button>
                 </div>
-                <p class="quiz-explanation">The smoothness term couples every pixel's flow to its neighbors', letting information spread from regions with strong gradients into flat regions that have no data term of their own.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The smoothness term couples every pixel's flow to its neighbors', letting information spread from regions with strong gradients into flat regions that have no data term of their own.</p>
             </div>
         </div>
         <div class="lesson-nav">

@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">It only works correctly for translations, not rotations</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">It requires the transform to be invertible, unlike inverse mapping</button>
                 </div>
-                <p class="quiz-explanation">When a transform enlarges or rotates an image, destination locations spread out and some destination pixels receive no source pixel at all.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> When a transform enlarges or rotates an image, destination locations spread out and some destination pixels receive no source pixel at all.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does inverse mapping avoid the holes problem that forward mapping has?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">It rounds all coordinates to the nearest integer before transforming, discarding fractional detail</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It skips pixels near the image border entirely, to avoid any out-of-bounds lookups during mapping</button>
                 </div>
-                <p class="quiz-explanation">Since every destination pixel is visited and mapped back via <code>M_inv</code>, every output pixel is guaranteed to get a value.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Since every destination pixel is visited and mapped back via <code>M_inv</code>, every output pixel is guaranteed to get a value.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does inverse mapping need interpolation at all?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Because <code>M_inv</code> applied to a destination pixel almost never lands exactly on an integer source coordinate</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Because the source image is always smaller in size than the destination image canvas</button>
                 </div>
-                <p class="quiz-explanation">The mapped-back coordinate is generally fractional, so a value must be estimated from the surrounding source pixels.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The mapped-back coordinate is generally fractional, so a value must be estimated from the surrounding source pixels.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the key trade-off between nearest-neighbor and bilinear interpolation?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">There is no real difference between them for enlarging transforms</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Nearest-neighbor is blocky/pixelated; bilinear is smoother but slightly blurrier</button>
                 </div>
-                <p class="quiz-explanation">Bilinear blends the 4 neighboring pixels, removing the blocky aliasing nearest-neighbor produces at the cost of a softer image.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Bilinear blends the 4 neighboring pixels, removing the blocky aliasing nearest-neighbor produces at the cost of a softer image.</p>
             </div>
         </div>
         <div class="lesson-nav">

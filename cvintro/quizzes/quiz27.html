@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">The checkerboard's rotation and translation only</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Color balance and exposure settings used by the camera</button>
                 </div>
-                <p class="quiz-explanation">Calibration recovers the ideal pinhole intrinsics matrix <code>K</code> plus the radial/tangential distortion coefficients that describe how a real lens deviates from that ideal.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Calibration recovers the ideal pinhole intrinsics matrix <code>K</code> plus the radial/tangential distortion coefficients that describe how a real lens deviates from that ideal.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does the lesson generate many synthetic checkerboard views from different angles rather than just one?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">OpenCV's <code>calibrateCamera</code> function requires exactly 40 views to run at all</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Multiple views are only needed to estimate the checkerboard's physical size, nothing else</button>
                 </div>
-                <p class="quiz-explanation">With noisy corner detections, a single view underconstrains the problem; many diverse views average out noise and better pin down both K and distortion.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> With noisy corner detections, a single view underconstrains the problem; many diverse views average out noise and better pin down both K and distortion.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does <code>k1</code> and <code>k2</code> radial distortion do to straight lines in a scene, when captured through a real lens?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">It bows them into curves (barrel or pincushion, depending on sign)</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">It removes straight lines entirely from the captured image</button>
                 </div>
-                <p class="quiz-explanation">Radial distortion terms in the distortion model curve straight lines; the sign of <code>k1</code>/<code>k2</code> determines whether they bow outward (barrel) or inward (pincushion).</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Radial distortion terms in the distortion model curve straight lines; the sign of <code>k1</code>/<code>k2</code> determines whether they bow outward (barrel) or inward (pincushion).</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. After applying <code>cv2.undistortPoints</code> with the *estimated* (not true) calibration, why don't the grid lines straighten out perfectly?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">Because the grid lines were never actually distorted in the first place, by construction</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Because the estimated K and distortion coefficients are themselves only approximately correct</button>
                 </div>
-                <p class="quiz-explanation">Calibration from noisy corner detections only approximates the true K/distortion, so undoing distortion with the estimate leaves a faint residual bow.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Calibration from noisy corner detections only approximates the true K/distortion, so undoing distortion with the estimate leaves a faint residual bow.</p>
             </div>
         </div>
         <div class="lesson-nav">

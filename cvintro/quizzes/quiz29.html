@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">The fundamental matrix F relating the two views, up to an unknown scale</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">The optimal feature descriptor for the matched point, used for re-matching</button>
                 </div>
-                <p class="quiz-explanation">Triangulation intersects the two rays (one per camera) that could have produced the matched 2D observations, recovering the 3D point via DLT/SVD.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Triangulation intersects the two rays (one per camera) that could have produced the matched 2D observations, recovering the 3D point via DLT/SVD.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the purpose of the cheirality check (requiring positive depth in both cameras) after triangulation?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">To convert the reconstruction from a sparse to a dense point cloud directly</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">To separately estimate the camera's unknown focal length from the matches</button>
                 </div>
-                <p class="quiz-explanation">The epipolar constraint doesn't rule out points that triangulate behind a camera; requiring positive depth in both views is a free extra filter that catches such bad matches.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The epipolar constraint doesn't rule out points that triangulate behind a camera; requiring positive depth in both views is a free extra filter that catches such bad matches.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does the reconstruction from *estimated* poses need to be multiplied by the true baseline length before it matches the true-pose reconstruction?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Because <code>recoverPose</code> only returns a translation *direction*</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">This scaling step is unnecessary and is only done here for illustration</button>
                 </div>
-                <p class="quiz-explanation">Since <code>t</code> from <code>recoverPose</code> is unit-length, every triangulated point comes out a fixed factor smaller than reality; rescaling by the true baseline fixes the metric scale (using outside knowledge, since two views alone can't supply it).</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Since <code>t</code> from <code>recoverPose</code> is unit-length, every triangulated point comes out a fixed factor smaller than reality; rescaling by the true baseline fixes the metric scale (using outside knowledge, since two views alone can't supply it).</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does bundle adjustment do that distinguishes a real multi-view SfM system from the simple two-view pipeline in this lesson?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">It converts the sparse point cloud directly into a dense mesh with no further computation</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">It refines all camera poses and 3D points together in one large nonlinear least-squares optimization</button>
                 </div>
-                <p class="quiz-explanation">As more views are added, per-view pose errors compound; bundle adjustment jointly refines every camera pose and 3D point at once to minimize the total reprojection error, correcting for that compounding.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> As more views are added, per-view pose errors compound; bundle adjustment jointly refines every camera pose and 3D point at once to minimize the total reprojection error, correcting for that compounding.</p>
             </div>
         </div>
         <div class="lesson-nav">

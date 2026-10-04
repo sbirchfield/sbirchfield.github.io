@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Because disparity is always exactly zero for a rectified pair, by definition of rectification</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Because block matching is inherently limited to searching in 1D, regardless of rectification</button>
                 </div>
-                <p class="quiz-explanation">Epipolar geometry for a rectified stereo pair guarantees the match lies on the same row, collapsing the search from 2D to a 1D scan.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Epipolar geometry for a rectified stereo pair guarantees the match lies on the same row, collapsing the search from 2D to a 1D scan.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. According to <code>Z = f * B / d</code>, what happens to estimated depth as disparity <code>d</code> increases?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Depth is completely unrelated to the disparity value, depending only on focal length</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Depth becomes negative once disparity exceeds the camera baseline distance</button>
                 </div>
-                <p class="quiz-explanation">Depth is inversely proportional to disparity: nearer surfaces shift more (larger d) and so have smaller Z.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Depth is inversely proportional to disparity: nearer surfaces shift more (larger d) and so have smaller Z.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does the left-right consistency check do in stereo matching?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">It matches both left-to-right and right-to-left, then keeps only pixels where the two results agree</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">It simply doubles the disparity search range used for matching, without checking consistency</button>
                 </div>
-                <p class="quiz-explanation">A pixel that disagrees between the two matching directions by more than about a pixel is flagged as unreliable, which is especially effective at catching occlusions.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> A pixel that disagrees between the two matching directions by more than about a pixel is flagged as unreliable, which is especially effective at catching occlusions.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the trade-off of increasing the block-matching window size in stereo matching?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">Larger windows only affect runtime speed, never the resulting disparity values at any pixel</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Larger windows are more robust to noise but blur across depth discontinuities</button>
                 </div>
-                <p class="quiz-explanation">A bigger window averages over more pixels (robust to noise) but mixes pixels from two different true depths near object edges (blurred boundaries); a smaller window has the opposite trade-off.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> A bigger window averages over more pixels (robust to noise) but mixes pixels from two different true depths near object edges (blurred boundaries); a smaller window has the opposite trade-off.</p>
             </div>
         </div>
         <div class="lesson-nav">

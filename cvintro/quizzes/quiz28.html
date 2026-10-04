@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">The match must be at the exact same pixel coordinates as in image 1</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">The match is constrained only if the images have already been rectified</button>
                 </div>
-                <p class="quiz-explanation">Given <code>x1</code>, the line <code>l2 = F x1</code> is the epipolar line in image 2 that the true match is guaranteed to lie on, collapsing the search from 2D to 1D.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Given <code>x1</code>, the line <code>l2 = F x1</code> is the epipolar line in image 2 that the true match is guaranteed to lie on, collapsing the search from 2D to 1D.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Geometrically, why does a point's match always fall on a single line rather than anywhere in the second image?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Because feature descriptors can only ever match along horizontal lines, by convention</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">This fact is only true after the two images have been rectified, not in general</button>
                 </div>
-                <p class="quiz-explanation">All points along the ray from C1 through x1 share the same epipolar plane with C1 and C2; camera 2 sees that plane edge-on, so every candidate projects onto the same line.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> All points along the ray from C1 through x1 share the same epipolar plane with C1 and C2; camera 2 sees that plane edge-on, so every candidate projects onto the same line.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does the 8-point algorithm normalize pixel coordinates (centering and rescaling) before solving for F via SVD?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Raw pixel coordinates (in the hundreds) make the linear system badly conditioned numerically</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Normalization is needed only in the rare case where <code>F</code> has rank 3, not rank 2</button>
                 </div>
-                <p class="quiz-explanation">This is the Hartley normalization step: solving in centered, rescaled coordinates avoids numerical ill-conditioning that raw large pixel values would cause.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> This is the Hartley normalization step: solving in centered, rescaled coordinates avoids numerical ill-conditioning that raw large pixel values would cause.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why can <code>cv2.recoverPose</code> only recover the *direction* of the translation between the two cameras, not its magnitude?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">Because rotation and translation can never both be recovered from two views at once</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Because doubling scene size and baseline together produces identical images</button>
                 </div>
-                <p class="quiz-explanation">The scale ambiguity is fundamental to monocular two-view geometry: uniformly scaling the scene and baseline together produces identical images, so absolute scale can't be recovered from correspondences alone.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The scale ambiguity is fundamental to monocular two-view geometry: uniformly scaling the scene and baseline together produces identical images, so absolute scale can't be recovered from correspondences alone.</p>
             </div>
         </div>
         <div class="lesson-nav">

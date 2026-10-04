@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Calibrate the camera, undistort, rectify, match rows, then triangulate</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Convert to grayscale, blur, edge-detect, Hough transform, then overlay lines</button>
                 </div>
-                <p class="quiz-explanation">The pipeline is: SIFT + ratio-test matching (Lesson 20), RANSAC homography (Lessons 23-24), <code>cv2.warpPerspective</code> (Lesson 9), then feathered blending.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The pipeline is: SIFT + ratio-test matching (Lesson 20), RANSAC homography (Lessons 23-24), <code>cv2.warpPerspective</code> (Lesson 9), then feathered blending.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the final composite, what does the linear feather blend do across the overlap region?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Averages the two images everywhere, including non-overlapping regions</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Discards the overlap region entirely, leaving a visible black gap</button>
                 </div>
-                <p class="quiz-explanation">A spatially-varying alpha ramp (same weighted-sum idea as <code>cv2.addWeighted</code>, Lesson 2) is used only within the overlap, so the seam fades smoothly rather than showing a hard cut.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> A spatially-varying alpha ramp (same weighted-sum idea as <code>cv2.addWeighted</code>, Lesson 2) is used only within the overlap, so the seam fades smoothly rather than showing a hard cut.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. With no synthetic ground truth available for a real photo pair, how does the lesson measure how good the estimated homography's fit is?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">By computing the reprojection error of the RANSAC inliers themselves under the fitted homography</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">By simply counting the number of SIFT keypoints detected in each image</button>
                 </div>
-                <p class="quiz-explanation">Projecting each inlier through <code>H</code> and measuring distance to its matched point (reprojection error) gives a direct, ground-truth-free measure of geometric fit quality.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Projecting each inlier through <code>H</code> and measuring distance to its matched point (reprojection error) gives a direct, ground-truth-free measure of geometric fit quality.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. According to the lesson, why might OpenCV's default <code>cv2.Stitcher</code> <code>PANORAMA</code> mode bow straight lines when stitching photos of a flat building facade?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">It only works correctly in grayscale, never full color, due to a format limitation</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">It assumes the camera rotated about its optical center and warps onto a sphere</button>
                 </div>
-                <p class="quiz-explanation"><code>PANORAMA</code> mode's spherical warp is suited to pure camera rotation; <code>SCANS</code> mode instead composites with planar homographies directly, matching this lesson's approach.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> <code>PANORAMA</code> mode's spherical warp is suited to pure camera rotation; <code>SCANS</code> mode instead composites with planar homographies directly, matching this lesson's approach.</p>
             </div>
         </div>
         <div class="lesson-nav">

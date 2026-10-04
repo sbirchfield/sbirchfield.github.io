@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Increasing <code>Z</code> moves the projected point further from the image center</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Depth <code>Z</code> only affects the pixel's color, never its position</button>
                 </div>
-                <p class="quiz-explanation">Both <code>x</code> and <code>y</code> are divided by <code>Z</code>, so farther points (larger <code>Z</code>) project closer to the image center -- the usual perspective effect.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Both <code>x</code> and <code>y</code> are divided by <code>Z</code>, so farther points (larger <code>Z</code>) project closer to the image center -- the usual perspective effect.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why do objects nearer or farther than the focal plane appear blurred (the circle of confusion), according to this lesson?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Because gamma correction systematically distorts out-of-focus regions, not the lens itself</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Because JPEG compression blurs distant objects more than nearby ones, during encoding</button>
                 </div>
-                <p class="quiz-explanation">Only points at the focal plane converge to a sharp point on the sensor; nearer/farther points spread over a disk whose size grows with distance from the focal plane.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Only points at the focal plane converge to a sharp point on the sensor; nearer/farther points spread over a disk whose size grows with distance from the focal plane.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What happens if a raw Bayer mosaic is demosaicked assuming the wrong filter pattern (e.g. BGGR treated as RGGB)?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">It fails silently: every pixel still gets a value, but colors are badly and systematically wrong</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Only the brightness channel is affected; the color channels stay correct regardless</button>
                 </div>
-                <p class="quiz-explanation">Since every pixel gets *some* value regardless of the assumed pattern, a wrong pattern produces a plausible-looking but strongly color-shifted image rather than an obvious failure.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Since every pixel gets *some* value regardless of the assumed pattern, a wrong pattern produces a plausible-looking but strongly color-shifted image rather than an obvious failure.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why is naively averaging two gamma-encoded pixel values (e.g. for blending or blurring) physically wrong?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">Gamma correction has been removed entirely from all modern image formats and sensors</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Gamma encoding is nonlinear, so averaging encoded values isn't the same as averaging true light intensity</button>
                 </div>
-                <p class="quiz-explanation">The correct approach is to decode to linear light, average there, then re-encode; averaging directly in encoded space under-represents the true blended brightness, as the lesson's black/white example shows.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The correct approach is to decode to linear light, average there, then re-encode; averaging directly in encoded space under-represents the true blended brightness, as the lesson's black/white example shows.</p>
             </div>
         </div>
         <div class="lesson-nav">

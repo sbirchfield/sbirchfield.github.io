@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Convolution requires a square kernel; correlation does not</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">There is no difference; the terms are interchangeable in all cases</button>
                 </div>
-                <p class="quiz-explanation">Convolution flips the kernel before sliding; for symmetric kernels this makes no difference, but for asymmetric kernels (like Sobel) it does.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Convolution flips the kernel before sliding; for symmetric kernels this makes no difference, but for asymmetric kernels (like Sobel) it does.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Does <code>cv2.filter2D</code> compute convolution or correlation?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Neither -- it actually computes a Fourier transform internally</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It alternates between the two depending on the kernel's size</button>
                 </div>
-                <p class="quiz-explanation">Most image libraries, including OpenCV's <code>cv2.filter2D</code>, actually implement correlation despite being casually called "convolution".</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Most image libraries, including OpenCV's <code>cv2.filter2D</code>, actually implement correlation despite being casually called "convolution".</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does it mean for a 2D kernel to be separable?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">It can be written as the outer product of two 1D kernels, turning O(n^2) work into O(2n)</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">It has no measurable effect on the resulting image</button>
                 </div>
-                <p class="quiz-explanation">A separable kernel like the Gaussian can be applied as a 1D pass along x then a 1D pass along y, which is much cheaper than the full 2D kernel.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> A separable kernel like the Gaussian can be applied as a 1D pass along x then a 1D pass along y, which is much cheaper than the full 2D kernel.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the Sobel edge-detection example, why does the convolution-vs-correlation distinction actually matter?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">It never matters for any kernel, symmetric or not</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Because the Sobel kernel is asymmetric</button>
                 </div>
-                <p class="quiz-explanation">For symmetric kernels (box, Gaussian) flipping changes nothing, but asymmetric kernels like Sobel give different results under convolution vs. correlation.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> For symmetric kernels (box, Gaussian) flipping changes nothing, but asymmetric kernels like Sobel give different results under convolution vs. correlation.</p>
             </div>
         </div>
         <div class="lesson-nav">

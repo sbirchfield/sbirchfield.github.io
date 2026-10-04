@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Sigmoid is strictly required in order to compute a dot product between weights and inputs</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Thresholding directly would make every prediction always equal to 1, regardless of the input</button>
                 </div>
-                <p class="quiz-explanation">Hard accuracy jumps discontinuously at the boundary with zero gradient almost everywhere, so gradient descent has nothing to follow; sigmoid squashes the score into a smooth probability instead.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Hard accuracy jumps discontinuously at the boundary with zero gradient almost everywhere, so gradient descent has nothing to follow; sigmoid squashes the score into a smooth probability instead.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In binary cross-entropy, what happens to the loss when the true label is 1 but the predicted probability p is close to 0?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">The loss is completely unaffected by how confident the wrong prediction was</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">The loss becomes negative, canceling out other terms in the batch</button>
                 </div>
-                <p class="quiz-explanation">The penalty for true label 1 is -log(p), which grows without bound as p approaches 0.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The penalty for true label 1 is -log(p), which grows without bound as p approaches 0.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What two independent methods does the lesson use to verify the hand-derived backprop gradient formulas are correct?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Numerical finite-difference gradient checking, and comparing against PyTorch's autograd</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Comparing training accuracy against a random chance baseline at every epoch</button>
                 </div>
-                <p class="quiz-explanation">The lesson perturbs each parameter by a tiny amount to estimate the gradient numerically, and separately lets PyTorch's .backward() compute it automatically -- both agree with the hand-derived formula.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The lesson perturbs each parameter by a tiny amount to estimate the gradient numerically, and separately lets PyTorch's .backward() compute it automatically -- both agree with the hand-derived formula.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does gradient descent do *worse* than exhaustive search on the ring-vs-disk dataset, converging to near-chance accuracy?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">Sigmoid activations cannot be used with more than 60 data points</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">The dataset is roughly symmetric around the origin</button>
                 </div>
-                <p class="quiz-explanation">Because the ring and disk are both centered at the origin, the training signal from all points nearly cancels in every direction, so the optimizer settles near w=0 instead of finding an asymmetric corner-case solution.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Because the ring and disk are both centered at the origin, the training signal from all points nearly cancels in every direction, so the optimizer settles near w=0 instead of finding an asymmetric corner-case solution.</p>
             </div>
         </div>
         <div class="lesson-nav">

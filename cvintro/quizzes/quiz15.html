@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">A pyramid of progressively blurred and downsampled copies</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">A single average brightness value computed per row</button>
                 </div>
-                <p class="quiz-explanation">The 2D DFT re-expresses the image as a sum of sinusoidal gratings, each with its own frequency, orientation, magnitude, and phase.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The 2D DFT re-expresses the image as a sum of sinusoidal gratings, each with its own frequency, orientation, magnitude, and phase.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does a real-valued sinusoidal grating produce two bright spots (not one) in its Fourier spectrum?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Because the image was captured using two separate cameras</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)"><code>cv2</code> always duplicates spectrum peaks purely for display purposes</button>
                 </div>
-                <p class="quiz-explanation">By Euler's formula, a real sinusoid decomposes into two complex exponentials at frequencies +f and -f, so its spectrum shows two symmetric spikes.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> By Euler's formula, a real sinusoid decomposes into two complex exponentials at frequencies +f and -f, so its spectrum shows two symmetric spikes.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What causes the visible ringing artifacts when applying an ideal (sharp-cutoff) low-pass filter in the frequency domain?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">A sharp frequency cutoff corresponds to convolving with a spatial sinc kernel</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">The frequency-domain mask was not centered correctly before multiplying</button>
                 </div>
-                <p class="quiz-explanation">By the convolution theorem, an ideal sharp cutoff in frequency corresponds to a sinc function in space, whose infinite ripples cause the Gibbs phenomenon.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> By the convolution theorem, an ideal sharp cutoff in frequency corresponds to a sinc function in space, whose infinite ripples cause the Gibbs phenomenon.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. According to the convolution theorem, multiplying two images' Fourier transforms elementwise and inverse-transforming is equivalent to what operation in the spatial domain?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">Stacking the two images together as separate channels</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Convolving the two images in the spatial domain</button>
                 </div>
-                <p class="quiz-explanation">The convolution theorem states that convolution in the spatial domain equals elementwise multiplication in the frequency domain, and vice versa.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The convolution theorem states that convolution in the spatial domain equals elementwise multiplication in the frequency domain, and vice versa.</p>
             </div>
         </div>
         <div class="lesson-nav">

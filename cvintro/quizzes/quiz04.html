@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Connected components only work correctly on color images, never grayscale, due to a hard OpenCV restriction</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Flood fill labels every blob in the image with a unique ID simultaneously, without a seed, in a single pass</button>
                 </div>
-                <p class="quiz-explanation">Flood fill needs one seed per region, while <code>cv2.connectedComponentsWithStats</code> scans the whole image and labels every blob at once.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Flood fill needs one seed per region, while <code>cv2.connectedComponentsWithStats</code> scans the whole image and labels every blob at once.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the classic stack-based <code>flood_fill_stack</code> algorithm, what happens when a pixel is popped from the stack?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">The algorithm terminates immediately, since popping a pixel always means the fill is complete</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It's deleted from the image array and treated as background from then on</button>
                 </div>
-                <p class="quiz-explanation">Popped pixels that are background or already filled are simply skipped; otherwise they're marked filled and their neighbors are added to the frontier.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Popped pixels that are background or already filled are simply skipped; otherwise they're marked filled and their neighbors are added to the frontier.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does <code>cv2.connectedComponentsWithStats</code> label as component <code>0</code>?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">The background</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">An error code meaning no blobs were found in the image</button>
                 </div>
-                <p class="quiz-explanation">Label 0 is always the background, so the number of actual blobs is <code>num_labels - 1</code>.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Label 0 is always the background, so the number of actual blobs is <code>num_labels - 1</code>.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What extra information does <code>cv2.connectedComponentsWithStats</code> provide alongside the labels, at almost no extra computational cost?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">The original unthresholded grayscale image, unchanged</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Bounding box, area, and centroid for each blob</button>
                 </div>
-                <p class="quiz-explanation">The lesson notes these stats come essentially free as part of the same labeling pass.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The lesson notes these stats come essentially free as part of the same labeling pass.</p>
             </div>
         </div>
         <div class="lesson-nav">

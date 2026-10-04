@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">A similarity transform allows shearing, while a Euclidean transform does not</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">There is no difference -- the two terms describe the same set of transforms</button>
                 </div>
-                <p class="quiz-explanation">Euclidean transforms (rotation + translation) preserve exact distances; similarity transforms add a single uniform scale factor, so they preserve angles and length ratios but not absolute distances.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Euclidean transforms (rotation + translation) preserve exact distances; similarity transforms add a single uniform scale factor, so they preserve angles and length ratios but not absolute distances.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Which of the three transform types (Euclidean, similarity, affine) is capable of shearing a square into a parallelogram?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Similarity transforms only, since they allow non-uniform scaling</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">None of them can shear a square into a parallelogram</button>
                 </div>
-                <p class="quiz-explanation">Affine transforms allow any invertible 2x2 matrix, including shear, which neither Euclidean nor similarity transforms permit.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Affine transforms allow any invertible 2x2 matrix, including shear, which neither Euclidean nor similarity transforms permit.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does a similarity transform preserve that a general affine transform does not necessarily preserve?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Angles (and ratios of lengths) between corresponding line segments</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">The exact pixel values at every location in the image</button>
                 </div>
-                <p class="quiz-explanation">Similarity transforms preserve angles and length ratios; affine transforms give up angle preservation in exchange for allowing shear.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Similarity transforms preserve angles and length ratios; affine transforms give up angle preservation in exchange for allowing shear.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. How many point correspondences does <code>cv2.getAffineTransform</code> require to solve for all 6 affine parameters?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">6 point correspondences</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">3 point correspondences</button>
                 </div>
-                <p class="quiz-explanation">3 point correspondences give exactly 6 equations, matching the 6 free parameters of an affine transform.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> 3 point correspondences give exactly 6 equations, matching the 6 free parameters of an affine transform.</p>
             </div>
         </div>
         <div class="lesson-nav">

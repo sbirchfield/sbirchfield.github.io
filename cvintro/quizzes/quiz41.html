@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">A class label only, with no location information whatsoever</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Four corner coordinates expressed in absolute pixel units</button>
                 </div>
-                <p class="quiz-explanation">The network's regression head outputs (cx, cy, w, h) through a sigmoid, keeping every value in the valid normalized [0, 1] range.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The network's regression head outputs (cx, cy, w, h) through a sigmoid, keeping every value in the valid normalized [0, 1] range.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why is IoU used to evaluate the detector instead of just looking at how close the four predicted numbers are to the true ones?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">IoU is only ever used during training, never for evaluation</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">The four box numbers cannot be meaningfully compared directly, for any reason</button>
                 </div>
-                <p class="quiz-explanation">Two boxes can have similar-looking coordinates but very different overlap (or vice versa), so IoU is the metric that reflects what actually matters for localization.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Two boxes can have similar-looking coordinates but very different overlap (or vice versa), so IoU is the metric that reflects what actually matters for localization.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why can this lesson's simple regression detector only ever predict exactly one object per image?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Its output is a fixed-size vector of exactly 4 numbers</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">The sigmoid activation itself limits the network to one prediction</button>
                 </div>
-                <p class="quiz-explanation">A fixed 4-number output has no way to represent a variable number of objects; real multi-object detectors need a different architecture (grid cells, region proposals, etc.).</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> A fixed 4-number output has no way to represent a variable number of objects; real multi-object detectors need a different architecture (grid cells, region proposals, etc.).</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the key architectural difference between two-stage (R-CNN family) and single-stage (YOLO, SSD) detectors?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">There is no real architectural difference; the two terms are interchangeable in practice</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Two-stage detectors first generate region proposals and then classify/regress each one</button>
                 </div>
-                <p class="quiz-explanation">Two-stage methods (e.g. Faster R-CNN) propose-then-classify; single-stage methods (YOLO, SSD) predict boxes and classes directly per grid cell in a single pass, trading some accuracy for speed.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Two-stage methods (e.g. Faster R-CNN) propose-then-classify; single-stage methods (YOLO, SSD) predict boxes and classes directly per grid cell in a single pass, trading some accuracy for speed.</p>
             </div>
         </div>
         <div class="lesson-nav">

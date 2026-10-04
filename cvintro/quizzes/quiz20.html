@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">The DCT quantization table from Lesson 17, applied here to a local window</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">The Laplacian pyramid from Lesson 13, applied here to a local window</button>
                 </div>
-                <p class="quiz-explanation">Both are 2x2 covariance-style matrices; Lesson 6 built one from pixel coordinates, this lesson builds the same kind of matrix from local image gradients.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Both are 2x2 covariance-style matrices; Lesson 6 built one from pixel coordinates, this lesson builds the same kind of matrix from local image gradients.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What do both eigenvalues of the structure tensor being large indicate about a point?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">It's on a straight edge, with gradient strong in one direction only</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It's outside the valid bounds of the image entirely</button>
                 </div>
-                <p class="quiz-explanation">A corner has strong gradient in every direction, which is exactly what two large eigenvalues of M mean.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> A corner has strong gradient in every direction, which is exactly what two large eigenvalues of M mean.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why are Harris and Shi-Tomasi corner detectors NOT scale-invariant, motivating SIFT?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">They operate at a single, fixed window size</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">They cannot run on images larger than 100x100 pixels</button>
                 </div>
-                <p class="quiz-explanation">A sharp corner becomes a gentle curve at a fixed window size when the image is zoomed out enough, so a fixed-scale detector misses it.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> A sharp corner becomes a gentle curve at a fixed window size when the image is zoomed out enough, so a fixed-scale detector misses it.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does Lowe's ratio test do when matching SIFT descriptors?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">It requires the two images to be exactly the same pixel dimensions throughout</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">It keeps a match only if the best candidate is meaningfully closer than the second-best candidate</button>
                 </div>
-                <p class="quiz-explanation">Comparing the best match's distance to the second-best's rejects ambiguous matches where two candidates are nearly equally good.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Comparing the best match's distance to the second-best's rejects ambiguous matches where two candidates are nearly equally good.</p>
             </div>
         </div>
         <div class="lesson-nav">

@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">fp16 is fundamentally incapable of storing negative numbers at all, by its format</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">PyTorch raises an error and halts training the instant this happens, every single time</button>
                 </div>
-                <p class="quiz-explanation">Below fp16's representable floor, underflow means total information loss (exactly 0.0), not just reduced precision — and gradients in deep sigmoid networks routinely fall in that underflowing range.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Below fp16's representable floor, underflow means total information loss (exactly 0.0), not just reduced precision — and gradients in deep sigmoid networks routinely fall in that underflowing range.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What are the two safeguards mixed-precision training uses to keep the speed of fp16 without hitting the underflow problem?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Switching over to double precision (fp64) whenever a gradient underflows, automatically</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Rounding every gradient up to the nearest nonzero representable fp16 value, always</button>
                 </div>
-                <p class="quiz-explanation">fp32 master weights avoid updates being rounded away, and loss scaling exploits gradients being linear in the loss to push otherwise-underflowing values back into fp16's representable range.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> fp32 master weights avoid updates being rounded away, and loss scaling exploits gradients being linear in the loss to push otherwise-underflowing values back into fp16's representable range.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the data-parallelism demonstration, splitting a batch into 4 shards, computing gradients independently per shard, and averaging them afterward produces a result that:</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Matches the single-device, whole-batch gradient to within ordinary floating-point roundoff</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Only works correctly if the model has no nonlinear activations at all, anywhere</button>
                 </div>
-                <p class="quiz-explanation">This is the whole correctness argument for data parallelism: per-shard gradients averaged after the fact equal the gradient computed over the whole batch at once, up to ~1e-8 roundoff.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> This is the whole correctness argument for data parallelism: per-shard gradients averaged after the fact equal the gradient computed over the whole batch at once, up to ~1e-8 roundoff.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the key difference between what limits data parallelism versus what limits (pipeline) model parallelism at scale?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">Model parallelism is limited by loss-scaling overflow, the same issue as fp16 training</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Data parallelism is limited by communication, the all-reduce that averages gradients</button>
                 </div>
-                <p class="quiz-explanation">Data parallelism's cost is the all-reduce communication step; model (pipeline) parallelism's cost is devices sitting idle unless multiple microbatches keep every stage busy.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Data parallelism's cost is the all-reduce communication step; model (pipeline) parallelism's cost is devices sitting idle unless multiple microbatches keep every stage busy.</p>
             </div>
         </div>
         <div class="lesson-nav">

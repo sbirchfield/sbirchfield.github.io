@@ -226,7 +226,7 @@ QUIZ_QUESTION_TEMPLATE = """            <div class="quiz-question" data-q="{q_in
                 <div class="quiz-choices">
 {choices_html}
                 </div>
-                <p class="quiz-explanation">{explanation}</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> {explanation}</p>
             </div>"""
 
 QUIZ_CHOICE_TEMPLATE = """                    <button class="quiz-choice" data-c="{c_index}" onclick="checkAnswer({q_index}, {c_index}, {correct_index})">{choice}</button>"""

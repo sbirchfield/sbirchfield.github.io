@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Both curves increase steadily throughout the entire training run, without exception</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Validation loss is always lower than training loss at every single epoch</button>
                 </div>
-                <p class="quiz-explanation">The network perfectly memorizes the 12 training images while validation loss reaches a minimum then gets worse as the model overfits further.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The network perfectly memorizes the 12 training images while validation loss reaches a minimum then gets worse as the model overfits further.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. How does data augmentation help fight overfitting on a small dataset?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">It automatically increases the optimizer's learning rate as training proceeds</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It removes the need for a held-out validation set entirely during training</button>
                 </div>
-                <p class="quiz-explanation">Applying random label-preserving transforms to the existing images gives the model many more effective examples to learn from, rather than memorizing a handful of exact images.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Applying random label-preserving transforms to the existing images gives the model many more effective examples to learn from, rather than memorizing a handful of exact images.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does weight decay do to fight overfitting?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">It adds a penalty proportional to weight magnitude, discouraging large weights</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">It forces every weight in the network to become exactly zero at initialization</button>
                 </div>
-                <p class="quiz-explanation">Penalizing large weight magnitudes makes memorizing noisy specifics of a small dataset more costly relative to finding a simpler, smoother function.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Penalizing large weight magnitudes makes memorizing noisy specifics of a small dataset more costly relative to finding a simpler, smoother function.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In inverted dropout, what happens to the surviving (non-zeroed) activations during training, and why?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">They are doubled in value, regardless of the dropout probability used</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">They are rescaled by 1/(1-p) to keep the layer's expected output the same scale</button>
                 </div>
-                <p class="quiz-explanation">Rescaling by 1/(1-p) keeps the expected activation magnitude consistent between training (with dropout) and evaluation (without it).</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Rescaling by 1/(1-p) keeps the expected activation magnitude consistent between training (with dropout) and evaluation (without it).</p>
             </div>
         </div>
         <div class="lesson-nav">

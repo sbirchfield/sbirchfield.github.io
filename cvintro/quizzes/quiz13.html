@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Second derivatives cannot be used to find edges at all, by mathematical definition</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">At the maximum value of the original image intensity, regardless of derivative</button>
                 </div>
-                <p class="quiz-explanation">The first derivative peaks at an edge; the second derivative crosses zero exactly at the edge location.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The first derivative peaks at an edge; the second derivative crosses zero exactly at the edge location.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does the Marr-Hildreth detector smooth the image with a Gaussian before applying the Laplacian?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Smoothing is not actually part of the Marr-Hildreth method at all, by design</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">To make the image square before applying the Laplacian operator to it</button>
                 </div>
-                <p class="quiz-explanation">Marr and Hildreth's fix is to smooth first, then differentiate -- equivalent to convolving with a single combined Laplacian-of-Gaussian kernel.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Marr and Hildreth's fix is to smooth first, then differentiate -- equivalent to convolving with a single combined Laplacian-of-Gaussian kernel.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does a Difference of Gaussians (DoG) approximate?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">A scaled Laplacian of Gaussian (LoG), at much cheaper computational cost</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">The Hough accumulator, computed from two blurred copies of the image</button>
                 </div>
-                <p class="quiz-explanation">Subtracting two Gaussian blurs at different scales approximates a scaled LoG using only two blurs and a subtraction, instead of an explicit second-derivative kernel.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Subtracting two Gaussian blurs at different scales approximates a scaled LoG using only two blurs and a subtraction, instead of an explicit second-derivative kernel.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does a Laplacian pyramid store at each level that a Gaussian pyramid does not, allowing exact reconstruction?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">Nothing extra -- Laplacian and Gaussian pyramids store identical information</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">The difference between a Gaussian level and the coarser level upsampled back to match it</button>
                 </div>
-                <p class="quiz-explanation">Each Laplacian level captures exactly what blurring/downsampling would discard, so summing back up the pyramid reconstructs the original exactly.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Each Laplacian level captures exactly what blurring/downsampling would discard, so summing back up the pyramid reconstructs the original exactly.</p>
             </div>
         </div>
         <div class="lesson-nav">

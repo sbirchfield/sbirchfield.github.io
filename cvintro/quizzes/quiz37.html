@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">It only ever allowed one submission per architecture, forever, with no resubmission</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">It required all models to have exactly the same number of parameters, by rule</button>
                 </div>
-                <p class="quiz-explanation">A shared, standardized competition -- not just a big labeled dataset -- is what let different architectures be compared fairly and drove rapid progress.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> A shared, standardized competition -- not just a big labeled dataset -- is what let different architectures be compared fairly and drove rapid progress.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. According to the lesson, why does stacking more layers make a *plain* (non-residual) deep network worse, not better?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Deeper networks always overfit, regardless of the dataset's size, by construction</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">GPUs are physically incapable of executing more than 20 sequential layers in sequence</button>
                 </div>
-                <p class="quiz-explanation">This is the vanishing-gradient problem: repeated multiplication by small per-layer factors drives the gradient toward zero, so early layers stop learning.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> This is the vanishing-gradient problem: repeated multiplication by small per-layer factors drives the gradient toward zero, so early layers stop learning.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Structurally, why does a residual connection (<code>x_{l+1} = x_l + F(x_l)</code>) prevent the gradient from vanishing across many layers?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Its Jacobian is I + dF/dx_l, so an identity term always survives the multiplication chain</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">It replaces backpropagation entirely with a different optimization algorithm, like RANSAC</button>
                 </div>
-                <p class="quiz-explanation">The identity matrix in the Jacobian is never shrunk by a small activation derivative, unlike a plain network where every layer's Jacobian is purely <code>dF/dx_l</code>.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The identity matrix in the Jacobian is never shrunk by a small activation derivative, unlike a plain network where every layer's Jacobian is purely <code>dF/dx_l</code>.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What do the two learnable parameters <code>gamma</code> and <code>beta</code> do in batch normalization, after a channel's activations are normalized to mean 0 and standard deviation 1?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">They convert the normalized activations back into 8-bit integers</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">They let the network rescale and shift the normalized activations</button>
                 </div>
-                <p class="quiz-explanation">gamma (scale) and beta (shift) are applied on top of the 0/1-normalized activations, so the network can still recover a different mean/scale if that's actually useful.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> gamma (scale) and beta (shift) are applied on top of the 0/1-normalized activations, so the network can still recover a different mean/scale if that's actually useful.</p>
             </div>
         </div>
         <div class="lesson-nav">

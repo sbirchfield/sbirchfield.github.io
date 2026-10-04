@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Detection can find more object classes than segmentation ever possibly could, by nature</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">There is no real difference; the two terms are used interchangeably in the literature</button>
                 </div>
-                <p class="quiz-explanation">Detection localizes objects with boxes; semantic segmentation goes further and assigns a class label to every single pixel in the image.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Detection localizes objects with boxes; semantic segmentation goes further and assigns a class label to every single pixel in the image.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In this lesson's minimal FCN-style network, what does the decoder see when producing its output?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">A random subset of encoder features sampled at every resolution, chosen arbitrarily</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Only the ground-truth mask, visible exclusively during training, never at test time</button>
                 </div>
-                <p class="quiz-explanation">A plain FCN just downsamples then upsamples: the decoder has no access to the encoder's higher-resolution intermediate features, only the coarse bottleneck.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> A plain FCN just downsamples then upsamples: the decoder has no access to the encoder's higher-resolution intermediate features, only the coarse bottleneck.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. How do U-Net's skip connections fix the boundary-detail loss of a plain FCN?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">By concatenating the encoder's higher-resolution features directly into the matching decoder stage</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">By adding more convolutional layers directly to the bottleneck itself, making it deeper</button>
                 </div>
-                <p class="quiz-explanation">Skip connections concatenate encoder features into the decoder at each matching resolution, so fine spatial detail never has to survive the lossy bottleneck in the first place.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Skip connections concatenate encoder features into the decoder at each matching resolution, so fine spatial detail never has to survive the lossy bottleneck in the first place.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. When the real pretrained FCN is run on a photo containing a tram, it labels part of the tram `train` and part `bus`. What does this reveal?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">FCN can only ever label one class per image, so this is expected of every photo</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Pascal VOC's 20-class vocabulary has no `tram` class</button>
                 </div>
-                <p class="quiz-explanation">The split roughly tracks a real visual seam (windows vs. body) and reflects VOC's limited vocabulary, not a random or nonsensical failure — a reminder that a model's answers are only as good as its label set.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The split roughly tracks a real visual seam (windows vs. body) and reflects VOC's limited vocabulary, not a random or nonsensical failure — a reminder that a model's answers are only as good as its label set.</p>
             </div>
         </div>
         <div class="lesson-nav">

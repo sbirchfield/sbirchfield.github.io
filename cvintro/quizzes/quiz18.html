@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">The plain average only produces correct results on already-grayscale images</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">There is no real difference between the two formulas in practice</button>
                 </div>
-                <p class="quiz-explanation">A plain average can't tell green and blue apart perceptually; weighting toward green (as human vision does) gives a much better brightness estimate.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> A plain average can't tell green and blue apart perceptually; weighting toward green (as human vision does) gives a much better brightness estimate.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In HSV, which channel should you threshold on to segment an object by color robustly, even under a lighting gradient across its surface?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Saturation, since it captures how vivid or washed-out the color is</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">All three channels equally, averaged together</button>
                 </div>
-                <p class="quiz-explanation">Hue captures which color something is, independent of how bright or washed-out it appears, so it stays consistent even as brightness varies across the object.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Hue captures which color something is, independent of how bright or washed-out it appears, so it stays consistent even as brightness varies across the object.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does video/JPEG compression discard resolution from the chroma channels (<code>Cb</code>, <code>Cr</code>) more aggressively than from luma (<code>Y</code>)?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">The human visual system resolves fine spatial detail in luma far better than in chroma</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)"><code>Cb</code> and <code>Cr</code> are simply redundant copies of <code>Y</code>, carrying no new information</button>
                 </div>
-                <p class="quiz-explanation">Chroma subsampling exploits the fact that losing the same amount of detail is far less objectionable in color than in brightness.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Chroma subsampling exploits the fact that losing the same amount of detail is far less objectionable in color than in brightness.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why was the L*a*b* color space designed the way it was?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">So that hue and brightness channels are always numerically identical to each other</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">So that Euclidean distance between two Lab colors approximates perceived color difference</button>
                 </div>
-                <p class="quiz-explanation">Equal RGB distances can correspond to wildly different perceived differences depending on where they fall in color space; Lab was designed so Euclidean distance tracks perception much more consistently.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Equal RGB distances can correspond to wildly different perceived differences depending on where they fall in color space; Lab was designed so Euclidean distance tracks perception much more consistently.</p>
             </div>
         </div>
         <div class="lesson-nav">

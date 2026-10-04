@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">The shape's orientation angle in radians</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Always zero, by definition, for any binary image</button>
                 </div>
-                <p class="quiz-explanation"><code>m00 = sum I(x,y)</code> over all pixels, which for a binary image is just a count of foreground pixels.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> <code>m00 = sum I(x,y)</code> over all pixels, which for a binary image is just a count of foreground pixels.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why are central moments <code>mu_pq</code> preferred over raw moments <code>m_pq</code> for describing a shape's spread?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Central moments are faster to compute than raw moments for large images</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">There is no real difference between them; the two terms are used interchangeably</button>
                 </div>
-                <p class="quiz-explanation">Raw moments (except <code>m00</code>) depend on where the shape sits in the image; central moments are translation-invariant.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Raw moments (except <code>m00</code>) depend on where the shape sits in the image; central moments are translation-invariant.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What property makes Hu moments useful for comparing shapes?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">They are (nearly) invariant to the shape's translation, scale, and rotation</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">They are always exactly equal to 1, regardless of the shape</button>
                 </div>
-                <p class="quiz-explanation">The lesson shows a translated and a rotated+scaled version of the same shape produce similar Hu moments, while a different shape does not.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The lesson shows a translated and a rotated+scaled version of the same shape produce similar Hu moments, while a different shape does not.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. The orientation formula <code>theta = 0.5 * atan2(2*mu11, mu20 - mu02)</code> is computed from which moments?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)"><code>m00</code> alone, the total foreground pixel count</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">The central second-order moments <code>mu20</code>, <code>mu02</code>, <code>mu11</code></button>
                 </div>
-                <p class="quiz-explanation">The second-order central moments describe the shape's spread around its centroid, from which the major-axis angle is derived.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The second-order central moments describe the shape's spread around its centroid, from which the major-axis angle is derived.</p>
             </div>
         </div>
         <div class="lesson-nav">

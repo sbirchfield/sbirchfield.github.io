@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">The convolutional kernel weights themselves, visualized directly</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">The class label the model predicts, overlaid as text on the image</button>
                 </div>
-                <p class="quiz-explanation">A pixel with large gradient magnitude is one the network's prediction is most sensitive to -- a pixel it's 'looking at'.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> A pixel with large gradient magnitude is one the network's prediction is most sensitive to -- a pixel it's 'looking at'.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why are Grad-CAM heatmaps coarser (lower-resolution) than saliency maps?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Grad-CAM intentionally blurs its own output for aesthetic reasons</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Saliency maps are actually the coarser of the two, not Grad-CAM</button>
                 </div>
-                <p class="quiz-explanation">Grad-CAM's resolution matches whichever conv layer it uses, which is coarser than the full input resolution a saliency map operates at.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Grad-CAM's resolution matches whichever conv layer it uses, which is coarser than the full input resolution a saliency map operates at.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. On *clean* test images (no marker present), why does Grad-CAM still catch <code>model_shortcut</code>'s reliance on the marker far more reliably than raw saliency does?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Grad-CAM pools gradients over a whole feature-map channel, smoothing out pixel-level noise</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">There is actually no measurable difference between the two methods on clean images at all</button>
                 </div>
-                <p class="quiz-explanation">The lesson reports Grad-CAM's peak lands in the marker region 92% of the time on clean images versus only 56% for saliency, attributed to Grad-CAM's channel-level pooling smoothing out pixel noise.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The lesson reports Grad-CAM's peak lands in the marker region 92% of the time on clean images versus only 56% for saliency, attributed to Grad-CAM's channel-level pooling smoothing out pixel noise.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does t-SNE do differently from a linear projection like PCA (Lesson 6)?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">t-SNE and PCA are mathematically identical operations under the hood, just renamed</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">t-SNE explicitly optimizes to preserve local neighborhoods in the projection</button>
                 </div>
-                <p class="quiz-explanation">t-SNE emphasizes preserving which points are close to which other points locally, which is why same-class images can end up visibly clustered even without ever seeing their labels.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> t-SNE emphasizes preserving which points are close to which other points locally, which is why same-class images can end up visibly clustered even without ever seeing their labels.</p>
             </div>
         </div>
         <div class="lesson-nav">

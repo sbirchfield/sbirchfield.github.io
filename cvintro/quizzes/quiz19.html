@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">GMM cannot handle more than 2 clusters at once, unlike k-means which has no such limit</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">There is no meaningful difference; they are the same algorithm under two different names</button>
                 </div>
-                <p class="quiz-explanation">GMM generalizes k-means by giving each cluster its own covariance shape and computing a probability of membership for every point, rather than a single hard label.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> GMM generalizes k-means by giving each cluster its own covariance shape and computing a probability of membership for every point, rather than a single hard label.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does k-means fail on two concentric rings, landing at chance accuracy?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">The rings dataset simply has too many points for k-means to process efficiently</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">k-means requires labeled training data, which the rings dataset entirely lacks</button>
                 </div>
-                <p class="quiz-explanation">Assigning each point to its nearest center can only produce straight-line boundaries between clusters, which cannot separate one ring from another.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Assigning each point to its nearest center can only produce straight-line boundaries between clusters, which cannot separate one ring from another.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In DBSCAN, what makes a point a <code>core point</code>?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">At least <code>min_samples</code> other points lie within distance <code>eps</code> of it</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">It was simply the first point visited by the algorithm</button>
                 </div>
-                <p class="quiz-explanation">A core point is defined purely by local density: enough neighbors within a fixed radius, with no notion of a cluster center at all.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> A core point is defined purely by local density: enough neighbors within a fixed radius, with no notion of a cluster center at all.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What can DBSCAN do that neither k-means nor GMM can, when clutter/noise points are added to a dataset?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">Guarantee a globally optimal clustering regardless of initialization</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Label a point as "noise," rather than being forced to assign it to some cluster</button>
                 </div>
-                <p class="quiz-explanation">k-means and GMM assign every point to some cluster no matter what; DBSCAN has an explicit noise category for points that aren't part of any sufficiently dense region.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> k-means and GMM assign every point to some cluster no matter what; DBSCAN has an explicit noise category for points that aren't part of any sufficiently dense region.</p>
             </div>
         </div>
         <div class="lesson-nav">

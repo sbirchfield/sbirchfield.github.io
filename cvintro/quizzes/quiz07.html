@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Ordinary Euclidean distance</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">The chamfer distance approximation</button>
                 </div>
-                <p class="quiz-explanation">Manhattan distance (<code>|dx| + |dy|</code>) forms diamonds; chessboard forms squares; Euclidean forms circles.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Manhattan distance (<code>|dx| + |dy|</code>) forms diamonds; chessboard forms squares; Euclidean forms circles.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does the plain Freeman chain-code estimate <code>L = N_e + sqrt(2)*N_o</code> systematically overestimate a smooth curve's true length?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Because the diagonal weight <code>sqrt(2)</code> used in the formula is too small to matter at all</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It actually underestimates the true length significantly, not overestimates it as commonly assumed</button>
                 </div>
-                <p class="quiz-explanation">A digitized circle's boundary alternates through many short zig-zag steps, which sum to more length than the smooth true arc.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> A digitized circle's boundary alternates through many short zig-zag steps, which sum to more length than the smooth true arc.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the key computational advantage of the chamfer distance transform over an exact Euclidean distance transform?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">It approximates the result with two fast raster-scan passes</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">It requires no distance function of any kind, relying instead on simple pixel counting heuristics</button>
                 </div>
-                <p class="quiz-explanation">The chamfer transform propagates local distances in two raster-scan passes, a fast approximation to the more expensive exact Euclidean distance transform.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The chamfer transform propagates local distances in two raster-scan passes, a fast approximation to the more expensive exact Euclidean distance transform.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does the chessboard distance <code>D8</code> correspond to physically?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">The number of pawn moves needed to travel between two squares</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">The number of king moves on a chessboard between two squares</button>
                 </div>
-                <p class="quiz-explanation"><code>D8 = max(|dx|, |dy|)</code> is the shortest path length when diagonal (8-connected) moves are allowed, like a chess king.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> <code>D8 = max(|dx|, |dy|)</code> is the shortest path length when diagonal (8-connected) moves are allowed, like a chess king.</p>
             </div>
         </div>
         <div class="lesson-nav">

@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">OLS requires at least 100 data points to produce a valid fit</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">OLS always overestimates the slope, regardless of the noise direction</button>
                 </div>
-                <p class="quiz-explanation">Total least squares (TLS) measures perpendicular distance and treats both coordinates symmetrically, which is more appropriate when both x and y carry comparable noise.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Total least squares (TLS) measures perpendicular distance and treats both coordinates symmetrically, which is more appropriate when both x and y carry comparable noise.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does ordinary least-squares fitting break catastrophically under outliers?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Outliers only ever affect the intercept term, never the slope, regardless of their position</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Squaring residuals actually makes outliers contribute less, not more, by design</button>
                 </div>
-                <p class="quiz-explanation">Squaring a large residual makes it dominate the total cost, so the fit moves away from the correct points to reduce that one huge squared term.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Squaring a large residual makes it dominate the total cost, so the fit moves away from the correct points to reduce that one huge squared term.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the core strategy RANSAC uses to fit a model in the presence of outliers?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">It repeatedly picks the smallest possible random subset needed to define a candidate model</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">It requires the user to manually label which points are outliers beforehand, before fitting</button>
                 </div>
-                <p class="quiz-explanation">RANSAC fits from minimal random samples and picks whichever candidate has the largest consensus set, then does a final least-squares refit on just the inliers.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> RANSAC fits from minimal random samples and picks whichever candidate has the largest consensus set, then does a final least-squares refit on just the inliers.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. According to the RANSAC iteration-count formula, why does fitting a homography (minimal sample size 4) require many more iterations than fitting a line (minimal sample size 2) at the same outlier rate?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">The iteration count does not depend on the minimal sample size at all</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">The probability of drawing an all-inlier sample is <code>w^n</code></button>
                 </div>
-                <p class="quiz-explanation">Since the chance of an all-inlier sample is w raised to the sample size, a larger minimal sample (4 vs. 2) makes an all-inlier draw far less likely, requiring many more trials for the same confidence.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Since the chance of an all-inlier sample is w raised to the sample size, a larger minimal sample (4 vs. 2) makes an all-inlier draw far less likely, requiring many more trials for the same confidence.</p>
             </div>
         </div>
         <div class="lesson-nav">

@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Translation is fundamentally impossible to represent with any matrix, homogeneous or not, ever</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">A homography only works correctly on images that have already been translated beforehand</button>
                 </div>
-                <p class="quiz-explanation">Representing a 2D point as (x, y, 1) lets a 3x3 matrix encode translation directly, unlike a 2x2 matrix acting on (x, y) alone.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Representing a 2D point as (x, y, 1) lets a 3x3 matrix encode translation directly, unlike a 2x2 matrix acting on (x, y) alone.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What specifically causes a homography to destroy parallelism, unlike an affine transform?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Applying the transform to the image more than once in sequence</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">The mere presence of a nonzero translation term in the matrix</button>
                 </div>
-                <p class="quiz-explanation">An affine transform's bottom row is always (0, 0, 1); a homography's nonzero (g, h) introduces the division effect that makes parallel lines converge.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> An affine transform's bottom row is always (0, 0, 1); a homography's nonzero (g, h) introduces the division effect that makes parallel lines converge.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. How does the point-at-infinity trick locate a vanishing point?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">By applying the homography to the homogeneous point representing the lines' shared direction</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">It only works for vertical lines, never for horizontal ones, due to a coordinate convention</button>
                 </div>
-                <p class="quiz-explanation">A point with zero third homogeneous coordinate represents a direction at infinity; transforming it by H lands exactly where the two parallel lines' images converge.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> A point with zero third homogeneous coordinate represents a direction at infinity; transforming it by H lands exactly where the two parallel lines' images converge.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In what two situations does a single homography exactly relate two photographs of a scene?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">Only when the photographed scene contains no straight lines at all, by construction</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Photographing a flat surface, or photographing any scene from a camera that only rotates in place</button>
                 </div>
-                <p class="quiz-explanation">A homography exactly models plane-to-plane relationships (a flat scene) or pure camera rotation about a fixed center; a translating camera viewing a genuinely 3D scene has no single exact homography relating the views.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> A homography exactly models plane-to-plane relationships (a flat scene) or pure camera rotation about a fixed center; a translating camera viewing a genuinely 3D scene has no single exact homography relating the views.</p>
             </div>
         </div>
         <div class="lesson-nav">

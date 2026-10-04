@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Always using the largest possible batch size for the target task</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Manually copying weights between two unrelated tasks without any pretraining</button>
                 </div>
-                <p class="quiz-explanation">Transfer learning sidesteps data-starved target tasks by reusing generic low-level features learned on a data-rich source task, rather than learning everything from scratch.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Transfer learning sidesteps data-starved target tasks by reusing generic low-level features learned on a data-rich source task, rather than learning everything from scratch.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the key difference between the 'frozen backbone' and 'fine-tuning' strategies in this lesson?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Frozen backbone requires strictly more target training images than fine-tuning does</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">There is no real difference between the two strategies in practice, despite the names</button>
                 </div>
-                <p class="quiz-explanation">Frozen backbone only trains the new head; fine-tuning also updates the backbone, but carefully, with a small backbone learning rate to avoid wrecking what it already learned.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Frozen backbone only trains the new head; fine-tuning also updates the backbone, but carefully, with a small backbone learning rate to avoid wrecking what it already learned.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does fine-tuning use a backbone learning rate roughly 30x smaller than the classifier head's learning rate?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">A large backbone update from just 30 target examples would overfit those few images</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Because the backbone simply has more parameters than the classifier head, by architecture</button>
                 </div>
-                <p class="quiz-explanation">A much smaller backbone learning rate protects the pretrained features from being wiped out by noisy updates from a tiny target dataset.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> A much smaller backbone learning rate protects the pretrained features from being wiped out by noisy updates from a tiny target dataset.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why is the comparison between the toy frozen backbone and the real ImageNet-pretrained ResNet-18 not a perfectly controlled experiment, according to the lesson's caveat?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">The comparison secretly uses different target images for each strategy</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">ImageNet's 1,000 classes already include cats and several vehicle types</button>
                 </div>
-                <p class="quiz-explanation">Since ImageNet already contains cat and vehicle photos, some of ResNet-18's advantage is direct class overlap, not purely richer general-purpose pretraining.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Since ImageNet already contains cat and vehicle photos, some of ResNet-18's advantage is direct class overlap, not purely richer general-purpose pretraining.</p>
             </div>
         </div>
         <div class="lesson-nav">

@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Neither one involves any matrix multiplication at any step</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">PCA and camera projection are unrelated operations with no shared structure</button>
                 </div>
-                <p class="quiz-explanation">Both compute a projection via a dot product between a fixed direction and the input coordinates; they differ only in how that direction was chosen.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Both compute a projection via a dot product between a fixed direction and the input coordinates; they differ only in how that direction was chosen.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What single operation does the lesson show convolution, the Fourier transform, and a homography all secretly are?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Gradient descent updates applied to each learnable parameter</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">Random sampling procedures used to initialize the weights</button>
                 </div>
-                <p class="quiz-explanation">Each output value in all three is a dot product between the input and a fixed row/kernel/basis function, which is exactly what one row of a matrix multiply computes.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Each output value in all three is a dot product between the input and a fixed row/kernel/basis function, which is exactly what one row of a matrix multiply computes.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What can a single linear projection classifier never do, regardless of how w and b are chosen?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Separate a ring of points from a disk of points it surrounds</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Be visualized in 1D after projecting the data down</button>
                 </div>
-                <p class="quiz-explanation">A single projection can only produce a straight-line (hyperplane) decision boundary, and no straight line can separate a ring from the disk it encloses.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> A single projection can only produce a straight-line (hyperplane) decision boundary, and no straight line can separate a ring from the disk it encloses.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the classification example, what determines which side of the decision boundary a point falls on?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">The point's raw color channel values, unrelated to w or b</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">The sign of the projected score <code>w^T x + b</code></button>
                 </div>
-                <p class="quiz-explanation">Points are classified by thresholding the projected score at zero: positive score means one class, negative means the other.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Points are classified by thresholding the projected score at zero: positive score means one class, negative means the other.</p>
             </div>
         </div>
         <div class="lesson-nav">

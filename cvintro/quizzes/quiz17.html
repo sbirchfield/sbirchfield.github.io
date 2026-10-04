@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Any image whatsoever, regardless of its content</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Only images that have already been JPEG-compressed</button>
                 </div>
-                <p class="quiz-explanation">RLE stores (value, run length) pairs for consecutive identical pixels, so it shines on flat regions but does nothing useful when pixel values rarely repeat, as in noisy photographs.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> RLE stores (value, run length) pairs for consecutive identical pixels, so it shines on flat regions but does nothing useful when pixel values rarely repeat, as in noisy photographs.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does Shannon entropy represent in the context of lossless image compression?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">The maximum possible file size the image could have after compression</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">The number of unique pixel values present anywhere in the image</button>
                 </div>
-                <p class="quiz-explanation">Entropy H = -sum(p_i * log2(p_i)) is the theoretical minimum average bits/pixel achievable by any prefix code based on the symbol probabilities; Huffman coding gets close to, but does not always exactly reach, this bound.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Entropy H = -sum(p_i * log2(p_i)) is the theoretical minimum average bits/pixel achievable by any prefix code based on the symbol probabilities; Huffman coding gets close to, but does not always exactly reach, this bound.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In JPEG compression, what is the main effect of quantizing (dividing and rounding) the DCT coefficients of an 8x8 block?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">It sets many coefficients, especially high-frequency ones, to exactly zero</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">It removes the need for any Huffman coding step afterward entirely</button>
                 </div>
-                <p class="quiz-explanation">Quantization divides coefficients by values from a quantization table and rounds, zeroing out many low-energy (mostly high-frequency) coefficients so they cost almost nothing to store.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Quantization divides coefficients by values from a quantization table and rounds, zeroing out many low-energy (mostly high-frequency) coefficients so they cost almost nothing to store.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why is JPEG generally a poor choice for compressing graphics like screenshots or text, compared to PNG?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">JPEG only supports grayscale images, never full color</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Sharp edges spread energy across all DCT frequencies</button>
                 </div>
-                <p class="quiz-explanation">A sharp edge's energy is spread across every DCT frequency (like the cross pattern in a Fourier spectrum), so the same quantization that photos tolerate produces visible ringing and blocking artifacts around graphics' edges and text.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> A sharp edge's energy is spread across every DCT frequency (like the cross pattern in a Fourier spectrum), so the same quantization that photos tolerate produces visible ringing and blocking artifacts around graphics' edges and text.</p>
             </div>
         </div>
         <div class="lesson-nav">

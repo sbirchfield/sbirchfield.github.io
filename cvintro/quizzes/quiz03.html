@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Converts the image into a different color space such as HSV, preserving all original brightness information</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Computes a histogram of pixel intensities across the whole image, without modifying any pixel</button>
                 </div>
-                <p class="quiz-explanation">Thresholding is a per-pixel comparison against a cutoff value, producing a binary image.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Thresholding is a per-pixel comparison against a cutoff value, producing a binary image.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What criterion does Otsu's method use to automatically choose a threshold?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">It always uses a fixed threshold of 128, regardless of the image</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It searches for the threshold that maximizes the number of white pixels</button>
                 </div>
-                <p class="quiz-explanation">Otsu searches every possible cutoff for the one that best separates the histogram into two low-variance classes.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Otsu searches every possible cutoff for the one that best separates the histogram into two low-variance classes.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What effect does erosion have on a white region in a binary image?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Shrinks it, removing small specks</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Inverts black and white everywhere in the image</button>
                 </div>
-                <p class="quiz-explanation">Erosion only keeps a pixel white if the entire structuring element fits inside the white region, so regions shrink.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Erosion only keeps a pixel white if the entire structuring element fits inside the white region, so regions shrink.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is "opening" (erosion followed by dilation) typically used for?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">Detecting edges by computing the image gradient magnitude</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">Removing small white specks while restoring the size of larger regions</button>
                 </div>
-                <p class="quiz-explanation">Erosion first wipes out small specks entirely; the following dilation grows the surviving (larger) regions back toward their original size.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Erosion first wipes out small specks entirely; the following dilation grows the surviving (larger) regions back toward their original size.</p>
             </div>
         </div>
         <div class="lesson-nav">

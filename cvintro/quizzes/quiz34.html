@@ -31,7 +31,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">It discards spatial structure and requires re-learning the same feature at every position independently</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">It eliminates the need for any loss function during convolutional training</button>
                 </div>
-                <p class="quiz-explanation">Restricting each output to a local patch and sharing that patch's weights across positions both shrinks the parameter count and makes detections shift consistently with the input.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Restricting each output to a local patch and sharing that patch's weights across positions both shrinks the parameter count and makes detections shift consistently with the input.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. For a 3x3 convolution filter applied to a 3-channel RGB image, how many weights does that single filter actually have?</p>
@@ -41,7 +41,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">3, exactly one weight per color channel, ignoring the spatial kernel entirely</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It depends entirely on the image's spatial resolution, not on channel count</button>
                 </div>
-                <p class="quiz-explanation">A conv filter is really 3x3xC_in, so on 3 input channels a '3x3 filter' actually has 3x3x3=27 weights, summed into one output value per position.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> A conv filter is really 3x3xC_in, so on 3 input channels a '3x3 filter' actually has 3x3x3=27 weights, summed into one output value per position.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does max pooling add to a CNN, beyond shrinking the spatial size of the feature map?</p>
@@ -51,7 +51,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">A small amount of local translation invariance</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">A guarantee that the resulting network cannot possibly overfit</button>
                 </div>
-                <p class="quiz-explanation">Keeping only the max value in each window means small position shifts within that window don't change the pooled output.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Keeping only the max value in each window means small position shifts within that window don't change the pooled output.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the unseen-position generalization test, why does the flatten-based MLP perform near chance on shapes placed at corner positions never seen in training, while the CNN does not?</p>
@@ -61,7 +61,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">The MLP only works correctly on grayscale images, never color, due to its input layer</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">The MLP memorized which specific pixels tend to be on for each class at the training positions</button>
                 </div>
-                <p class="quiz-explanation">Flattening ties the MLP's decision to specific pixel positions, while the CNN's global pooling collapses spatial position, letting it recognize shapes regardless of where they appear.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Flattening ties the MLP's decision to specific pixel positions, while the CNN's global pooling collapses spatial position, letting it recognize shapes regardless of where they appear.</p>
             </div>
         </div>
         <div class="lesson-nav">
