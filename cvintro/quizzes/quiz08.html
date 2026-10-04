@@ -24,14 +24,14 @@
         <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
         <div id="quiz-questions">
             <div class="quiz-question" data-q="0">
-                <p class="quiz-question-text"><span class="quiz-q-number"></span>. In <code>cv2.flip(img, code)</code>, what does <code>code=1</code> do?</p>
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the key difference between a Euclidean transform and a similarity transform?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Flips the image horizontally (left-right)</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Flips the image vertically (top-bottom)</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Flips the image both horizontally and vertically</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Leaves the image completely unchanged</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">A similarity transform additionally allows uniform scaling, while a Euclidean transform only allows rotation and translation</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">A Euclidean transform additionally allows uniform scaling, while a similarity transform only allows rotation and translation</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">A similarity transform allows shearing, while a Euclidean transform does not</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">There is no difference -- the two terms describe the same set of transforms</button>
                 </div>
-                <p class="quiz-explanation"><code>code=1</code> is a horizontal flip, <code>code=0</code> is vertical, and <code>code=-1</code> flips both.</p>
+                <p class="quiz-explanation">Euclidean transforms (rotation + translation) preserve exact distances; similarity transforms add a single uniform scale factor, so they preserve angles and length ratios but not absolute distances.</p>
             </div>
             <div class="quiz-question" data-q="1">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Which of the three transform types (Euclidean, similarity, affine) is capable of shearing a square into a parallelogram?</p>

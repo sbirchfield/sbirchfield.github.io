@@ -210,7 +210,7 @@ QUIZZES = {
             "question": "Why are central moments <code>mu_pq</code> preferred over raw moments <code>m_pq</code> for describing a shape's spread?",
             "choices": [
                 "Central moments are always integers, unlike raw moments which can be fractional",
-                "Central moments are measured around the shape's own centroid",
+                "Central moments are translation invariant, unlike raw moments",
                 "Central moments are faster to compute than raw moments for large images",
                 "There is no real difference between them; the two terms are used interchangeably",
             ],
@@ -334,15 +334,15 @@ QUIZZES = {
     ],
     8: [
         {
-            "question": "In <code>cv2.flip(img, code)</code>, what does <code>code=1</code> do?",
+            "question": "What is the key difference between a Euclidean transform and a similarity transform?",
             "choices": [
-                "Flips the image horizontally (left-right)",
-                "Flips the image vertically (top-bottom)",
-                "Flips the image both horizontally and vertically",
-                "Leaves the image completely unchanged",
+                "A similarity transform additionally allows uniform scaling, while a Euclidean transform only allows rotation and translation",
+                "A Euclidean transform additionally allows uniform scaling, while a similarity transform only allows rotation and translation",
+                "A similarity transform allows shearing, while a Euclidean transform does not",
+                "There is no difference -- the two terms describe the same set of transforms",
             ],
             "correct": 0,
-            "explanation": "<code>code=1</code> is a horizontal flip, <code>code=0</code> is vertical, and <code>code=-1</code> flips both.",
+            "explanation": "Euclidean transforms (rotation + translation) preserve exact distances; similarity transforms add a single uniform scale factor, so they preserve angles and length ratios but not absolute distances.",
         },
         {
             "question": "Which of the three transform types (Euclidean, similarity, affine) is capable of shearing a square into a parallelogram?",
