@@ -106,6 +106,14 @@ eigenvectors (columns):
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=da3b211f"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this animation, a circle of vectors is morphed through A, from the identity (start) to A itself (end). Watch how every ordinary vector (gray) rotates away from its starting direction as the circle deforms into an ellipse, while the two eigenvectors (red, blue) stay on the same line the entire time — they only stretch, by exactly their eigenvalue.</p>
+<img alt="Animated walkthrough of a matrix transforming a circle into an ellipse, showing eigenvectors do not rotate" src="../animations/eigen_demo.gif" style="display: block; margin: 0 auto; max-width: 650px;"/>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=6c07574e"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -172,6 +180,14 @@ P.T @ A @ P (A in its own eigenbasis -- should be diagonal):
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=16f8d6ab"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this animation, the same matrix A is applied as three separate steps instead of one: first Pᵀ rotates the eigenvectors onto the x/y axes, then Λ stretches along those axes by the eigenvalues, then P rotates everything back. The matrix currently being applied is highlighted in orange. The result lands on the exact same ellipse as applying A directly above.</p>
+<img alt="Animated walkthrough of diagonalization A = P Lambda P transpose, applied as three sequential steps" src="../animations/diagonalization_demo.gif" style="display: block; margin: 0 auto; max-width: 750px;"/>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=06080955"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -203,6 +219,7 @@ P.T @ A @ P (A in its own eigenbasis -- should be diagonal):
 <h2 id="Eigen-decomposition-gives-orientation-and-size">Eigen decomposition gives orientation and size<a class="anchor-link" href="#Eigen-decomposition-gives-orientation-and-size">¶</a></h2><p><code>np.linalg.eigh</code> returns eigenvalues in ascending order along with their eigenvectors (as columns). For a filled ellipse with semi-axes $a \ge b$, the eigenvalues work out to $\lambda_{\max} = a^2/4$ and $\lambda_{\min}=b^2/4$, so</p>
 <p>$$a = 2\sqrt{\lambda_{\max}}, \qquad b = 2\sqrt{\lambda_{\min}}$$</p>
 <p>and the corresponding eigenvectors point along the major and minor axes.  Note that the angle of the major axis is the same as the angle computed in Lesson 5.</p>
+<p><em>Notice the square root here, which was absent in the refresher above: there, the eigenvalues of the arbitrary matrix <em>A</em> were themselves the stretch factors applied to the unit circle. Here, the eigenvalues of the covariance matrix are variances (built from squared coordinate deviations), so recovering an actual axis length means undoing that square, hence the square root.</em></p>
 </div>
 </div>
 </div>
