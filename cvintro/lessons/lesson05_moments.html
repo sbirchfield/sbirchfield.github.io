@@ -338,7 +338,7 @@ centroid     = (100.0, 100.0)
 <h2 id="Central-moments">Central moments<a class="anchor-link" href="#Central-moments">¶</a></h2><p>Raw moments $m_{pq}$ depend on where the shape happens to sit in the image — move the shape and every $m_{ij}$ (except $m_{00}$) changes. <strong>Central moments</strong> fix this by measuring around the shape's own centroid $(\bar x, \bar y)$ instead of the image origin:</p>
 <p>$$\mu_{pq} = \sum_{x,y} (x-\bar x)^p\,(y-\bar y)^q\, I(x,y)$$</p>
 <p>Recomputing this sum from scratch would mean re-visiting every pixel again. Instead, there's a shift-of-origin identity — the image-moment analogue of $\mathrm{Var}(X) = E[X^2] - E[X]^2$ — that computes the central moments directly from the raw moments:</p>
-<p>$$\mu_{20} = M_{20} - \bar x\,m_{10}, \qquad \mu_{02} = m_{02} - \bar y\,m_{01}, \qquad \mu_{11} = m_{11} - \bar x\,m_{01}$$</p>
+<p>$$\mu_{20} = m_{20} - \bar x\,m_{10}, \qquad \mu_{02} = m_{02} - \bar y\,m_{01}, \qquad \mu_{11} = m_{11} - \bar x\,m_{01} - \bar y \,m_{10}$$</p>
 <p><code>cv2.moments</code> returns both raw (<code>m['m20']</code>, ...) and central (<code>m['mu20']</code>, ...) moments in the same dictionary, so in practice you never need to compute these by hand —.</p>
 </div>
 </div>
