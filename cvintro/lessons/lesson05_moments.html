@@ -375,7 +375,7 @@ cv2.moments: mu20 = 5385316.0   mu02 = 2384824.0   mu11 = 2611874.0
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Orientation-from-central-moments">Orientation from central moments<a class="anchor-link" href="#Orientation-from-central-moments">¶</a></h2><p>The central moments $\mu_{20}$, $\mu_{02}$, $\mu_{11}$ describe the spread of the shape around its centroid — essentially its covariance matrix (which we revisit in Lesson 6). The angle of the major axis (the direction of greatest spread) is</p>
-<p>$$\theta = \frac{1}{2}\,\mathrm{atan2}\!\left(2\mu_{11},\; \mu_{20} - \mu_{02}\right)$$</p>
+    <p>$$\theta = \frac{1}{2}\mathrm{atan}\left(\frac{2\mu_{11}^{\prime}}{\mu_{20}^{\prime} - \mu_{02}^{\prime}}\right)$$</p>
 </div>
 </div>
 </div>
