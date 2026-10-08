@@ -338,7 +338,7 @@ centroid     = (100.0, 100.0)
 <h2 id="Central-moments">Central moments<a class="anchor-link" href="#Central-moments">¶</a></h2><p>Raw moments $m_{pq}$ depend on where the shape happens to sit in the image — move the shape and every $m_{ij}$ (except $m_{00}$) changes. <strong>Central moments</strong> fix this by measuring around the shape's own centroid $(\bar x, \bar y)$ instead of the image origin:</p>
 <p>$$\mu_{pq} = \sum_{x,y} (x-\bar x)^p\,(y-\bar y)^q\, I(x,y)$$</p>
 <p>Recomputing this sum from scratch would mean re-visiting every pixel again. Instead, there's a shift-of-origin identity — the image-moment analogue of $\mathrm{Var}(X) = E[X^2] - E[X]^2$ — that computes the central moments directly from the raw moments:</p>
-<p>$$\mu_{20} = M_{20} - \bar x\,m_{10}, \qquad \mu_{02} = m_{02} - \bar y\,m_{01}, \qquad \mu_{11} = m_{11} - \bar x\,m_{01}$$</p>
+<p>$$\mu_{20} = m_{20} - \bar x\,m_{10}, \qquad \mu_{02} = m_{02} - \bar y\,m_{01}, \qquad \mu_{11} = m_{11} - \bar x\,m_{01} = m_{11} - \bar y\,m_{10}$$</p>
 <p><code>cv2.moments</code> returns both raw (<code>m['m20']</code>, ...) and central (<code>m['mu20']</code>, ...) moments in the same dictionary, so in practice you never need to compute these by hand —.</p>
 </div>
 </div>
@@ -350,9 +350,10 @@ centroid     = (100.0, 100.0)
 <div class="input_area">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">mu20_manual</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s1">'m20'</span><span class="p">]</span> <span class="o">-</span> <span class="n">cx</span> <span class="o">*</span> <span class="n">m</span><span class="p">[</span><span class="s1">'m10'</span><span class="p">]</span>
 <span class="n">mu02_manual</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s1">'m02'</span><span class="p">]</span> <span class="o">-</span> <span class="n">cy</span> <span class="o">*</span> <span class="n">m</span><span class="p">[</span><span class="s1">'m01'</span><span class="p">]</span>
-<span class="n">mu11_manual</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s1">'m11'</span><span class="p">]</span> <span class="o">-</span> <span class="n">cx</span> <span class="o">*</span> <span class="n">m</span><span class="p">[</span><span class="s1">'m01'</span><span class="p">]</span>
+<span class="n">mu11_manual_v1</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s1">'m11'</span><span class="p">]</span> <span class="o">-</span> <span class="n">cx</span> <span class="o">*</span> <span class="n">m</span><span class="p">[</span><span class="s1">'m01'</span><span class="p">]</span>
+<span class="n">mu11_manual_v2</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s1">'m11'</span><span class="p">]</span> <span class="o">-</span> <span class="n">cy</span> <span class="o">*</span> <span class="n">m</span><span class="p">[</span><span class="s1">'m10'</span><span class="p">]</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'moments:     mu20 = </span><span class="si">{</span><span class="n">mu20_manual</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">   mu02 = </span><span class="si">{</span><span class="n">mu02_manual</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">   mu11 = </span><span class="si">{</span><span class="n">mu11_manual</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'moments:     mu20 = </span><span class="si">{</span><span class="n">mu20_manual</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">   mu02 = </span><span class="si">{</span><span class="n">mu02_manual</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">   mu11 = </span><span class="si">{</span><span class="n">mu11_manual_v1</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1"> = </span><span class="si">{</span><span class="n">mu11_manual_v2</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"cv2.moments: mu20 = </span><span class="si">{</span><span class="n">m</span><span class="p">[</span><span class="s1">'mu20'</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">   mu02 = </span><span class="si">{</span><span class="n">m</span><span class="p">[</span><span class="s1">'mu02'</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">   mu11 = </span><span class="si">{</span><span class="n">m</span><span class="p">[</span><span class="s1">'mu11'</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -363,7 +364,7 @@ centroid     = (100.0, 100.0)
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>moments:     mu20 = 5385316.0   mu02 = 2384824.0   mu11 = 2611874.0
+<pre>moments:     mu20 = 5385316.0   mu02 = 2384824.0   mu11 = 2611874.0 = 2611874.0
 cv2.moments: mu20 = 5385316.0   mu02 = 2384824.0   mu11 = 2611874.0
 </pre>
 </div>
