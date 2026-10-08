@@ -375,7 +375,9 @@ cv2.moments: mu20 = 5385316.0   mu02 = 2384824.0   mu11 = 2611874.0
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=69793fce"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Orientation-from-central-moments">Orientation from central moments<a class="anchor-link" href="#Orientation-from-central-moments">¶</a></h2><p>The central moments $\mu_{20}$, $\mu_{02}$, $\mu_{11}$ describe the spread of the shape around its centroid — essentially its covariance matrix (which we revisit in Lesson 6). The angle of the major axis (the direction of greatest spread) is</p>
+<h2 id="Orientation-from-central-moments">Orientation from central moments<a class="anchor-link" href="#Orientation-from-central-moments">¶</a></h2><p>The central moments $\mu_{20}$, $\mu_{02}$, $\mu_{11}$ describe the spread of the shape around its centroid — essentially its covariance matrix (which we revisit in Lesson 6). The angle of the major axis (the direction of greatest spread) is related to the moments:</p>
+<p>$$\tan 2\theta = \left(\frac{2\mu_{11}}{\mu_{20} - \mu_{02}}\right)$$</p>
+<p>When inverting this equation, be careful to use <code>atan2</code> (inverse tangent that takes two separate arguments) to ensure that the output angle is in the correct quadrant:</p>
 <p>$$\theta = \frac{1}{2}\,\mathrm{atan2}\!\left(2\mu_{11},\; \mu_{20} - \mu_{02}\right)$$</p>
 </div>
 </div>
