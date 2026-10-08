@@ -125,7 +125,8 @@ def build_notebook(nb_path: pathlib.Path, sequence=None):
     if m and int(m.group(1)) in QUIZZES:
         quiz_button = QUIZ_BUTTON_TEMPLATE.format(lesson_num=int(m.group(1)))
 
-    title = nb_path.stem.replace("_", " ").title()
+    m = re.match(r"lesson0*(\d+)_(.+)", nb_path.stem)
+    title = f"Lesson {m.group(1)}: {m.group(2).replace('_', ' ').title()}"
     page = PAGE_TEMPLATE.format(
         title=title,
         body=body,
