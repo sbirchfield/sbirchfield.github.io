@@ -71,14 +71,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=8f80b216"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Raw-moments,-computed-by-hand">Raw moments, computed by hand<a class="anchor-link" href="#Raw-moments,-computed-by-hand">¶</a></h2><p>The formula above is just a weighted sum over pixel coordinates, so for a binary image it's nothing more than: find every foreground pixel's $(x,y)$ coordinates, then sum $x^py^q$ over them. Here it is on a tiny 3x3 image with 3 foreground pixels, computed directly with NumPy and cross-checked against <code>cv2.moments</code>.</p>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=ad4e7813"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>In this animation, each foreground pixel is visited in turn, immediately contributing to the running sums, ending with the centroid (marked with a star).</p>
+<h2 id="Raw-moments,-computed-by-hand">Raw moments, computed by hand<a class="anchor-link" href="#Raw-moments,-computed-by-hand">¶</a></h2><p>The formula above is just a weighted sum over pixel coordinates, so for a binary image it's nothing more than: find every foreground pixel's $(x,y)$ coordinates, then sum $x^py^q$ over them. In this animation, each foreground pixel is visited in turn, immediately contributing to the running sums, ending with the centroid (marked with a star).</p>
 <img alt="Animated walkthrough of computing raw moments m00, m10, m01 and the centroid on a small binary image" src="../animations/moments_demo.gif" style="display: block; margin: 0 auto; max-width: 550px;"/>
 </div>
 </div>
@@ -86,7 +79,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=b515f240"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Create a small 3x3 binary image and compute the first-order moments.</p>
+<p>Create a tiny 3x3 binary image with 3 foreground pixels. Compute the first-order moments directly with NumPy and cross-check against <code>cv2.moments</code>.</p>
 </div>
 </div>
 </div>
