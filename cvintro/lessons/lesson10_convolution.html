@@ -129,6 +129,14 @@ match: True
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=92221982"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here's the same computation animated step by step: the kernel is first flipped, then the flipped kernel slides across the zero-padded signal one position at a time, taking a dot product at each step to produce one output value.</p>
+<img alt="Animated walkthrough of 1D convolution: flipping the kernel and sliding it across a signal, computing a dot product at each position" src="../animations/convolution_demo.gif" style="display: block; margin: 0 auto; max-width: 850px;"/>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=86b6a4dd"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -141,10 +149,19 @@ match: True
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=4fa20875"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Convolution-from-scratch">Convolution from scratch<a class="anchor-link" href="#Convolution-from-scratch">¶</a></h2><p>To implement 2D convolution: flip the kernel both horizontally and vertically, pad the image so the kernel never runs off the edge, then at every position multiply the flipped kernel elementwise by the pixels underneath it and sum.</p>
+<p>Shown in this animation: flip the kernel 180°, then slide it across a small zero-padded image, taking a dot product with the overlapping 3x3 window at each position. This is the same asymmetric kernel used again below in the convolution-vs-correlation comparison, where the flip will visibly matter.</p>
+<img alt="Animated walkthrough of 2D convolution: flipping the kernel 180 degrees and sliding it across an image, computing a dot product at each position" src="../animations/convolution2d_demo.gif" style="display: block; margin: 0 auto; max-width: 900px;"/>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=88eb2dc2"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Convolution-from-scratch">Convolution from scratch<a class="anchor-link" href="#Convolution-from-scratch">¶</a></h2><p>To implement 2D convolution: flip the kernel both horizontally and vertically, pad the image so the kernel never runs off the edge, then at every position multiply the flipped kernel elementwise by the pixels underneath it and sum. The code below implements this directly — except that for speed it loops over the kernel's (few) entries rather than the image's (many) pixels, shifting and accumulating the whole padded image at once for each kernel weight.</p>
+<h2 id="Convolution----an-efficient-trick">Convolution -- an efficient trick<a class="anchor-link" href="#Convolution----an-efficient-trick">¶</a></h2><p>The code below implements 2D convolution directly — except that for speed it loops over the kernel's (few) entries rather than the image's (many) pixels, shifting and accumulating the whole padded image at once for each kernel weight.</p>
 </div>
 </div>
 </div>
@@ -167,6 +184,14 @@ match: True
     <span class="k">return</span> <span class="n">out</span>
 </pre></div>
 </div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=24c25101"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here's the trick animated, on the same image and kernel as above: instead of lighting up one output cell per step, each step now lights up one kernel weight and adds a shifted, scaled copy of the <em>entire</em> image to a running accumulator — so after only 9 steps (one per kernel weight) rather than 25 (one per pixel), the accumulator achieves the same result.</p>
+<img alt="Animated walkthrough of the efficient convolution trick: for each kernel weight, add a shifted and scaled copy of the whole image to a running accumulator" src="../animations/convolution2d_fast_demo.gif" style="display: block; margin: 0 auto; max-width: 950px;"/>
 </div>
 </div>
 </div>
@@ -262,7 +287,7 @@ match: True
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=05b4428e"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Boundary-handling">Boundary handling<a class="anchor-link" href="#Boundary-handling">¶</a></h2><p>Near the edges, the kernel hangs off the image. <code>convolve2d</code> uses <code>cv2.copyMakeBorder</code> to pad first; the padding mode changes the result at the border. Common choices: constant (zero) padding, replicate (extend the edge pixel), and reflect (mirror across the edge, <code>REFLECT101</code> avoids duplicating the edge pixel itself). In this example, the inner $4 \times 4$ array of each output is identical to the original array — only the outer ring is different.</p>
+<h2 id="Boundary-handling">Boundary handling<a class="anchor-link" href="#Boundary-handling">¶</a></h2><p>Near the edges, the kernel hangs off the image. <code>convolve2d</code> uses <code>cv2.copyMakeBorder</code> to pad first; the padding mode changes the result at the border. Common choices: constant (zero) padding, replicate (extend the edge pixel), and reflect (mirror across the edge).  For the latter, there are two choices: <code>REFLECT101</code> is more common as it avoids duplicating the edge pixel itself. In this example, the inner $4 \times 4$ array of each output is identical to the original array — only the outer ring is different.</p>
 </div>
 </div>
 </div>
@@ -314,6 +339,14 @@ REFLECT101:
 </pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=7f0bf71f"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here's the same three modes compared side by side, with an arrow from each padding cell back to the interior pixel its value comes from (CONSTANT has no arrows, since every padding cell is simply 0):</p>
+<img alt="Side-by-side comparison of CONSTANT, REPLICATE, and REFLECT101 border padding, with arrows from each padding cell to its source pixel" src="../animations/boundary_modes.png" style="display: block; margin: 0 auto; max-width: 1000px;"/>
 </div>
 </div>
 </div>
@@ -423,6 +456,22 @@ separable == full 2D convolution? True
 </pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=ffdd7875"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here's the kernel side animated: the 5x5 Gaussian kernel built as an outer product of two 1D kernels, row by row.</p>
+<img alt="Animated walkthrough of building a 2D kernel as an outer product of two 1D kernels, row by row" src="../animations/separable_kernel_demo.gif" style="display: block; margin: 0 auto; max-width: 700px;"/>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=e18f28f1"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>And here's the convolution side animated: that kernel applied to the image above as a row pass followed by a column pass, compared against convolving with the full 2D kernel directly.</p>
+<img alt="Animated walkthrough of separable convolution applied as a row pass followed by a column pass, compared against direct 2D convolution" src="../animations/separable_pass_demo.gif" style="display: block; margin: 0 auto; max-width: 950px;"/>
 </div>
 </div>
 </div>
