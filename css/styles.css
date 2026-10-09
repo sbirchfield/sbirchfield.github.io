@@ -223,9 +223,16 @@ li {
 .paper {
     display: flex;
     margin-bottom: 30px;
+    padding: 10px;
     padding-bottom: 20px;
     border-bottom: 1px solid #f0f0f0;
     align-items: flex-start;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.paper:hover {
+    background-color: #eef0f2;
 }
 
 .paper:last-child {
@@ -242,7 +249,7 @@ li {
     transition: transform 0.3s ease;
 }
 
-.paper-thumbnail:hover {
+.paper:hover .paper-thumbnail {
     transform: scale(1.05);
 }
 
