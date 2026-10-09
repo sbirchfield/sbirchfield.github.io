@@ -31,10 +31,14 @@ im_bin2 = cv2.morphologyEx(im_bin, cv2.MORPH_OPEN, kernel)
 SEED_ORIG = (60, 110)  # (x, y) inside the first banana, same as the notebook
 
 # Downsample drastically so each pixel renders as a large, countable square.
+# Dilate first so thin parts (e.g. a banana's stem tip) survive the
+# area-average downsampling instead of being thresholded away into a
+# disconnected speck.
+im_bin2_dilated = cv2.dilate(im_bin2, np.ones((6, 6), np.uint8))
 TARGET_W = 36
 scale = TARGET_W / im_bin2.shape[1]
 TARGET_H = round(im_bin2.shape[0] * scale)
-small = cv2.resize(im_bin2, (TARGET_W, TARGET_H), interpolation=cv2.INTER_AREA)
+small = cv2.resize(im_bin2_dilated, (TARGET_W, TARGET_H), interpolation=cv2.INTER_AREA)
 _, binary = cv2.threshold(small, 127, 255, cv2.THRESH_BINARY)
 H, W = binary.shape
 seed = (round(SEED_ORIG[0] * scale), round(SEED_ORIG[1] * scale))

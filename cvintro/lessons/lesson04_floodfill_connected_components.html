@@ -181,7 +181,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=67719fcc"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Here's an animation of the stack-based algorithm (on a downsampled version of the same blob to make it easier to visualize).  Filled pixels are blue, the current frontier (pixels sitting on the stack, not yet popped) is orange.</p>
+<p>Here's an animation of the stack-based algorithm (on a downsampled image for easier visualization).</p>
 <img alt="Animated walkthrough of stack-based flood fill, showing the filled region and the frontier of pixels still on the stack growing outward from the seed" src="../animations/floodfill_demo.gif" style="display: block; margin: 0 auto; max-width: 500px;"/>
 </div>
 </div>
@@ -189,7 +189,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=a28e0330"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Flood-fill-from-a-seed-point">Flood fill from a seed point<a class="anchor-link" href="#Flood-fill-from-a-seed-point">¶</a></h2><p><code>cv2.floodFill</code> does exactly the same thing, just considerably faster because it is compiled.</p>
+<h2 id="Flood-fill-with-OpenCV">Flood fill with OpenCV<a class="anchor-link" href="#Flood-fill-with-OpenCV">¶</a></h2><p><code>cv2.floodFill</code> does exactly the same thing, just considerably faster because it is compiled.</p>
 </div>
 </div>
 </div>
@@ -237,7 +237,15 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=9ab456bc"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Connected-components:-label-every-blob-at-once">Connected components: label every blob at once<a class="anchor-link" href="#Connected-components:-label-every-blob-at-once">¶</a></h2><p>Instead of picking seeds by hand, the connected-component labeling algorithm (<code>cv2.connectedComponentsWithStats</code>) scans the whole image and assigns every blob its own integer label. (The classic algorithm, which is omitted for brevity, is known as <em>union-find</em>, and it requires two passes through the image, as well a traversal of the equivalence table.)</p>
+<h2 id="Connected-components:-label-every-blob-at-once">Connected components: label every blob at once<a class="anchor-link" href="#Connected-components:-label-every-blob-at-once">¶</a></h2><p>Instead of picking seeds by hand, the connected-component labeling algorithm scans the whole image and assigns every blob its own integer label.  A simple way to implement this: scan the image, and each time an unlabeled foreground pixel is encountered, run flood fill with a new color. This animation shows the process.</p>
+<img alt="Animated walkthrough of a scan-and-flood-fill connected components algorithm, labeling each blob with a new color as it's discovered" src="../animations/components_demo.gif" style="display: block; margin: 0 auto; max-width: 500px;"/>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=09481a17"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The classic connected-components algorithm (<code>cv2.connectedComponentsWithStats</code>) is known as <em>union-find</em>, and it requires two passes through the image, as well as a traversal of the equivalence table. The algorithm details are omitted for brevity, but the results are identical to the scan-and-flood-fill algorithm just mentioned.</p>
 </div>
 </div>
 </div>
@@ -278,7 +286,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=33c88544"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The connected-component labeling algorithm also returns handy stats (e.g., bounding box, area, centroid). This additional information is essentially free, as it requires almost no extra computation (as we will see in Lesson 5).</p>
+<p>Whichever implementation you choose, the connected-component labeling algorithm also returns handy stats (e.g., bounding box, area, centroid). This additional information is essentially free, as it requires almost no extra computation (as we will see in Lesson 5).</p>
 </div>
 </div>
 </div>
