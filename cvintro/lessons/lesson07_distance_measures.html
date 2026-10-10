@@ -262,6 +262,14 @@ Corrected estimate        = 375.4  (error -0.4%)
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=6285ec90"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This visualization shows a small example of the two-pass 3-4 chamfer algorithm in action, propagating distance outward from a seed blob (red pixels, where the distance to itself is zero). Pass 1 scans top-left to bottom-right, so it can only pull from neighbors already visited — it "casts a shadow" of known distances down and to the right. Pass 2 scans in the opposite direction (bottom-right to top-left), casting a shadow up and to the left, filling in everything pass 1 couldn't reach.</p>
+<img alt="Animated walkthrough of the two-pass 3-4 chamfer distance transform, propagating distance from a seed blob in a forward pass then a backward pass" src="../animations/chamfer_demo.gif" style="display: block; margin: 0 auto; max-width: 680px;"/>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=c4a36798">
 <div class="input">
 <div class="prompt input_prompt">In [6]:</div>
