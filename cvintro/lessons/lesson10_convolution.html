@@ -475,7 +475,7 @@ separable == full 2D convolution? True
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=ffdd7875"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This animation shows the 5x5 blur kernel built as an outer product of two 1D kernels.</p>
+<p>This animation shows the 5x5 blur kernel built as an outer product of two 1D kernels (or, equivalently, treating <code>kx</code> as a 1x5 row image and <code>ky</code> as a 5x1 column image and taking their 2D convolution).</p>
 <img alt="Animated walkthrough of building a 2D kernel as an outer product of two 1D kernels, row by row" src="../animations/separable_kernel_demo.gif" style="display: block; margin: 0 auto; max-width: 700px;"/>
 </div>
 </div>
@@ -483,7 +483,7 @@ separable == full 2D convolution? True
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=e18f28f1"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This animation shows separable convolution: that kernel applied to the image above as a row pass followed by a column pass, compared against convolving with the full 2D kernel directly.</p>
+<p>This animation shows separable convolution: that kernel applied to the image above as a row pass followed by a column pass. Separable convolution achieves the same result as convolving with the full 2D kernel directly.</p>
 <img alt="Animated walkthrough of separable convolution applied as a row pass followed by a column pass, compared against direct 2D convolution" src="../animations/separable_pass_demo.gif" style="display: block; margin: 0 auto; max-width: 950px;"/>
 </div>
 </div>

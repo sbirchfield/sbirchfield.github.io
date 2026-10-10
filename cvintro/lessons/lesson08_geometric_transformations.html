@@ -355,7 +355,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=3b945e99"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Here's the same three transforms animated, morphing the square continuously from identity to its final transform and back. Watch the corner angles: the Euclidean square stays rigid, the similarity square grows but stays "square-shaped," and only the affine square sheds its right angles into a parallelogram.</p>
+<p>This animation shows the square morphing continuously to its final transform and back. The Euclidean square stays rigid, the similarity square grows but remains "square-shaped," and the affine square shears its right angles into a parallelogram.</p>
 <img alt="Animated morph of a unit square from identity to a Euclidean, similarity, and affine transform, showing which properties (lengths, angles, parallelism) survive each" src="../animations/transform_hierarchy_demo.gif" style="display: block; margin: 0 auto; max-width: 900px;"/>
 </div>
 </div>
@@ -434,7 +434,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=87956363"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Here's the same process animated: the known warp distorting the photo, then the recovered transform undoing it, with the 3 landmarks tracked throughout. The side panel spells out an important asymmetry: stage 1 applies a known matrix directly, while stage 2 must first <em>solve</em> for that matrix from the 3 point correspondences before it can apply it.</p>
+<p>This animation shows the warp distorting the photo, then the recovered transform undoing it, indicating the 3 landmark points throughout. The side panel highlights an important asymmetry: stage 1 applies a matrix directly (which is generally unknown), while stage 2 must first <em>solve</em> for that matrix from the 3 point correspondences before it can apply it.</p>
 <img alt="Animated warp-then-rectify sequence, showing a photo being distorted by a known affine warp and then recovered using 3 tracked landmark points, with a side panel explaining the asymmetry between applying a known warp and solving for an unknown one" src="../animations/affine_rectify_demo.gif" style="display: block; margin: 0 auto; max-width: 680px;"/>
 </div>
 </div>
