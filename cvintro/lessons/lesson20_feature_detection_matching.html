@@ -105,6 +105,14 @@
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=3948f80b"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This animation slides the same 5x5 window around this image (with a little pixel noise added so the gradient scatter is an actual cloud of points) — the gradient scatter and its structure-tensor eigen-ellipse update live, and the classification (flat / edge / corner) follows directly from the two eigenvalues, exactly the rule above.</p>
+<img alt="Animated sliding window computing the local structure tensor as it moves around the image, showing the gradient scatter and eigen-ellipse updating live with a flat/edge/corner classification" src="../animations/structure_tensor_sweep_demo.gif" style="display: block; margin: 0 auto; max-width: 680px;"/>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=cd745658"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -226,6 +234,14 @@
 <li>Build a 128-dimensional descriptor from histograms of gradient orientations in a $4\times4$ grid of subregions around the keypoint.</li>
 </ol>
 <p>The result: a keypoint with a position, a scale, an orientation, and a descriptor vector that's designed to be very similar between two images even under moderate rotation, scaling, and illumination change.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=ee03c108"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This animation shows the 26-neighbor extremum test on a synthetic Difference-of-Gaussians scale-space with two blobs of different sizes. On the left, the dot marks the candidate pixel's (x, y) location as it slides across the image at different scales. On the right, the three patches show the candidate's 26 neighbors (8 in the same scale plus the matching 3x3 patches one scale level up and down). An orange box highlights the smallest of all 27 values. When the extremum is off-center, the candidate pixel is not a keypoint. The box turns green only when the extremum lands exactly on the candidate pixel: the center of the smaller blob at a smaller sigma, and the center of the larger blob (twice the radius) a full octave later — exactly the scale-selection that fixes the scale problem raised above.</p>
+<img alt="Animated SIFT scale-space extrema test: a candidate pixel slides across the image while a box tracks the smallest of its 27 space+scale neighborhood values, turning green exactly when it lands on the candidate itself at each blob's own center and matching scale" src="../animations/sift_scalespace_demo.gif" style="display: block; margin: 0 auto; max-width: 680px;"/>
 </div>
 </div>
 </div>
