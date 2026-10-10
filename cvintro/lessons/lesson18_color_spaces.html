@@ -207,6 +207,14 @@ pure green: Rec. 601 (cv2) Y =  149.7    Rec. 709 (modern) Y =  182.4
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=2d5be435"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This animation shows a point moving in two 3D spaces simultaneously: the RGB cube and the HSV cylinder. First it sweeps through every hue at full saturation and value, tracing the outer rim of both shapes; then it dims toward black at a fixed hue — a vertical drop in HSV, but a straight-line move toward the origin in RGB. This illustrates how HSV separates "which color" from "how bright" while RGB does not.</p>
+<img alt="Animated comparison of a single color's trajectory in the RGB cube versus the HSV cylinder, sweeping hue around the rim and then dropping value straight down" src="../animations/rgb_hsv_cube_demo.gif" style="display: block; margin: 0 auto; max-width: 680px;"/>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=761ecdf6">
 <div class="input">
 <div class="prompt input_prompt">In [6]:</div>
@@ -272,6 +280,14 @@ IoU vs. true disk, fixed RGB range:   0.710
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Hue thresholding recovers the disk perfectly regardless of the lighting gradient across it, while a fixed RGB range misses the darkened side entirely — exactly the brittleness that pure-RGB color segmentation runs into as soon as lighting isn't perfectly uniform.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=086ccbe7"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This animation sweeps the gradient of the shaded disk (from uniform lighting to that above), recomputing both masks live each frame. The HSV hue threshold (green) stays locked onto the disk throughout, while the fixed RGB range visibly erodes as the gradient steepens.</p>
+<img alt="Animated comparison of HSV hue thresholding versus a fixed RGB range as a lighting gradient across a disk steepens, showing the RGB mask eroding while the HSV mask stays stable" src="../animations/hue_threshold_robustness_demo.gif" style="display: block; margin: 0 auto; max-width: 820px;"/>
 </div>
 </div>
 </div>
