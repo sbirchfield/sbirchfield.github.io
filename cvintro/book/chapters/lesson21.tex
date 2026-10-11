@@ -52,13 +52,17 @@ The single-shot linear solve relies on the Taylor approximation, which only hold
 
 OpenCV's \code{calcOpticalFlowPyrLK} handles large motions by running Lucas-Kanade \textbf{iteratively} (re-warping and re-linearizing until convergence) on an \textbf{image pyramid} (Chapter~\ref{ch:lesson11}) --- estimate coarsely on a small, blurry version of the image first, then refine level by level. This combination lets it recover large motions accurately even though the underlying linear approximation is only valid locally, one small step at a time.
 
+\subsection*{Tracking points through a short video}
+
+To see Lucas-Kanade run over more than just two frames, a short synthetic sequence is built by repeatedly warping a single still photo with a smoothly changing affine transform (a small pan, rotation, and zoom per frame), simulating a moving camera. Shi-Tomasi corners are detected once on frame 0, then tracked frame-to-frame with \code{cv2.calcOpticalFlowPyrLK}, chaining each frame's output into the next frame's input: of 25 corners detected on frame 0, 24 are still tracked by frame 14. Points on strong corners (window frames, roofline) survive the whole sequence; a few drift off onto weak or repetitive texture and are dropped once the tracker loses confidence.
+
 \section{Horn-Schunck: a global alternative to windowed flow}
 
 Lucas-Kanade's window is a \emph{local} smoothness assumption: flow is constant over a small neighborhood, estimated independently at each point. The same year, Horn and Schunck (\citelink{hornschunck1981}{1981}) proposed a \emph{global} alternative: instead of many independent per-window solves, minimize a single energy over the whole image at once, trading off how well the flow satisfies the optical flow constraint equation against how smoothly it varies between neighboring pixels:
 \begin{equation}
 E(u,v) = \sum_{x,y} \underbrace{(I_x u + I_y v + I_t)^2}_{\text{data term}} \;+\; \alpha^2 \underbrace{\left(\|\nabla u\|^2 + \|\nabla v\|^2\right)}_{\text{smoothness term}}.
 \end{equation}
-The smoothness term is what makes this global: it couples every pixel's flow to its neighbors', so minimizing $E$ (e.g.\ by iterative Gauss-Seidel updates) lets reliable flow estimates near edges \emph{propagate} into flat, textureless regions that have no local information of their own --- exactly the failure mode the aperture problem produces at its worst, as Figure~\ref{fig:l21-4} shows.
+The smoothness term is what makes this global: it couples every pixel's flow to its neighbors', so minimizing $E$ (e.g., by iterative Gauss-Seidel updates) lets reliable flow estimates near edges \emph{propagate} into flat, textureless regions that have no local information of their own --- exactly the failure mode the aperture problem produces at its worst, as Figure~\ref{fig:l21-4} shows.
 
 \begin{figure}[h]
 \centering
@@ -69,32 +73,25 @@ The smoothness term is what makes this global: it couples every pixel's flow to 
 
 \section{Farneb\"ack's method for dense optical flow}
 
-Horn-Schunck's global optimization is elegant but expensive and slow to converge; for dense (every-pixel) flow, Farneb\"ack's method (\citelink{farneback2003}{2003}) --- exposed as \code{cv2.calcOpticalFlowFarneback} --- is a more popular method actually used in practice. It stays local, like Lucas-Kanade, but drops the constant-flow-in-a-window assumption in favor of locally approximating each neighborhood with a polynomial and comparing the polynomial expansions between frames.
+Horn-Schunck's global optimization is elegant but expensive and slow to converge; for dense (every-pixel) flow, Farneb\"ack's method (\citelink{farneback2003}{2003}) --- exposed as \code{cv2.calcOpticalFlowFarneback} --- is a more recent (but still classical) method. It stays local, like Lucas-Kanade, but drops the constant-flow-in-a-window assumption in favor of locally approximating each neighborhood with a polynomial and comparing the polynomial expansions between frames.
 
-On a synthetic scene with true motion $(5.0,-3.0)$: averaging the dense flow over \emph{all} pixels gives a biased $(2.25,-1.35)$, but restricting to textured (high-gradient) pixels recovers $(5.00,-3.00)$ almost exactly. This is the aperture problem again, at its most extreme: over flat, textureless background, there's no local information at all to estimate motion from, dragging the whole-image average away from the true value. Figure~\ref{fig:l21-5} shows the resulting flow field.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.85\textwidth]{figures/lesson21_fig05.png}
-\caption{A synthetic frame and its dense Farneb\"ack flow field, visualized with color = direction, brightness = speed. Every moving circle produces the same color here, since they all share the same true motion.}
-\label{fig:l21-5}
-\end{figure}
+To visualize a dense flow field, every pixel's $(u,v)$ vector is color-coded as an HSV pixel: hue encodes direction (angle around the color wheel) and brightness (value) encodes speed (magnitude) --- fast motion is bright, slow motion is dark, and the specific direction maps to a specific color. On a real video with independently moving objects, this color-coding immediately separates different motions at a glance --- exactly why it's the standard way to visualize dense flow fields.
 
 \subsection*{A real video: the Army sequence}
 
-On a real video with independently moving objects, this color-coding immediately separates different motions at a glance (Figure~\ref{fig:l21-6}) --- exactly why it's the standard way to visualize dense flow fields.
+Consider a pair of frames from the Middlebury benchmark, where the toy soldiers, the ball, and the background all move differently. Figure~\ref{fig:l21-5} compares Farneb\"ack's classical estimate against a top-ranked, deep-learning-based method from the same benchmark. Although Farneb\"ack separates the soldiers, the ball, and the background into distinct colors, its boundaries are soft and blur across object edges; the deep-learning method produces much sharper, cleaner boundaries, with far less bleeding into the background. The gap between these two outputs helps illustrate why deep learning became so dominant in computer vision.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.85\textwidth]{figures/lesson21_fig06.png}
-\caption{A frame from the Army sequence and its dense flow field. \attrib{Image source: \href{https://vision.middlebury.edu/flow/data}{Middlebury Optical Flow}.}}
-\label{fig:l21-6}
+\includegraphics[width=0.95\textwidth]{figures/lesson21_fig05.png}
+\caption{Frame 1 of the Army sequence, its dense Farneb\"ack flow field (color = direction, brightness = speed), and a top Middlebury-benchmark deep-learning result for comparison. \attrib{Image source: \href{https://vision.middlebury.edu/flow/}{Middlebury Optical Flow} evaluation; benchmark result from the \href{https://vision.middlebury.edu/flow/eval/results/results-e1.php}{Middlebury flow evaluation} leaderboard.}}
+\label{fig:l21-5}
 \end{figure}
 
 \subsection*{Exercises}
 \begin{enumerate}
   \item Rerun the sparse Lucas-Kanade comparison with a true motion of $(10.0, 8.0)$. Does \code{cv2.calcOpticalFlowPyrLK} still recover it accurately? At what point (try increasingly large motions) does it start to fail, and why would you expect a pyramid to help push that limit further out?
-  \item Modify the synthetic scene so the circles move with \emph{different} velocities (e.g.\ half moving one way, half another). Re-run the dense Farneb\"ack color visualization and confirm the two motions appear as two distinct colors.
+  \item Modify the synthetic scene so the circles move with \emph{different} velocities (e.g., half moving one way, half another). Re-run the dense Farneb\"ack color visualization and confirm the two motions appear as two distinct colors.
   \item In the aperture-problem demo, construct a small textured (non-edge) patch instead of a straight edge, and show that \emph{both} components of an arbitrary motion vector are recoverable from it --- unlike the edge case, this should not have an invisible direction of motion.
 \end{enumerate}
 
