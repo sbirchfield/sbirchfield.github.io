@@ -24,9 +24,9 @@ Extending Chapter~\ref{ch:lesson08}'s hierarchy: an affine matrix has a fixed bo
 
 \subsection*{Vanishing points, computed two ways}
 
-Where do these two lines actually meet? Intersecting the transformed line segments directly gives $(50, 5)$. More elegantly: transforming the \emph{point at infinity} in the original lines' shared direction $(1,0)$, represented in homogeneous coordinates as $(1,0,0)$, gives the exact same answer, $(50, 5)$ --- confirming that a homography applied to a point at infinity lands exactly on the corresponding vanishing point.
+Where do these two lines actually meet? Intersecting the transformed line segments directly gives $(0, 2)$. More elegantly: transforming the \emph{point at infinity} in the original lines' shared direction $(0,1)$, represented in homogeneous coordinates as $(0,1,0)$, gives the exact same answer, $(0, 2)$ --- confirming that a homography applied to a point at infinity lands exactly on the corresponding vanishing point.
 
-Points aren't the only thing homogeneous coordinates represent elegantly --- a line $ax+by+c=0$ is just as naturally the 3-vector $l=(a,b,c)$, with a point $p=(x,y,1)$ lying on it exactly when $l^\top p=0$. Two useful consequences follow from the cross product: the line through two points is $l=p_1\times p_2$, and the intersection of two lines is $p=l_1\times l_2$ --- both give the same vanishing point, $(50,5)$, computed a third way.
+Points aren't the only thing homogeneous coordinates represent elegantly --- a line $ax+by+c=0$ is just as naturally the 3-vector $l=(a,b,c)$, with a point $p=(x,y,1)$ lying on it exactly when $l^\top p=0$. Two useful consequences follow from the cross product: the line through two points is $l=p_1\times p_2$, and the intersection of two lines is $p=l_1\times l_2$ --- both give the same vanishing point, $(0,2)$, computed a third way.
 
 \section{When does a homography actually apply?}
 
@@ -61,7 +61,7 @@ Everything in this chapter has been 2D-to-2D: a homography relates two planes (i
 \begin{enumerate}
   \item Add zero-mean Gaussian noise (e.g.\ std 2 pixels) to the second point set before calling \code{cv2.findHomography}. How much does the estimated homography drift from the true one, and does increasing the number of correspondences (say, from 30 to 200) reduce that drift?
   \item Increase the number of injected bad matches from 15 until RANSAC starts to fail. Using the iteration-count formula from Chapter~\ref{ch:lesson23} (minimal sample size 4 for a homography), roughly what outlier fraction is that, and how many iterations would it theoretically require to stay $99\%$ confident of success?
-  \item In the vanishing-point demo, change the two lines to be \emph{vertical} instead of horizontal (e.g.\ $x=0$ and $x=1$), and predict, then verify, where their vanishing point ends up using the point-at-infinity trick with direction $(0,1,0)$.
+  \item In the vanishing-point demo, change the two lines to be \emph{horizontal} instead of vertical (e.g.\ $y=0$ and $y=1$), and predict, then verify, where their vanishing point ends up using the point-at-infinity trick with direction $(1,0,0)$.
 \end{enumerate}
 
 \vfill
