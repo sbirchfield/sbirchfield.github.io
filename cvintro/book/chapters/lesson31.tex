@@ -3,6 +3,34 @@
 
 Chapter~\ref{ch:lesson30} hand-picked a projection direction $w$ (the difference of class means) to separate two classes. That worked, but it required a human to notice a good heuristic. This chapter replaces the human with \textbf{gradient descent}: an automatic procedure that \emph{learns} $w$ and $b$ directly from data by repeatedly nudging them to reduce a loss. The recipe --- forward pass, loss, backward pass, update --- is the entire training loop behind every neural network in this course, no matter how large.
 
+\section{Gradient descent: using the slope to find a minimum}
+
+Training a model means minimizing a loss function over its parameters. Before extending the concept to many parameters, let's first see the idea in its simplest form: a 1D function of a single number $x$.
+
+At any point $x$, the derivative $f'(x)$ is the slope of $f$ at that point: positive means $f$ increases as $x$ increases, negative means it decreases. So taking a small step \emph{opposite} the slope always decreases $f$ (for a small enough step) --- that's the entire idea behind gradient descent:
+\begin{equation}
+x \leftarrow x - \eta\, f'(x)
+\end{equation}
+where $\eta$ (the \textbf{learning rate}) controls how big a step to take. Repeat this update and $x$ walks downhill, settling near a minimum, where $f'(x)\approx0$.
+
+Let $f$ be a parabola. Starting far from the minimum, each step moves against the local slope. The steps shrink on their own as they approach the bottom, since the slope $f'(x)=2(x-3)$ itself shrinks as $x\to3$ --- gradient descent naturally slows down near a minimum. In the case of a parabola, the local minimum found by gradient descent is also the global minimum, which in this case is at $x=3$ (Figure~\ref{fig:l31-1}).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.55\textwidth]{figures/lesson31_fig01.png}
+\caption{Gradient descent on a 1D parabola, starting far from the minimum.}
+\label{fig:l31-1}
+\end{figure}
+
+The learning rate $\eta$ matters: too small and convergence crawls; too large and the steps overshoot and diverge instead of settling (Figure~\ref{fig:l31-2}).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/lesson31_fig02.png}
+\caption{Learning rate tradeoffs: too small (slow), good (fast, settles), too large (diverges).}
+\label{fig:l31-2}
+\end{figure}
+
 \section{A new library: PyTorch and tensors}
 
 From here on, most chapters lean on \textbf{PyTorch} rather than OpenCV, because training neural networks needs two things OpenCV was never designed for: automatic differentiation (computing gradients of arbitrarily complex functions) and GPU acceleration for large matrix multiplications. A \textbf{tensor} is simply the general term for a grid of numbers of any dimensionality --- every array used so far in this course has really been a tensor all along; PyTorch's \code{torch.Tensor} is NumPy's \code{ndarray} with two extras: it can track a \code{.grad} for automatic differentiation, and it can live on a GPU.
@@ -11,13 +39,13 @@ Two PyTorch conventions worth flagging up front: it stores color images \textbf{
 
 \section{A binary classification problem}
 
-We reuse the same two-class dataset from Chapter~\ref{ch:lesson30} (Figure~\ref{fig:l31-1}), so the learned direction below can be compared directly against the hand-picked one.
+We reuse the same two-class dataset from Chapter~\ref{ch:lesson30} (Figure~\ref{fig:l31-3}), so the learned direction below can be compared directly against the hand-picked one.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.6\textwidth]{figures/lesson31_fig01.png}
+\includegraphics[width=0.6\textwidth]{figures/lesson31_fig03.png}
 \caption{The same two-class dataset from Chapter~\ref{ch:lesson30}.}
-\label{fig:l31-1}
+\label{fig:l31-3}
 \end{figure}
 
 \section{From a raw score to a probability}
@@ -28,24 +56,24 @@ The trouble is that classification accuracy (right or wrong) is flat almost ever
 \begin{equation}
 \sigma(z) = \frac{1}{1+e^{-z}}.
 \end{equation}
-A large positive $z$ maps close to 1, a large negative $z$ close to 0, and $z=0$ maps to exactly 0.5, right on the fence (Figure~\ref{fig:l31-2}).
+A large positive $z$ maps close to 1, a large negative $z$ close to 0, and $z=0$ maps to exactly 0.5, right on the fence (Figure~\ref{fig:l31-4}).
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.55\textwidth]{figures/lesson31_fig02.png}
+\includegraphics[width=0.55\textwidth]{figures/lesson31_fig04.png}
 \caption{The sigmoid activation.}
-\label{fig:l31-2}
+\label{fig:l31-4}
 \end{figure}
 
 \section{Binary cross-entropy: turning probability into a trainable loss}
 
-A probability alone isn't yet something to optimize. Training needs a single number --- \textbf{loss} --- that's small when the model's probabilities are good and large when they're bad. \textbf{Binary cross-entropy} penalizes each prediction according to how confident it was, and whether that confidence was justified: if the true label is 1, the penalty is $-\log(p)$ (near zero when $p$ is close to 1, exploding as $p\to0$); if the true label is 0, the mirror image, $-\log(1-p)$ (Figure~\ref{fig:l31-3}).
+A probability alone isn't yet something to optimize. Training needs a single number --- \textbf{loss} --- that's small when the model's probabilities are good and large when they're bad. \textbf{Binary cross-entropy} penalizes each prediction according to how confident it was, and whether that confidence was justified: if the true label is 1, the penalty is $-\log(p)$ (near zero when $p$ is close to 1, exploding as $p\to0$); if the true label is 0, the mirror image, $-\log(1-p)$ (Figure~\ref{fig:l31-5}).
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.6\textwidth]{figures/lesson31_fig03.png}
+\includegraphics[width=0.6\textwidth]{figures/lesson31_fig05.png}
 \caption{Binary cross-entropy: the penalty for one prediction, as a function of the predicted probability.}
-\label{fig:l31-3}
+\label{fig:l31-5}
 \end{figure}
 
 Averaging that per-example penalty over the whole dataset gives the full loss:
@@ -54,13 +82,13 @@ L = -\frac{1}{n}\sum_i\big[y_i\log\sigma(z_i) + (1-y_i)\log(1-\sigma(z_i))\big].
 \end{equation}
 This is exactly the two curves above, selected by $y_i$ (only one term is ever nonzero, since $y_i$ is 0 or 1) and averaged over every point. Because both the sigmoid and the logarithm are smooth, $L$ has a well-defined gradient everywhere --- the loss decreases smoothly as predictions get closer to being correct, instead of only changing at the decision boundary.
 
-\section{Backpropagation: the chain rule, applied}
+\section{Computing the gradient: the chain rule, applied}
 
-``Backprop'' is just the chain rule from Chapters~\ref{ch:lesson12}--\ref{ch:lesson13}, applied to a composed function: $L$ depends on $\sigma(z)$, which depends on $z=w^\top x+b$, which depends on $w$ and $b$. Working backward through that chain (skipping the algebra) gives a remarkably clean result:
+The gradient is found by applying the chain rule from calculus to this composed function: $L$ depends on $\sigma(z)$, which depends on $z=w^\top x+b$, which depends on $w$ and $b$. Working backward through that chain gives a remarkably clean result (skipping the algebra, which is straightforward but tedious):
 \begin{equation}
 \frac{\partial L}{\partial z_i} = \sigma(z_i) - y_i, \qquad \frac{\partial L}{\partial w} = \frac{1}{n}X^\top(\sigma(z)-y), \qquad \frac{\partial L}{\partial b} = \frac{1}{n}\sum_i(\sigma(z_i)-y_i).
 \end{equation}
-In words: the gradient is just the \emph{prediction error}, averaged (weighted by $x$ for $w$'s gradient). Wildly wrong predictions push the weights hard; correct ones barely move them at all.
+In words: the gradient is just the \emph{prediction error}, averaged (weighted by $x$ for $w$'s gradient). Wildly wrong predictions push the weights hard; correct ones barely move them at all. With only one layer here, this chain has just one link; Chapter~\ref{ch:lesson32} adds a second one, and that's where applying the chain rule \emph{repeatedly, layer by layer} earns the name \textbf{backpropagation}.
 
 \subsection*{Sanity checks: numerical gradient and PyTorch autograd}
 
@@ -68,7 +96,9 @@ Before trusting any hand-derived gradient, it's standard practice to check it tw
 
 \section{Training: the full loop}
 
-Initialize $w,b$ randomly (not with a clever heuristic this time), then repeat: forward pass, compute loss, backward pass, take a small step \emph{against} the gradient (gradient \emph{descent}, since the gradient points toward increasing loss).
+The same idea extends directly to many parameters at once: instead of a single slope $f'(x)$, the \textbf{gradient} is a vector of partial derivatives, one per parameter --- exactly $\partial L/\partial w$ and $\partial L/\partial b$ derived above. The update rule is identical in spirit: $w \leftarrow w - \eta\,\partial L/\partial w$, $b \leftarrow b - \eta\,\partial L/\partial b$. Initialize $w,b$ randomly (not with a clever heuristic this time), then repeat: forward pass, compute loss, backward pass, take a small step \emph{against} the gradient (gradient \emph{descent}, since the gradient points toward increasing loss).
+
+Every step below uses the gradient computed over the \emph{entire} training set at once ($n=120$ examples) --- this is sometimes called full-batch gradient descent, to distinguish it from the mini-batch \textbf{stochastic gradient descent (SGD)} real training actually uses, which Chapter~\ref{ch:lesson33} covers in depth.
 
 \begin{lstlisting}
 def train(X, y, n_epochs=500, lr=0.5, seed=0):
@@ -82,13 +112,13 @@ def train(X, y, n_epochs=500, lr=0.5, seed=0):
     return w, b
 \end{lstlisting}
 
-Training converges to $w=[2.954, 2.089]$, $b=-0.115$, with final accuracy $100.0\%$, shown in Figure~\ref{fig:l31-4}.
+Training converges to $w=[2.954, 2.089]$, $b=-0.115$, with final accuracy $100.0\%$, shown in Figure~\ref{fig:l31-6}.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.5\textwidth]{figures/lesson31_fig04.png}
+\includegraphics[width=0.5\textwidth]{figures/lesson31_fig06.png}
 \caption{Training loss over 500 epochs of gradient descent.}
-\label{fig:l31-4}
+\label{fig:l31-6}
 \end{figure}
 
 \subsection*{Compare to Chapter~\ref{ch:lesson30}'s hand-picked direction}

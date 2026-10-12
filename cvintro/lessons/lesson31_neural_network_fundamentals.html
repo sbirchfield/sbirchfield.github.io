@@ -308,7 +308,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=dc6f5345"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Computing-the-gradient:-the-chain-rule,-applied">Computing the gradient: the chain rule, applied<a class="anchor-link" href="#Computing-the-gradient:-the-chain-rule,-applied">¶</a></h2><p>The gradient is found by applying the chain rule from Lessons 12-13 to this composed function: $L$ depends on $\sigma(z)$, which depends on $z=w^\top x + b$, which depends on $w$ and $b$. Working backward through that chain gives a remarkably clean result (skipping the algebra, which is straightforward but tedious):</p>
+<h2 id="Computing-the-gradient:-the-chain-rule,-applied">Computing the gradient: the chain rule, applied<a class="anchor-link" href="#Computing-the-gradient:-the-chain-rule,-applied">¶</a></h2><p>The gradient is found by applying the chain rule from calculus to this composed function: $L$ depends on $\sigma(z)$, which depends on $z=w^\top x + b$, which depends on $w$ and $b$. Working backward through that chain gives a remarkably clean result (skipping the algebra, which is straightforward but tedious):</p>
 <p>$$\frac{\partial L}{\partial z_i} = \sigma(z_i) - y_i, \qquad \frac{\partial L}{\partial w} = \frac{1}{n}X^\top(\sigma(z)-y), \qquad \frac{\partial L}{\partial b} = \frac{1}{n}\sum_i(\sigma(z_i)-y_i)$$</p>
 <p>In words: the gradient is just the <em>prediction error</em>, averaged (weighted by $x$ for $w$'s gradient). Wildly wrong predictions push the weights hard; correct ones barely move them at all. With only one layer here, this chain has just one link; Lesson 32 adds a second one, and that's where applying the chain rule <em>repeatedly, layer by layer</em> earns the name <strong>backpropagation</strong>.</p>
 </div>
@@ -572,7 +572,13 @@ angle between them: 2.2 degrees
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>learned w = [-0.0791  0.0228] (norm=0.0824), b = 0.0005
+<pre>learned w = [-0.0791  0.0228] (norm=0.0824), b = 0.0005</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
 trained single-neuron accuracy: 50.0%
 (Lesson 30's exhaustive-search ceiling for ANY linear separator was 74%)
 </pre>
