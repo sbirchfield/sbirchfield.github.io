@@ -26,7 +26,7 @@
             <div class="quiz-question" data-q="0">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does the Fourier transform (Lesson 15) fail to tell you, that wavelets and Gabor filters are designed to capture?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Which frequencies are present, without knowing where in the image they occur</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Where in the image the frequencies occur</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">The overall average brightness of the image, summed across every pixel</button>
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">The image's color channel values at each individual pixel location</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">The size of the image in pixels, both its width and its height</button>
@@ -46,12 +46,12 @@
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. In a one-level 2D wavelet decomposition of an image, what does the LH subband respond to?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">A half-resolution blurred copy of the whole image</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">Vertical edges, since it is high-pass along rows and low-pass along columns</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Horizontal edges, since it is low-pass along rows and high-pass along columns</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Diagonal detail and corners, since it is high-pass in both directions</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 1)">A half-resolution blurred copy of the whole image</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 1)">Edges running in one particular direction, since it is low-pass along one axis and high-pass along the other</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 1)">Diagonal detail and corners, since it is high-pass along both axes</button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 1)">Uniform, texture-free regions, since it is low-pass along both axes</button>
                 </div>
-                <p class="quiz-explanation"><strong>Explanation:</strong> LH means low-pass along rows, high-pass along columns, which makes it sensitive to horizontal edges.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> LH is low-pass along one axis and high-pass along the other, which makes it sensitive to edges in one direction -- unlike HH (diagonal/corner detail, high-pass both ways) or LL (the blurry low-res approximation, low-pass both ways). The exact axis-to-direction mapping (LH = horizontal or vertical edges) depends on the row/column convention used.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does a Gabor filter's response tell you when the filter is tuned to one orientation and applied to bars drawn at several different orientations?</p>

@@ -571,7 +571,7 @@ QUIZZES = {
             "explanation": "The first derivative peaks at an edge; the second derivative crosses zero exactly at the edge location.",
         },
         {
-            "question": "Why does the Marr-Hildreth detector smooth the image with a Gaussian before applying the Laplacian?",
+            "question": "Why does the Marr-Hildreth detector smooth the image with a Gaussian before differentiating?",
             "choices": [
                 "To increase the overall contrast of the image before differentiating it further",
                 "Because a second derivative amplifies high-frequency noise even more",
@@ -701,7 +701,7 @@ QUIZZES = {
         {
             "question": "What does the Fourier transform (Lesson 15) fail to tell you, that wavelets and Gabor filters are designed to capture?",
             "choices": [
-                "Which frequencies are present, without knowing where in the image they occur",
+                "Where in the image the frequencies occur",
                 "The overall average brightness of the image, summed across every pixel",
                 "The image's color channel values at each individual pixel location",
                 "The size of the image in pixels, both its width and its height",
@@ -724,12 +724,12 @@ QUIZZES = {
             "question": "In a one-level 2D wavelet decomposition of an image, what does the LH subband respond to?",
             "choices": [
                 "A half-resolution blurred copy of the whole image",
-                "Vertical edges, since it is high-pass along rows and low-pass along columns",
-                "Horizontal edges, since it is low-pass along rows and high-pass along columns",
-                "Diagonal detail and corners, since it is high-pass in both directions",
+                "Edges running in one particular direction, since it is low-pass along one axis and high-pass along the other",
+                "Diagonal detail and corners, since it is high-pass along both axes",
+                "Uniform, texture-free regions, since it is low-pass along both axes",
             ],
-            "correct": 2,
-            "explanation": "LH means low-pass along rows, high-pass along columns, which makes it sensitive to horizontal edges.",
+            "correct": 1,
+            "explanation": "LH is low-pass along one axis and high-pass along the other, which makes it sensitive to edges in one direction -- unlike HH (diagonal/corner detail, high-pass both ways) or LL (the blurry low-res approximation, low-pass both ways). The exact axis-to-direction mapping (LH = horizontal or vertical edges) depends on the row/column convention used.",
         },
         {
             "question": "What does a Gabor filter's response tell you when the filter is tuned to one orientation and applied to bars drawn at several different orientations?",
@@ -829,7 +829,7 @@ QUIZZES = {
                 "So that it uses noticeably less memory per pixel than RGB requires",
                 "So that converting to grayscale is faster computationally than from RGB",
                 "So that hue and brightness channels are always numerically identical to each other",
-                "So that Euclidean distance between two Lab colors approximates perceived color difference",
+                "So that Euclidean distance between two L*a*b* colors approximates perceived color difference",
             ],
             "correct": 3,
             "explanation": "Equal RGB distances can correspond to wildly different perceived differences depending on where they fall in color space; Lab was designed so Euclidean distance tracks perception much more consistently.",
