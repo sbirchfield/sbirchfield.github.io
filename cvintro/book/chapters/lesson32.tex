@@ -18,6 +18,15 @@ h = \text{ReLU}(W_1x+b_1), \qquad z=w_2^\top h+b_2, \qquad p=\sigma(z).
 \end{equation}
 $\text{ReLU}(u)=\max(0,u)$ is the simplest common activation: linear everywhere except a single kink at zero. That one kink, applied independently to every unit of $h$, is enough --- the hidden layer can bend, fold, and stretch the input space so a \emph{linear} boundary in the transformed space corresponds to a highly nonlinear boundary back in the original coordinates.
 
+ReLU and sigmoid are two different activations doing different jobs here: ReLU is the \emph{hidden-layer} nonlinearity, reshaping the input space so the points become easier to separate, while sigmoid (carried over unchanged from Chapter~\ref{ch:lesson31}) squashes the final score $z$ into a probability at the end. Their shapes look fairly similar (Figure~\ref{fig:l32-2}), but each is suited to its own role: ReLU's unbounded output and simple derivative work well buried inside a network, while sigmoid's output confined to $(0,1)$ makes it readable as a probability at the output.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/lesson32_fig02.png}
+\caption{ReLU (the hidden-layer activation) versus sigmoid (the output activation) --- two different functions for two different jobs.}
+\label{fig:l32-2}
+\end{figure}
+
 \subsection*{Why the nonlinearity is essential}
 
 Without ReLU --- if the hidden layer were left as plain $h=W_1x+b_1$ --- the two layers would collapse into a single linear projection:
@@ -28,9 +37,11 @@ That's exactly Chapter~\ref{ch:lesson31}'s single neuron again, just with the tw
 
 \section{Backprop through two layers}
 
-The chain rule extends cleanly: propagate the error signal $\partial L/\partial z$ from Chapter~\ref{ch:lesson31} backward through the output projection to get $\partial L/\partial h$, then backward through the ReLU and the hidden projection to get $\partial L/\partial W_1,\partial L/\partial b_1$. Every step is either ``multiply by a weight matrix's transpose'' or ``multiply elementwise by an activation's derivative'' --- this is \emph{all} backpropagation ever is, no matter how many layers are stacked. A from-scratch implementation of forward and backward passes through a 2-layer MLP matches PyTorch's autograd gradients to within $3\times10^{-17}$ on every parameter.
+The chain rule extends cleanly: propagate the error signal $\partial L/\partial z$ from Chapter~\ref{ch:lesson31} backward through the output projection to get $\partial L/\partial h$, then backward through the ReLU and the hidden projection to get $\partial L/\partial W_1,\partial L/\partial b_1$. Every step is either ``multiply by a weight matrix's transpose'' or ``multiply elementwise by an activation's derivative'' --- stacking more layers just repeats these same two operations further back through the chain. A from-scratch implementation of forward and backward passes through a 2-layer MLP matches PyTorch's autograd gradients to within $3\times10^{-17}$ on every parameter.
 
 \section{Training}
+
+Same recipe as Chapter~\ref{ch:lesson31} --- forward pass, loss, backward pass, step against the gradient --- just with four parameter tensors ($W_1,b_1,W_2,b_2$) updated each epoch instead of two.
 
 \begin{lstlisting}
 def forward(X, W1, b1, W2, b2):
@@ -39,37 +50,37 @@ def forward(X, W1, b1, W2, b2):
     return sigmoid(z2), (X, a1)
 \end{lstlisting}
 
-With $H=4$ hidden units, trained for 3000 epochs: final accuracy $100.0\%$ (Chapter~\ref{ch:lesson31}'s single neuron managed only $50\%$ on this dataset), shown in Figure~\ref{fig:l32-2}.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.5\textwidth]{figures/lesson32_fig02.png}
-\caption{Training loss (2-layer MLP) over 3000 epochs.}
-\label{fig:l32-2}
-\end{figure}
-
-\section{The hidden layer's projections, made visible}
-
-Each hidden unit is itself a Chapter~\ref{ch:lesson30}-style projection: a direction $w_i$ (one column of $W_1$) and an offset $b_i$ (one entry of $b_1$), together defining a cut $w_i\cdot x+b_i=0$ that ReLU zeroes out on one side of. With only 2 input dimensions, all $H$ of these can be drawn directly over the original data, as Figure~\ref{fig:l32-3} shows.
+With $H=4$ hidden units, trained for 3000 epochs: final accuracy $100.0\%$ (Chapter~\ref{ch:lesson31}'s single neuron managed only $50\%$ on this dataset), shown in Figure~\ref{fig:l32-3}.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.5\textwidth]{figures/lesson32_fig03.png}
-\caption{Each hidden unit is one projection direction $w_i$, cutting the space along $w_i\cdot x+b_i=0$.}
+\caption{Training loss (2-layer MLP) over 3000 epochs.}
 \label{fig:l32-3}
+\end{figure}
+
+\section{The hidden layer's projections, made visible}
+
+Each hidden unit is itself a Chapter~\ref{ch:lesson30}-style projection: a direction $w_i$ (one column of $W_1$) and an offset $b_i$ (one entry of $b_1$), together defining a cut $w_i\cdot x+b_i=0$ that ReLU zeroes out on one side of. With only 2 input dimensions, all $H$ of these can be drawn directly over the original data, as Figure~\ref{fig:l32-4} shows.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{figures/lesson32_fig04.png}
+\caption{Each hidden unit is one projection direction $w_i$, cutting the space along $w_i\cdot x+b_i=0$.}
+\label{fig:l32-4}
 \end{figure}
 
 On its own, each cut is just a straight line --- no single one of them separates the ring from the disk. But the output layer combines all $H$ of their (ReLU'd) results together, and a handful of straight cuts arranged around the ring, combined with the right weights, can approximate a closed curve well enough to enclose it.
 
 \subsection*{What the hidden layer actually did}
 
-The output layer is \emph{just} a linear projection (Chapter~\ref{ch:lesson31}'s neuron) --- but it acts on $h$, the hidden layer's output, not on the original $x$. If the hidden layer did its job, the \emph{transformed} points should already be much easier to separate with a straight line. Since $h$ lives in $\mathbb{R}^4$ here, PCA (Chapter~\ref{ch:lesson06}) visualizes it in 2D, shown alongside the original space in Figure~\ref{fig:l32-4}.
+The output layer is \emph{just} a linear projection (Chapter~\ref{ch:lesson31}'s neuron) --- but it acts on $h$, the hidden layer's output, not on the original $x$. If the hidden layer did its job, the \emph{transformed} points should already be much easier to separate with a straight line. Since $h$ lives in $\mathbb{R}^4$ here, PCA (Chapter~\ref{ch:lesson06}) visualizes it in 2D, shown alongside the original space in Figure~\ref{fig:l32-5}.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.9\textwidth]{figures/lesson32_fig04.png}
+\includegraphics[width=0.9\textwidth]{figures/lesson32_fig05.png}
 \caption{Original input space vs.\ the hidden representation (top 2 PCA directions of a 4D space).}
-\label{fig:l32-4}
+\label{fig:l32-5}
 \end{figure}
 
 Even this lossy 2D snapshot of the full 4D hidden space shows the two classes pulled apart into something close to linearly separable --- a big improvement over the $74\%$ ceiling that was the best \emph{any} line could do in the original space (Chapter~\ref{ch:lesson30}). The actual output neuron works in the full 4D hidden space, where it achieves 100\% accuracy exactly. This is the entire mechanism of deep learning in miniature: each layer \emph{reshapes the space} so that the next layer's job gets easier, until the final layer's job is trivial --- a single linear projection.
@@ -97,12 +108,12 @@ A model's \textbf{capacity} is how rich a family of functions it can represent. 
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.55\textwidth]{figures/lesson32_fig05.png}
+\includegraphics[width=0.55\textwidth]{figures/lesson32_fig06.png}
 \caption{Accuracy vs.\ capacity, across 5 random seeds at each width.}
-\label{fig:l32-5}
+\label{fig:l32-6}
 \end{figure}
 
-$H=1$ (Figure~\ref{fig:l32-5}) caps out well below 100\% no matter how long it trains or which seed it starts from --- that's not an optimization failure, it's a representational ceiling: one hidden unit is just a single cut, so it inherits Chapter~\ref{ch:lesson30}'s $\sim74\%$ linear limit almost exactly. $H=2$ is better, but still capacity-limited --- none of the five seeds reach 100\%. $H=3$ is the actual knife's edge: the capacity to represent a perfect solution is there (one seed reaches exactly 100\%), but whether training finds it depends on \emph{which} seed it starts from (a preview of Chapter~\ref{ch:lesson33}'s optimization landscape problems).
+$H=1$ (Figure~\ref{fig:l32-6}) caps out well below 100\% no matter how long it trains or which seed it starts from --- that's not an optimization failure, it's a representational ceiling: one hidden unit is just a single cut, so it inherits Chapter~\ref{ch:lesson30}'s $\sim74\%$ linear limit almost exactly. $H=2$ is better, but still capacity-limited --- none of the five seeds reach 100\%. $H=3$ is the actual knife's edge: the capacity to represent a perfect solution is there (one seed reaches exactly 100\%), but whether training finds it depends on \emph{which} seed it starts from (a preview of Chapter~\ref{ch:lesson33}'s optimization landscape problems).
 
 By $H=4$, every seed reaches 100\% reliably: there's enough capacity that the network stops being the bottleneck, and training reliably finds a solution within that capacity. This is the general shape of a capacity curve --- a hard floor set by what the model \emph{can} represent, with optimization difficulty riding on top of it near the floor's edge. This same curve is revisited in Chapter~\ref{ch:lesson35} from the opposite direction: there, capacity is held generously high and \emph{data} is scarce, which turns ``enough capacity to represent the right answer'' into ``also enough capacity to memorize the wrong one.''
 
