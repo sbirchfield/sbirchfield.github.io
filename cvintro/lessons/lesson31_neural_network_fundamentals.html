@@ -443,6 +443,23 @@ max discrepancy: 5.55e-17
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=tr41n1ngl00ph4ndw0rk3d"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Watching-the-loop-run,-one-stage-at-a-time">Watching the loop run, one stage at a time<a class="anchor-link" href="#Watching-the-loop-run,-one-stage-at-a-time">¶</a></h3><p>The animation below plays through exactly this recipe — forward pass, loss, backward pass, update — one labeled stage at a time, on a single tiny example: $x=(2, 1)$, $y=1$, starting from $w=(-0.5, 0.3)$, $b=0$, with $\eta=0.5$. Unlike the 120-point dataset trained below, these numbers are simple enough to work out by hand.</p>
+<img alt="Animated single-neuron training loop: a computation graph with w.x+b, sigmoid, and loss boxes, cycling through forward pass, loss, backward pass, and update stages with a progress bar, on a hand-worked example that starts misclassified and converges over 3 consecutive updates" src="../animations/training_loop_demo.gif" style="display: block; margin: 0 auto; max-width: 760px;"/>
+<p><strong>Working the first step out by hand</strong> is a good way to confirm you've understood the formulas above before trusting them on a full dataset:</p>
+<p>$$z = w^\top x + b = (-0.5)(2) + (0.3)(1) + 0 = -0.7$$
+$$p = \sigma(z) = \sigma(-0.7) \approx 0.332$$
+$$L = -\log(p) \approx 1.103 \quad\text{(since } y=1\text{, only the } -\log(p) \text{ term applies)}$$
+$$\frac{\partial L}{\partial z} = p - y \approx 0.332 - 1 = -0.668$$
+$$\frac{\partial L}{\partial w_1} = x_1 \cdot \frac{\partial L}{\partial z} \approx -1.336, \qquad \frac{\partial L}{\partial w_2} = x_2 \cdot \frac{\partial L}{\partial z} \approx -0.668, \qquad \frac{\partial L}{\partial b} \approx -0.668$$
+$$w_1 \leftarrow -0.5 - 0.5(-1.336) \approx 0.168, \qquad w_2 \leftarrow 0.3 - 0.5(-0.668) \approx 0.634, \qquad b \leftarrow 0 - 0.5(-0.668) \approx 0.334$$</p>
+<p>That's exactly what the animation shows after its first update — the model started out confidently wrong ($p=0.33$ when $y=1$), and one step already flips the prediction to correct ($p=0.79$) and cuts the loss by about three quarters (from $1.10$ to $0.24$). These latter numbers are left as an exercise for the reader (plug the updated $w, b$ back into the same formulas above).</p>
+<h4 id="Back-to-the-real-dataset">Back to the real dataset<a class="anchor-link" href="#Back-to-the-real-dataset">¶</a></h4><p>With the mechanics confirmed by hand, the rest of this section goes back to training on the full 120-point two-blob dataset from Lesson 30 — same formulas, just applied to every example at once instead of one.</p>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=5353354e">
 <div class="input">
 <div class="prompt input_prompt">In [10]:</div>

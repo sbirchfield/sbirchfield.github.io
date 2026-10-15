@@ -290,6 +290,26 @@ b2 max diff: 0.00e+00
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=mlptr41nl00ph4ndw0rk3d"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Watching-the-loop-run,-one-stage-at-a-time">Watching the loop run, one stage at a time<a class="anchor-link" href="#Watching-the-loop-run,-one-stage-at-a-time">¶</a></h3><p>The animation below plays through the same 4-stage recipe — forward pass, loss, backward pass, update — now across two hidden units instead of one, on a hand-picked example (not the real 120-point dataset below): $x=(2, 1)$, $y=1$, hidden units $w_0=(0.2,-0.4)$, $b_0=0.1$ and $w_1=(-0.3,0.5)$, $b_1=0.3$, output layer $w_2=(0.4,0.5)$, $b_2=-0.6$, $\eta=0.5$. As in Lesson 31's version, the checkpoints are consecutive steps (no gaps), so every number is reproducible by hand.</p>
+<img alt="Animated 2-hidden-unit training loop: a computation graph with two parallel linear+ReLU boxes feeding a shared output linear box, sigmoid, and loss box, cycling through forward pass, loss, backward pass, and update stages with a progress bar, on a hand-worked example" src="../animations/mlp_training_loop_demo.gif" style="display: block; margin: 0 auto; max-width: 900px;"/>
+<p><strong>Working the first step out by hand:</strong></p>
+<p>$$z_0 = w_0\cdot x+b_0 = (0.2)(2)+(-0.4)(1)+0.1=0.1, \qquad h_0=\text{ReLU}(z_0)=0.1$$
+$$z_1 = w_1\cdot x+b_1 = (-0.3)(2)+(0.5)(1)+0.3=0.2, \qquad h_1=\text{ReLU}(z_1)=0.2$$
+$$z_2 = w_2\cdot h+b_2 = (0.4)(0.1)+(0.5)(0.2)-0.6=-0.46$$
+$$p=\sigma(-0.46)\approx0.387, \qquad L=-\log(p)\approx0.949$$</p>
+<p>Backward, worked out for hidden unit 0 (unit 1 and the output layer follow exactly the same pattern — left as an exercise):</p>
+<p>$$\frac{\partial L}{\partial z_2}=p-y\approx-0.613$$
+$$\frac{\partial L}{\partial h_0}=\frac{\partial L}{\partial z_2}\cdot w_{2,0}\approx-0.245, \qquad \frac{\partial L}{\partial z_0}=\frac{\partial L}{\partial h_0}\cdot\text{ReLU}'(z_0)\approx-0.245 \quad(\text{since } z_0&gt;0)$$
+$$\frac{\partial L}{\partial w_{0,1}}=x_1\cdot\frac{\partial L}{\partial z_0}\approx-0.490, \qquad \frac{\partial L}{\partial w_{0,2}}\approx-0.245, \qquad \frac{\partial L}{\partial b_0}\approx-0.245$$
+$$w_{0,1} \leftarrow 0.2-0.5(-0.490)\approx0.445, \qquad w_{0,2} \leftarrow -0.4-0.5(-0.245)\approx-0.277, \qquad b_0 \leftarrow 0.1-0.5(-0.245)\approx0.223$$</p>
+<p>That's exactly what the animation shows after its first update.</p>
+<h4 id="Back-to-the-real-dataset">Back to the real dataset<a class="anchor-link" href="#Back-to-the-real-dataset">¶</a></h4><p>With the two-hidden-unit mechanics confirmed by hand, the rest of this section goes back to the real network: $H=4$ hidden units, trained on the full ring-vs-disk dataset from earlier in this lesson.</p>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered" id="cell-id=a728c7ab">
 <div class="input">
 <div class="prompt input_prompt">In [7]:</div>
@@ -306,7 +326,7 @@ b2 max diff: 0.00e+00
     <span class="n">W2</span> <span class="o">-=</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">grad_W2</span><span class="p">;</span> <span class="n">b2</span> <span class="o">-=</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">grad_b2</span>
 
 <span class="n">final_pred</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'final accuracy: </span><span class="si">{</span><span class="p">(</span><span class="n">final_pred</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s1">.1%</span><span class="si">}</span><span class="s1">  (single neuron, Lesson 31, managed 50%)'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'final accuracy: </span><span class="si">{</span><span class="p">(</span><span class="n">final_pred</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s1">.1%</span><span class="si">}</span><span class="s1">  (cf. single neuron from Lesson 31 managed 50%)'</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'final loss: </span><span class="si">{</span><span class="n">losses</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span>
@@ -322,7 +342,7 @@ b2 max diff: 0.00e+00
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>final accuracy: 100.0%  (single neuron, Lesson 31, managed 50%)
+<pre>final accuracy: 100.0%  (cf. single neuron from Lesson 31 managed 50%)
 final loss: 0.0091
 </pre>
 </div>
@@ -339,7 +359,7 @@ final loss: 0.0091
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=99d88892"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-hidden-layer's-projections,-made-visible">The hidden layer's projections, made visible<a class="anchor-link" href="#The-hidden-layer's-projections,-made-visible">¶</a></h2><p>Each hidden unit is itself a Lesson 30-style projection: a direction $w_i$ (one column of $W_1$) and an offset $b_i$ (one entry of $b_1$), together defining a cut $w_i \cdot x + b_i = 0$ that ReLU zeroes out on one side of. With only 2 input dimensions, all $H$ of these can be drawn directly over the original data.</p>
+<h2 id="The-hidden-layer's-projections,-made-visible">The hidden layer's projections, made visible<a class="anchor-link" href="#The-hidden-layer's-projections,-made-visible">¶</a></h2><p>Each hidden unit is itself a Lesson 30-style projection: a direction $w_i$ (one column of $W_1$) and an offset $b_i$ (one entry of $b_1$), together defining a cut $w_i \cdot x + b_i = 0$ with ReLU zeroing out everything on one side of it. With only 2 input dimensions, all $H$ of these can be drawn directly over the original data.</p>
 </div>
 </div>
 </div>
@@ -393,7 +413,7 @@ final loss: 0.0091
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=86e459dd"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This animation runs the full training loop live, redrawing all four hidden-unit cuts and the combined decision region (shaded) together on every checkpoint. At epoch 0 the four lines and the shaded region are essentially arbitrary; by the end, the four cuts have rotated and shifted into a rough square straddling the ring, and their shaded intersection has become a tight polygon hugging the inner disk almost exactly — several straight lines, combined through one more linear layer, bending into a closed curve.</p>
+<p>This animation runs the full training loop, redrawing all four hidden-unit cuts and the combined decision region (shaded) together on every checkpoint. At epoch 0 the four lines and the shaded region are essentially arbitrary; by the end, the four cuts have rotated and shifted so their shaded intersection is a tight polygon hugging the inner disk almost exactly — several straight lines, combined through one more linear layer, bending into a closed curve.</p>
 <img alt="Animated MLP training on a ring-vs-disk dataset: four hidden-unit straight-line cuts and the resulting shaded decision region evolving together with the loss curve, converging to a tight polygon that wraps the inner disk" src="../animations/mlp_training_demo.gif" style="display: block; margin: 0 auto; max-width: 760px;"/>
 </div>
 </div>
@@ -401,7 +421,7 @@ final loss: 0.0091
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=mlph1dd3nun1tsc4pt10n"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Once training has converged, freeze the weights and look at the four hidden units one at a time. The left panel shows a single unit in isolation: its cut and the half-plane where it's "on" (ReLU output &gt; 0). The right panel shows the <em>real</em> partial forward pass through the (frozen) output layer with the not-yet-introduced units' contributions zeroed out of the sum — not a simplified intersection of half-planes, so by the last step it lands exactly on the network's actual decision boundary.</p>
+<p>Once training has converged, freeze the weights and look at the four hidden units one at a time. The left panel shows a single unit in isolation: its cut and the half-plane where it's "on" (ReLU output &gt; 0). The right panel shows the partial forward pass through the (frozen) output layer (the not-yet-introduced units' contributions are zeroed out of the sum), so by the last step it lands exactly on the network's actual decision boundary.</p>
 <img alt="Animated comparison of a trained MLP's four hidden units: left panel shows one hidden unit's cut and active half-plane at a time, right panel shows the cumulative decision region from a real partial forward pass as units are added one by one, ending on the network's actual decision boundary" src="../animations/mlp_hidden_units_demo.gif" style="display: block; margin: 0 auto; max-width: 760px;"/>
 </div>
 </div>
@@ -569,7 +589,9 @@ final loss: 0.0091
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=4bedea62"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>$H=1$ caps out well below 100% no matter how long it trains or which seed it starts from — that's not an optimization failure, it's a representational ceiling: one hidden unit is just a single cut, so it inherits Lesson 30's ~74% linear limit almost exactly. $H=2$ is better, but it is still capacity-limited — none of the five seeds above reach 100%. $H=3$ is the actual knife's edge: the capacity to represent a perfect solution is there (one seed above reaches exactly 100%), but whether training finds it depends on <em>which</em> seed it starts from (a preview of Lesson 33's optimization landscape problems).</p>
+<p>$H=1$ caps out well below 100% no matter how long it trains or which seed it starts from — that's not an optimization failure, it's a representational ceiling: one hidden unit is just a single cut, so it inherits Lesson 30's ~74% linear limit almost exactly.</p>
+<p>$H=2$ is better, but it is still capacity-limited — none of the five seeds above reach 100%.</p>
+<p>$H=3$ is the actual knife's edge: the capacity to represent a perfect solution is there (one seed above reaches exactly 100%), but whether training finds it depends on <em>which</em> seed it starts from (a preview of Lesson 33's optimization landscape problems).</p>
 <p>By $H=4$, every seed reaches 100% reliably: there's enough capacity that the network stops being the bottleneck, and training reliably finds a solution within that capacity. This is the general shape of a capacity curve — a hard floor set by what the model <em>can</em> represent, with optimization difficulty riding on top of it near the floor's edge. This same curve is revisited in Lesson 35 from the opposite direction: there, capacity is held generously high and <em>data</em> is scarce, which turns "enough capacity to represent the right answer" into "also enough capacity to memorize the wrong one."</p>
 <p>Width isn't the only knob. <strong>Depth</strong> — stacking more layers instead of making a layer wider — is the other axis, and it isn't just "width in disguise": a deep, narrow network can represent some functions far more compactly than a shallow, wide one needs to (fewer total units for the same expressiveness), but it introduces its own failure mode instead. Lesson 37 picks this up directly: stacking enough layers can make gradients vanish before they ever reach the earliest ones, a problem not encountered by this lesson's shallow 2-layer network.</p>
 </div>

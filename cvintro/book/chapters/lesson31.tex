@@ -100,6 +100,23 @@ The same idea extends directly to many parameters at once: instead of a single s
 
 Every step below uses the gradient computed over the \emph{entire} training set at once ($n=120$ examples) --- this is sometimes called full-batch gradient descent, to distinguish it from the mini-batch \textbf{stochastic gradient descent (SGD)} real training actually uses, which Chapter~\ref{ch:lesson33} covers in depth.
 
+\subsection*{Working the first step by hand}
+
+Unlike the 120-point dataset trained below, a single tiny example is small enough to check by hand: $x=(2,1)$, $y=1$, starting from $w=(-0.5, 0.3)$, $b=0$, with $\eta=0.5$.
+\begin{align*}
+z &= w^\top x + b = (-0.5)(2) + (0.3)(1) + 0 = -0.7 \\
+p &= \sigma(z) = \sigma(-0.7) \approx 0.332 \\
+L &= -\log(p) \approx 1.103 \quad\text{(since $y=1$, only the $-\log(p)$ term applies)} \\
+\frac{\partial L}{\partial z} &= p - y \approx 0.332 - 1 = -0.668 \\
+\frac{\partial L}{\partial w_1} = x_1\cdot\frac{\partial L}{\partial z} &\approx -1.336, \qquad \frac{\partial L}{\partial w_2} = x_2\cdot\frac{\partial L}{\partial z} \approx -0.668, \qquad \frac{\partial L}{\partial b} \approx -0.668 \\
+w_1 \leftarrow -0.5 - 0.5(-1.336) &\approx 0.168, \qquad w_2 \leftarrow 0.3 - 0.5(-0.668) \approx 0.634, \qquad b \leftarrow 0 - 0.5(-0.668) \approx 0.334
+\end{align*}
+The model started out confidently wrong ($p=0.33$ when $y=1$), and one step already flips the prediction to correct ($p=0.79$) and cuts the loss by about three quarters (from $1.10$ to $0.24$) --- a good way to confirm the formulas above before trusting them on a full dataset. These latter numbers are left as an exercise for the reader (plug the updated $w, b$ back into the same formulas above).
+
+\subsubsection*{Back to the real dataset}
+
+With the mechanics confirmed by hand, the rest of this section goes back to training on the full 120-point two-blob dataset from Chapter~\ref{ch:lesson30} --- same formulas, just applied to every example at once instead of one.
+
 \begin{lstlisting}
 def train(X, y, n_epochs=500, lr=0.5, seed=0):
     w = rng.normal(size=X.shape[1]) * 0.1

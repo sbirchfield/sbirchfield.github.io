@@ -43,6 +43,27 @@ The chain rule extends cleanly: propagate the error signal $\partial L/\partial 
 
 Same recipe as Chapter~\ref{ch:lesson31} --- forward pass, loss, backward pass, step against the gradient --- just with four parameter tensors ($W_1,b_1,W_2,b_2$) updated each epoch instead of two.
 
+\subsection*{Working the first step by hand}
+
+As in Chapter~\ref{ch:lesson31}, a small hand-picked example (not the real 120-point dataset below) keeps every number checkable: $x=(2,1)$, $y=1$, hidden units $w_0=(0.2,-0.4)$, $b_0=0.1$ and $w_1=(-0.3,0.5)$, $b_1=0.3$, output layer $w_2=(0.4,0.5)$, $b_2=-0.6$, $\eta=0.5$.
+\begin{align*}
+z_0 = w_0\cdot x+b_0 &= (0.2)(2)+(-0.4)(1)+0.1=0.1, \qquad h_0=\mathrm{ReLU}(z_0)=0.1 \\
+z_1 = w_1\cdot x+b_1 &= (-0.3)(2)+(0.5)(1)+0.3=0.2, \qquad h_1=\mathrm{ReLU}(z_1)=0.2 \\
+z_2 = w_2\cdot h+b_2 &= (0.4)(0.1)+(0.5)(0.2)-0.6=-0.46 \\
+p=\sigma(-0.46) &\approx 0.387, \qquad L=-\log(p) \approx 0.949
+\end{align*}
+Backward, worked out for hidden unit 0 (unit 1 and the output layer follow exactly the same pattern --- left as an exercise):
+\begin{align*}
+\frac{\partial L}{\partial z_2} &= p - y \approx -0.613 \\
+\frac{\partial L}{\partial h_0} = \frac{\partial L}{\partial z_2}\cdot w_{2,0} &\approx -0.245, \qquad \frac{\partial L}{\partial z_0} = \frac{\partial L}{\partial h_0}\cdot\mathrm{ReLU}'(z_0) \approx -0.245 \quad(\text{since } z_0>0) \\
+\frac{\partial L}{\partial w_{0,1}} = x_1\cdot\frac{\partial L}{\partial z_0} &\approx -0.490, \qquad \frac{\partial L}{\partial w_{0,2}} \approx -0.245, \qquad \frac{\partial L}{\partial b_0} \approx -0.245 \\
+w_{0,1} \leftarrow 0.2-0.5(-0.490) &\approx 0.445, \qquad w_{0,2} \leftarrow -0.4-0.5(-0.245) \approx -0.277, \qquad b_0 \leftarrow 0.1-0.5(-0.245) \approx 0.223
+\end{align*}
+
+\subsubsection*{Back to the real dataset}
+
+With the two-hidden-unit mechanics confirmed by hand, the rest of this section goes back to the real network: $H=4$ hidden units, trained on the full ring-vs-disk dataset from earlier in this chapter.
+
 \begin{lstlisting}
 def forward(X, W1, b1, W2, b2):
     a1 = relu(X @ W1 + b1)
@@ -61,7 +82,7 @@ With $H=4$ hidden units, trained for 3000 epochs: final accuracy $100.0\%$ (Chap
 
 \section{The hidden layer's projections, made visible}
 
-Each hidden unit is itself a Chapter~\ref{ch:lesson30}-style projection: a direction $w_i$ (one column of $W_1$) and an offset $b_i$ (one entry of $b_1$), together defining a cut $w_i\cdot x+b_i=0$ that ReLU zeroes out on one side of. With only 2 input dimensions, all $H$ of these can be drawn directly over the original data, as Figure~\ref{fig:l32-4} shows.
+Each hidden unit is itself a Chapter~\ref{ch:lesson30}-style projection: a direction $w_i$ (one column of $W_1$) and an offset $b_i$ (one entry of $b_1$), together defining a cut $w_i\cdot x+b_i=0$, with ReLU zeroing out everything on one side of it. With only 2 input dimensions, all $H$ of these can be drawn directly over the original data, as Figure~\ref{fig:l32-4} shows.
 
 \begin{figure}[h]
 \centering
