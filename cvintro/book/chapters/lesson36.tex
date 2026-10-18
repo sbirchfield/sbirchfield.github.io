@@ -90,6 +90,29 @@ truck      & 0.72 & 0.09 & 150 \\
 \end{tabular}
 \end{center}
 
+\subsection*{Bayes' rule}
+
+To see why precision behaves the way it does, it may help to recognize a deeper connection. \textbf{Bayes' rule} relates a conditional probability to its reverse: $P(A\mid B) = P(B\mid A)\,P(A)\,/\,P(B)$. Bayes' rule connects precision, $P(\text{actually }i\mid\text{predicted }i)$, with sensitivity/specificity, $P(\text{predicted }i\mid\text{actually }i)$:
+$$P(\text{actually }i\mid\text{predicted }i) = \frac{P(\text{predicted }i\mid\text{actually }i)\,P(\text{actually }i)}{P(\text{predicted }i)}.$$
+The $P(\text{actually }i)$ term --- the \textbf{base rate} or \textbf{prior}, how common class $i$ is to begin with --- matters just as much as how good the classifier is.
+
+The classic illustration: a disease with $1\%$ true prevalence, and a test that's ``99\% accurate'' ($99\%$ sensitivity, $99\%$ specificity). You test positive --- what's the chance you actually have it? Intuition says $\approx\!99\%$, but the real answer is closer to $50\%$. The reason: Out of $10{,}000$ people, $100$ actually have the disease, and the test catches $99$ of them ($\text{TP}=99$). Of the $9{,}900$ healthy people, a $1\%$ false-positive rate flags about $99$ more ($\text{FP}=99$) --- so among everyone who tests positive, only about half actually has the disease: $\text{precision}=99/198\approx50\%$, nowhere near $99\%$. A low base rate lets false positives from the enormous healthy majority swamp the true positives from the rare, small minority.
+
+Truck shows the same effect: it's the rarest class here, and even its respectable $72\%$ precision (table above) is already fighting the same uphill arithmetic that makes precision (also known as ``positive predictive value'') punishing for any rare condition, medical or otherwise.
+
+\subsection*{The precision-recall curve}
+
+So far, each class's precision and recall came from a single, fixed decision rule: whichever class scores highest wins (hard argmax). But the model doesn't actually output a single verdict --- for ``truck vs.\ everything else,'' it outputs a continuous score (the softmax probability assigned to truck) for every test image. Thresholding that score directly and sweeping the threshold from 0 to 1 traces out a \textbf{precision-recall curve} (Figure~\ref{fig:l36-3}): the complete tradeoff between catching more trucks and crying wolf less often. Hard argmax isn't quite the same decision rule --- it depends on how truck's score compares to the \emph{other three} classes, not just whether it clears some fixed number --- so the point it actually lands on (marked in red) sits close to, but not exactly on, this single-score curve.
+
+The raw curve is jagged: with so few truck examples, a single unlucky (or lucky) false positive can make precision dip and then recover as the threshold relaxes further, which isn't a real change in the underlying tradeoff --- just noise from a small test set. The standard fix (used, for instance, to compute \emph{average precision}) is to replace each point's precision with the \emph{best} precision achieved at that recall or higher, producing a monotonically non-increasing envelope that casts a ``shadow'' leftward over the noisy dips (Figure~\ref{fig:l36-3}).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.55\textwidth]{figures/lesson36_fig03.png}
+\caption{Truck's precision-recall curve as the decision threshold sweeps from 0 to 1 (light line: raw, noisy; dark step: the monotonic envelope); the red dot marks the operating point hard argmax actually uses.}
+\label{fig:l36-3}
+\end{figure}
+
 Truck --- the class starved to 90 training images, versus 400 for each other class --- has high precision but very low recall: when the model does say ``truck,'' it's usually right, but it fails to recognize the overwhelming majority of actual trucks, defaulting instead to whichever classes it saw plenty of during training (mostly ``automobile,'' the visually closest well-represented class). That is the standard signature of class imbalance, and it is completely invisible in the single overall-accuracy number from before. Cat and dog, by contrast, are both well-represented in training but get confused \emph{with each other} far more than with automobile or truck --- a different failure mode entirely, caused by genuine visual similarity between the two animals rather than by a lack of data. Automobile ends up with unusually high recall but only middling precision, for the same reason truck's recall suffered: it's absorbing the starved truck class's misclassifications, since ``wheeled vehicle'' is an easy fallback guess once the model can't tell trucks apart from automobiles.
 
 The practical lesson: always inspect the confusion matrix and per-class metrics before trusting a single accuracy figure, especially on any dataset where classes aren't naturally balanced.

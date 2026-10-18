@@ -124,8 +124,8 @@ def draw_image_grid(ax, highlight_rc=None):
 
     if highlight_rc is not None:
         r, c = highlight_rc
-        ax.add_patch(Rectangle((c - 0.5, r - 0.5), K, K, fill=False,
-                                 edgecolor=ACTIVE_COLOR, linewidth=2.6, zorder=3))
+        ax.add_patch(Rectangle((c - 0.5, r - 0.5), K, K, facecolor=ACTIVE_COLOR,
+                                 alpha=0.22, edgecolor=ACTIVE_COLOR, linewidth=2.6, zorder=3))
 
     ax.set_title("input image (one channel)", fontsize=12)
 
