@@ -61,16 +61,32 @@
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="A-conv-layer-is-a-projection,-restricted-and-shared">A conv layer is a projection, restricted and shared<a class="anchor-link" href="#A-conv-layer-is-a-projection,-restricted-and-shared">¶</a></h2><p>Recall Lesson 30's central idea: $y = w^\top x + b$, a projection. A convolutional layer computes <em>exactly this</em>, but for $x$, it only looks at a small local patch (say $3\times3$) instead of the whole image — and, crucially, it reuses the <em>same</em> $w$ at every patch location. Two consequences:</p>
 <ul>
-<li><strong>Vastly fewer parameters.</strong> A $3\times3$ filter over a single input channel has 9 weights, no matter how big the image is — a fully-connected layer over a $16\times16$ image needs 256 weights <em>per output unit</em>.</li>
+<li><strong>Vastly fewer parameters.</strong> A $3\times3$ filter over a single input channel has 9 weights, no matter how big the image is — a fully-connected layer over a $100\times100$ image needs 10,000 weights <em>per output unit</em>.</li>
 <li><strong>Translation equivariance.</strong> Because the same filter slides everywhere, a feature learned at one position is automatically detected at every other position too, for free. <em>Equivariant</em> means the output shifts along with the input, rather than staying fixed — shift the image by 2 pixels and the feature map's detections shift by exactly 2 pixels too. That's a distinct, weaker property than <em>invariance</em> (an unchanged output despite a shifted input), which pooling adds a bit of, later in this lesson.</li>
 </ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=c0nvpr0j3ct10n4n1m"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The animation below slides a $3\times3$ vertical-edge Prewitt kernel (no flip for simplicity, since "convolution" is often implemented as cross-correlation) across a simple step-edge image, pausing at each position to show the arithmetic of Lesson 30's projection formula: $y=w^\top x+b$, where $x$ is just the current patch flattened, and there is no bias ($b=0$). The same 9 weights $w$ are reused at every position.</p>
+<img alt="Animated sliding 3x3 convolution kernel over a step-edge image, showing at each position the patch and kernel values multiplied and summed into y = w transpose x + b, filling in an output feature map that is zero everywhere except two columns of 3s right at the edge" src="../animations/conv_projection_demo.gif" style="display: block; margin: 0 auto; max-width: 900px;"/>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=39b16814"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="A-conv-layer-kernel-is-3D">A conv layer kernel is 3D<a class="anchor-link" href="#A-conv-layer-kernel-is-3D">¶</a></h2><p>One more thing: In the context of a convolutional neural network (CNN), a "$3\times3$ filter" is really $3\times3\times C_{in}$, not just $3\times3$. Lesson 10's kernels were flat 2D grids, because they slid over a single grayscale channel. A conv layer's filter has to reach across <em>every</em> input channel at once — a $3\times3$ filter on a 3-channel RGB image has $3\times3\times3=27$ weights, one full depth-slice per input channel, summed together into a single output value at each position. Stack $C_{out}$ of these $3\times3\times C_{in}$ filters side by side (one per output channel) and the full weight tensor is 4D: <code>(C_out, C_in, 3, 3)</code> — exactly the shape <code>conv2d_forward</code> below expects.</p>
+<p>One more thing: In the context of a convolutional neural network (CNN), a "$3\times3$ filter" is really $3\times3\times C_{in}$, not just $3\times3$ — where $C_{in}$ is the number of input channels. Lesson 10's kernels were flat 2D grids, because they slid over a single grayscale channel. A conv layer's filter has to reach across <em>every</em> input channel at once — a $3\times3$ filter on a 3-channel RGB image has $3\times3\times3=27$ weights, one full $3\times3$ slice per input channel, summed together into a single output value at each position. Stack $C_{out}$ of these $3\times3\times C_{in}$ filters side by side (one per output channel) and the full weight tensor is 4D: <code>(C_out, C_in, 3, 3)</code> — exactly the shape <code>conv2d_forward</code> below expects.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=c0nvdepth4n1mcell"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This animation illustrates the concept: a 3x3x3 kernel slides across a 10x10x3 input volume (three stacked, color-coded channel slabs), producing one output value per position. At the bottom, the current window and the kernel are flattened into color-blocked vectors — same channel order, same values — showing that their dot product (with $b=0$) is the output value. The cube picture and the flat-vector picture show the same computation.</p>
+<img alt="Animated 3x3x3 kernel sliding across a 10x10x3 input volume rendered as solid stacked cuboids, filling in an 8x8 output feature map one position at a time, with the current window and kernel shown flattened into matching color-blocked vectors feeding a single dot product" src="../animations/conv_depth_demo.gif" style="display: block; margin: 0 auto; max-width: 900px;"/>
 </div>
 </div>
 </div>
@@ -222,6 +238,14 @@ grad_bias max diff:   1.78e-15
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Pooling:-downsampling-with-a-purpose">Pooling: downsampling with a purpose<a class="anchor-link" href="#Pooling:-downsampling-with-a-purpose">¶</a></h2><p><strong>Max pooling</strong> slides a window over the feature map and keeps only the maximum value in each window, shrinking the spatial size (like the pyramids of Lesson 11) while adding a small amount of local translation invariance — a feature detected at slightly different positions within one pooling window still produces the same output.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=p00l1nganimcell"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The animation below steps a $2\times2$, stride-2 window across a small feature map, highlighting the max cell at each stop and filling in the downsampled output accordingly.</p>
+<img alt="Animated 2x2 max pooling: a window steps across a 4x4 feature map, highlighting the maximum value in each non-overlapping window, filling in a 2x2 pooled output grid" src="../animations/pooling_demo.gif" style="display: block; margin: 0 auto; max-width: 760px;"/>
 </div>
 </div>
 </div>
@@ -399,6 +423,14 @@ grad_bias max diff:   1.78e-15
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Both models fit the training data perfectly. On positions neither has ever seen, the flatten-based MLP does little better than a coin flip — it memorized <em>which pixels</em> tend to be on for each class at the training positions, and that knowledge doesn't transfer. The CNN, whose global max pooling forces the final decision to depend only on <em>what filters fired somewhere</em>, not <em>where</em>, generalizes to the new positions with no loss in accuracy at all.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=equ1v4r14nceanimcell"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The animation below shows the failure: the same 'circle' shape slides through several positions safely inside the training region, then one step further into the held-out test range it never saw. The MLP stays confidently correct the whole time it's within familiar territory, then flips to confidently <em>wrong</em> the instant it crosses into unseen territory. The CNN never wavers.</p>
+<img alt="Animated comparison of an MLP and CNN classifying a circle shape as it slides toward a position never seen during training: the MLP stays correct inside the training region then becomes confidently wrong once outside it, while the CNN stays correct throughout" src="../animations/equivariance_demo.gif" style="display: block; margin: 0 auto; max-width: 820px;"/>
 </div>
 </div>
 </div>

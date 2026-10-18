@@ -7,13 +7,15 @@ The layers in Chapters~\ref{ch:lesson31}--\ref{ch:lesson33} treat every input as
 
 Recall Chapter~\ref{ch:lesson30}'s central idea: $y=w^\top x+b$, a projection. A convolutional layer computes \emph{exactly this}, but for $x$, it only looks at a small local patch (say $3\times3$) instead of the whole image --- and, crucially, it reuses the \emph{same} $w$ at every patch location. Two consequences:
 \begin{itemize}
-  \item \textbf{Vastly fewer parameters.} A $3\times3$ filter over a single input channel has 9 weights, no matter how big the image is --- a fully-connected layer over a $16\times16$ image needs 256 weights \emph{per output unit}.
+  \item \textbf{Vastly fewer parameters.} A $3\times3$ filter over a single input channel has 9 weights, no matter how big the image is --- a fully-connected layer over a $100\times100$ image needs 10{,}000 weights \emph{per output unit}.
   \item \textbf{Translation equivariance.} Because the same filter slides everywhere, a feature learned at one position is automatically detected at every other position too, for free. \emph{Equivariant} means the output shifts along with the input, rather than staying fixed --- shift the image by 2 pixels and the feature map's detections shift by exactly 2 pixels too. That's a distinct, weaker property than \emph{invariance} (an unchanged output despite a shifted input), which pooling adds a bit of, later in this chapter.
 \end{itemize}
 
 \subsection*{A conv layer kernel is 3D}
 
-A ``$3\times3$ filter'' in a CNN is really $3\times3\times C_{in}$, not just $3\times3$. Chapter~\ref{ch:lesson10}'s kernels were flat 2D grids, because they slid over a single grayscale channel. A conv layer's filter has to reach across \emph{every} input channel at once --- a $3\times3$ filter on a 3-channel RGB image has $3\times3\times3=27$ weights, one full depth-slice per input channel, summed together into a single output value at each position. Stack $C_{out}$ of these $3\times3\times C_{in}$ filters side by side (one per output channel) and the full weight tensor is 4D: \code{(C\_out, C\_in, 3, 3)}.
+A ``$3\times3$ filter'' in a CNN is really $3\times3\times C_{in}$, not just $3\times3$. Chapter~\ref{ch:lesson10}'s kernels were flat 2D grids, because they slid over a single grayscale channel. A conv layer's filter has to reach across \emph{every} input channel at once --- a $3\times3$ filter on a 3-channel RGB image has $3\times3\times3=27$ weights, one full $3\times3$ slice per input channel, summed together into a single output value at each position. Stack $C_{out}$ of these $3\times3\times C_{in}$ filters side by side (one per output channel) and the full weight tensor is 4D: \code{(C\_out, C\_in, 3, 3)}.
+
+Concretely: three $3\times3$ input-channel patches, each dotted against its own kernel slice, give three partial sums that accumulate into a running total; the bias is added last to produce the single output value --- $C_{in}$ dot products collapsing into one number.
 
 \section{Conv2d, forward and backward, from scratch}
 
@@ -49,7 +51,7 @@ The output of a conv layer before training is nonsense; the point is that gradie
 
 \section{Pooling: downsampling with a purpose}
 
-\textbf{Max pooling} slides a window over the feature map and keeps only the maximum value in each window, shrinking the spatial size (like the pyramids of Chapter~\ref{ch:lesson11}) while adding a small amount of local translation invariance --- a feature detected at slightly different positions within one pooling window still produces the same output. A from-scratch $2\times2$ max pool matches \code{F.max\_pool2d} exactly (max diff $0.00\times10^{0}$).
+\textbf{Max pooling} slides a window over the feature map and keeps only the maximum value in each window, shrinking the spatial size (like the pyramids of Chapter~\ref{ch:lesson11}) while adding a small amount of local translation invariance --- a feature detected at slightly different positions within one pooling window still produces the same output. A from-scratch $2\times2$ max pool matches \code{F.max\_pool2d} exactly (max diff $0.00\times10^{0}$). Concretely, pooling $\begin{pmatrix}1&3&2&0\\4&1&0&2\\0&2&5&1\\3&0&1&4\end{pmatrix}$ with a $2\times2$, stride-2 window gives $\begin{pmatrix}4&2\\3&5\end{pmatrix}$: each $2\times2$ block collapses to its single largest value.
 
 \section{Putting them together: convolution and pooling, interleaved}
 
@@ -93,7 +95,7 @@ CNN & 100.0\% & 100.0\% \\
 \end{tabular}
 \end{center}
 
-Both models fit the training data perfectly. On positions neither has ever seen, the flatten-based MLP does little better than a coin flip --- it memorized \emph{which pixels} tend to be on for each class at the training positions, and that knowledge doesn't transfer. The CNN, whose global max pooling forces the final decision to depend only on \emph{what filters fired somewhere}, not \emph{where}, generalizes to the new positions with no loss in accuracy at all.
+Both models fit the training data perfectly. On positions neither has ever seen, the flatten-based MLP does little better than a coin flip --- it memorized \emph{which pixels} tend to be on for each class at the training positions, and that knowledge doesn't transfer. The CNN, whose global max pooling forces the final decision to depend only on \emph{what filters fired somewhere}, not \emph{where}, generalizes to the new positions with no loss in accuracy at all. Concretely: a circle centered at $(5,5)$, safely inside the sampled training range, is classified correctly by both models with $P(\text{circle})=1.00$; the same circle centered at $(4,4)$, just inside the disjoint test range, is still $P(\text{circle})=1.00$ for the CNN but drops to $0.00$ for the MLP --- confidently wrong the instant the shape leaves familiar territory.
 
 \subsection*{Exercises}
 \begin{enumerate}
