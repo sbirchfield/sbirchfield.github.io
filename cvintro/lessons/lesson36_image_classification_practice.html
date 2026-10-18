@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=8a17f30b"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=cac3b68d"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-36:-Image-Classification-in-Practice">Lesson 36: Image Classification in Practice<a class="anchor-link" href="#Lesson-36:-Image-Classification-in-Practice">¶</a></h1><p>Every classifier so far has been evaluated with a single number: overall accuracy. That number hides a lot. This lesson builds a 4-class classifier on a deliberately imbalanced subset of <strong>CIFAR-10</strong> — real photographs, not synthetic shapes — and shows why accuracy alone can be misleading, using the tools that reveal what's actually going wrong: the <strong>confusion matrix</strong>, and <strong>per-class precision and recall</strong>.</p>
@@ -129,8 +129,8 @@
 <span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">subset_for_classes</span><span class="p">(</span><span class="n">test_imgs</span><span class="p">,</span> <span class="n">test_labels</span><span class="p">,</span>
     <span class="p">{</span><span class="s1">'cat'</span><span class="p">:</span> <span class="mi">150</span><span class="p">,</span> <span class="s1">'dog'</span><span class="p">:</span> <span class="mi">150</span><span class="p">,</span> <span class="s1">'automobile'</span><span class="p">:</span> <span class="mi">150</span><span class="p">,</span> <span class="s1">'truck'</span><span class="p">:</span> <span class="mi">150</span><span class="p">})</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s1">'training class counts:'</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">CLASSES</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">minlength</span><span class="o">=</span><span class="mi">4</span><span class="p">))))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">'test class counts:    '</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">CLASSES</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">minlength</span><span class="o">=</span><span class="mi">4</span><span class="p">))))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'training class counts:'</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">CLASSES</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">minlength</span><span class="o">=</span><span class="mi">4</span><span class="p">)))))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'test class counts:    '</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">CLASSES</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">minlength</span><span class="o">=</span><span class="mi">4</span><span class="p">)))))</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">CLASSES</span><span class="p">):</span>
@@ -147,8 +147,8 @@
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>training class counts: {'cat': np.int64(400), 'dog': np.int64(400), 'automobile': np.int64(400), 'truck': np.int64(90)}
-test class counts:     {'cat': np.int64(150), 'dog': np.int64(150), 'automobile': np.int64(150), 'truck': np.int64(150)}
+<pre>training class counts: {'cat': 400, 'dog': 400, 'automobile': 400, 'truck': 90}
+test class counts:     {'cat': 150, 'dog': 150, 'automobile': 150, 'truck': 150}
 </pre>
 </div>
 </div>
@@ -232,9 +232,9 @@ test class counts:     {'cat': np.int64(150), 'dog': np.int64(150), 'automobile'
     <span class="n">cm</span><span class="p">[</span><span class="n">t</span><span class="p">,</span> <span class="n">p</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s1">'confusion matrix (rows=true, cols=predicted):'</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="s2">""</span><span class="si">:</span><span class="s1">&gt;10</span><span class="si">}</span><span class="s1">'</span> <span class="o">+</span> <span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">s</span><span class="si">:</span><span class="s1">&gt;10</span><span class="si">}</span><span class="s1">'</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">CLASSES</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="s2">""</span><span class="si">:</span><span class="s1">&gt;12</span><span class="si">}</span><span class="s1">'</span> <span class="o">+</span> <span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">s</span><span class="si">:</span><span class="s1">&gt;12</span><span class="si">}</span><span class="s1">'</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">CLASSES</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">CLASSES</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">s</span><span class="si">:</span><span class="s1">&gt;10</span><span class="si">}</span><span class="s1">'</span> <span class="o">+</span> <span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">cm</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">]</span><span class="si">:</span><span class="s1">&gt;10</span><span class="si">}</span><span class="s1">'</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">s</span><span class="si">:</span><span class="s1">&gt;12</span><span class="si">}</span><span class="s1">'</span> <span class="o">+</span> <span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">cm</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">]</span><span class="si">:</span><span class="s1">&gt;12</span><span class="si">}</span><span class="s1">'</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)))</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">'Blues'</span><span class="p">)</span>
@@ -258,11 +258,11 @@ test class counts:     {'cat': np.int64(150), 'dog': np.int64(150), 'automobile'
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>confusion matrix (rows=true, cols=predicted):
-                 cat       dogautomobile     truck
-       cat        60        68        20         2
-       dog        47        95         7         1
-automobile         9         5       134         2
-     truck        21        13       103        13
+                     cat         dog  automobile       truck
+         cat          60          68          20           2
+         dog          47          95           7           1
+  automobile           9           5         134           2
+       truck          21          13         103          13
 </pre>
 </div>
 </div>
@@ -392,6 +392,49 @@ automobile       0.51     0.89      150
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The animation below cycles through each class, showing precision and recall as fractions of the same TP/FP/FN counts: a recall bar split into caught (TP) vs. missed (FN), a precision bar split into correct (TP) vs. false alarm (FP).</p>
 <img alt="Animated cycling through each of the four classes, showing recall as a bar split into true positives and false negatives, and precision as a bar split into true positives and false positives, with the resulting fraction labeled for each" src="../animations/precision_recall_demo.gif" style="display: block; margin: 0 auto; max-width: 820px;"/>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=a05739f8"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For quick reference, since these terms go by several names across various fields:</p>
+<table>
+<thead>
+<tr>
+<th>term</th>
+<th>formula</th>
+<th>also known as</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Precision</td>
+<td>TP / (TP + FP)</td>
+<td>Positive Predictive Value (PPV)</td>
+</tr>
+<tr>
+<td>Recall</td>
+<td>TP / (TP + FN)</td>
+<td>Sensitivity, True Positive Rate (TPR)</td>
+</tr>
+<tr>
+<td>Specificity</td>
+<td>TN / (TN + FP)</td>
+<td>True Negative Rate (TNR)</td>
+</tr>
+<tr>
+<td>False Positive Rate</td>
+<td>FP / (TN + FP) = 1 − Specificity</td>
+<td>Fallout, False Alarm Rate</td>
+</tr>
+<tr>
+<td>False Negative Rate</td>
+<td>FN / (TP + FN) = 1 − Recall</td>
+<td>Miss Rate</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
