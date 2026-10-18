@@ -206,6 +206,14 @@ val loss minimum was 0.456 at epoch 277 (out of 400); it ended at 0.573
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=0v3rf1tt1nganim4t10n"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Watching it play out epoch by epoch makes the moment concrete: validation loss tracks training loss down for a while, then visibly peels away and starts climbing back up right around epoch 277, even as training loss keeps marching toward zero.</p>
+<img alt="Animated training and validation loss curves for a CNN overfitting a 12-image dataset: training loss falls steadily to near zero while validation loss stays noisy and then climbs back up after epoch 277, with a dashed line marking the best validation loss once training reaches it" src="../animations/overfitting_demo.gif" style="display: block; margin: 0 auto; max-width: 700px;"/>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=145842a7"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -265,6 +273,29 @@ val loss minimum was 0.456 at epoch 277 (out of 400); it ended at 0.573
 </pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=augment4ll3ry4n1mcell"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The animation below applies <code>augment</code> to a single training image over and over, showing which transforms are used each time.</p>
+<img alt="Animated data augmentation: a single training image cycles through several randomly flipped and rotated variants, with the applied transforms labeled and the class label staying fixed throughout" src="../animations/augmentation_gallery_demo.gif" style="display: block; margin: 0 auto; max-width: 480px;"/>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=2628bf60"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The same idea, applied to a real photo (for illustration only — not part of this lesson's training run). Real pipelines usually leverage a wider bag of tricks: not just flips and rotations but also brightness/contrast/color jitter, Gaussian noise, blur, random occlusion, etc. — different combinations, but always the same dog.</p>
+<img alt="Animated data augmentation applied to a real photo of a dog: the photo cycles through variants combining random flips, rotations, brightness/contrast/color jitter, Gaussian noise, blur, and occlusion, labeled with which transforms were applied, still clearly the same dog every time" src="../animations/dog_augmentation_demo.gif" style="display: block; margin: 0 auto; max-width: 480px;"/>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=d53bf2b6"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p class="image-attribution">Photo by <a href="https://unsplash.com/@laulaco?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText" rel="noopener" target="_blank">Laula Co</a> on <a href="https://unsplash.com/photos/long-coat-tan-puppy-sICtHYZzt_s?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText" rel="noopener" target="_blank">Unsplash</a></p>
 </div>
 </div>
 </div>
@@ -367,6 +398,14 @@ eval-mode dropout is a no-op: True
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=dr0p0utanimcell"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The animation below applies <code>manual_dropout</code> to a small fixed grid of activations, with a fresh random mask every step: a different $\sim$ 30% of units dropped each time, the survivors rescaled by $1/(1-p)$.</p>
+<img alt="Animated dropout: a grid of activation values has a different random 30 percent of units zeroed out each step, with the surviving units rescaled by 1 over (1 minus p)" src="../animations/dropout_demo.gif" style="display: block; margin: 0 auto; max-width: 700px;"/>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=d3333f4e"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -439,10 +478,18 @@ dropout(0.5):   mean val acc = 70.2%  (+/- 8.0%, 8 seeds)
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=reg4r1z3rrac3animcell"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="All-three-fixes-compared">All three fixes compared<a class="anchor-link" href="#All-three-fixes-compared">¶</a></h3><p>Every fix so far has been tested one at a time against the baseline. The animation below compares all four validation-accuracy curves together on the same 12-image dataset: the unregularized baseline stuck low and noisy, augmentation climbing fastest and settling highest, weight decay strong but volatile, and dropout — as already noted — only a modest improvement over the baseline on such a tiny dataset.</p>
+<img alt="Animated race of four validation accuracy curves over 200 epochs: the unregularized baseline stuck around 60 percent and noisy, augmentation climbing fastest to settle above 95 percent, weight decay reaching around 80 percent but volatile, and dropout staying close to the noisy baseline" src="../animations/regularizer_race_demo.gif" style="display: block; margin: 0 auto; max-width: 760px;"/>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=3bbe6c72"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Putting-it-together:-real-photos,-real-overfitting">Putting it together: real photos, real overfitting<a class="anchor-link" href="#Putting-it-together:-real-photos,-real-overfitting">¶</a></h2><p>Every fix so far has been tested one at a time, on a synthetic 12-image toy problem chosen specifically to make the failure mode unmistakable. This closing section repeats the experiment on real <strong>CIFAR-10</strong> (<a href="../references.html#krizhevsky-2009-cifar">Krizhevsky, 2009</a>) photographs: a small, deliberately data-scarce training set of cats and trucks, with augmentation, weight decay, and dropout combined together. Real photographs contain lighting, clutter, and genuine visual ambiguity between classes.</p>
+<h2 id="Putting-it-together:-real-photos,-real-overfitting">Putting it together: real photos, real overfitting<a class="anchor-link" href="#Putting-it-together:-real-photos,-real-overfitting">¶</a></h2><p>The above synthetic 12-image toy problem was chosen specifically to make the failure mode unmistakable. This closing section repeats the experiment on real <strong>CIFAR-10</strong> (<a href="../references.html#krizhevsky-2009-cifar">Krizhevsky, 2009</a>) photographs: a small, deliberately data-scarce training set of cats and trucks, with augmentation, weight decay, and dropout combined together. Real photographs contain lighting, clutter, and genuine visual ambiguity between classes.</p>
 </div>
 </div>
 </div>
