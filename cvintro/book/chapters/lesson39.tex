@@ -74,7 +74,7 @@ model\_shortcut & 63.0\% & 98.0\% \\
 
 \code{model\_original}'s accuracy barely moves whether the marker is present or not --- since it never learned to use it, it has nothing to lose when it's absent. \code{model\_shortcut} looks \emph{better} than \code{model\_original} when the marker is present, but it collapses when the marker is removed. It learned the shortcut ``white corner square = automobile.''
 
-Now use Grad-CAM to check whether the visualization tool actually catches this. Since the marker's location is known exactly (rows 0--4, columns 0--4), checking becomes: what fraction of test images does each model's heatmap peak land inside that exact $5\times5$ region?
+Now use saliency and Grad-CAM to check whether the visualization tools actually catch this. Since the marker's location is known exactly (rows 0--4, columns 0--4), checking becomes: what fraction of test images does each model's heatmap peak land inside that exact $5\times5$ region, for each method?
 
 \begin{center}
 \renewcommand{\arraystretch}{1.3}
@@ -89,9 +89,9 @@ model\_shortcut & clean  & 56.0\%  & 92.0\% \\
 \end{tabular}
 \end{center}
 
-\code{model\_original} (never trained on the marker) rarely lands either method's peak in that exact corner. \code{model\_shortcut} is a different story: on marked images both tools are nearly perfect (saliency 96\%, Grad-CAM 100\%), but on \emph{clean} images --- where the marker was never added, yet \code{model\_shortcut} still relies on it internally --- Grad-CAM's peak still lands there 92\% of the time versus only 56\% for saliency. Grad-CAM pools gradients over an entire feature-map channel before localizing, which smooths out pixel-level noise and makes it the more trustworthy detector when the shortcut's literal trigger isn't visible in a given image; \code{model\_shortcut}'s internal machinery is anchored to that spot regardless of what's actually there, exactly the failure mode described at the top of this chapter.
+\code{model\_original} (never trained on the marker) never lands either method's peak in that exact corner. \code{model\_shortcut} is a different story: on marked images both tools are nearly perfect (saliency 96\%, Grad-CAM 100\%), but on \emph{clean} images --- where the marker was never added, yet \code{model\_shortcut} still relies on it internally --- Grad-CAM's peak still consistently lands there 92\% of the time, whereas saliency drops dramatically to 56\%. This is because Grad-CAM pools gradients over an entire feature-map channel before localizing, which smooths out pixel-level noise and makes it the more trustworthy detector when the shortcut's literal trigger isn't visible in a given image. In contrast, \code{model\_shortcut}'s internal machinery is anchored to that spot regardless of what's actually there, exactly the failure mode described at the top of this chapter.
 
-The practical lesson: accuracy alone (Chapter~\ref{ch:lesson36}) can't distinguish whether the model has learned the real signal or a shortcut correlated with it in the training data. Visualization tools such as saliency and Grad-CAM can --- but only if you know to check, if you pick a tool sturdy enough to trust, and if you interpret the results with some skepticism about what else in the image might be drawing gradient attention.
+The practical lesson: accuracy alone (Chapter~\ref{ch:lesson36}) can't distinguish whether the model has learned the real signal or a shortcut correlated with it in the training data. Visualization tools such as saliency and Grad-CAM can --- but only if you know to check, if you pick a tool sturdy enough to trust, and if you carefully interpret the results to discern what else in the image might be drawing gradient attention.
 
 \section{Feature-space visualization: t-SNE}
 
