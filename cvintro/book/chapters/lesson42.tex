@@ -29,7 +29,7 @@ class FCNTiny(nn.Module):
         return self.out(d1)
 \end{lstlisting}
 
-Trained for 200 epochs with cross-entropy loss: pixel accuracy $98.1\%$, per-class IoU of $0.984$ (background), $0.736$ (circle), $0.891$ (square), giving a mean IoU of $0.870$.
+Trained for 200 epochs with cross-entropy loss: pixel accuracy $97.6\%$, per-class IoU of $0.982$ (background), $0.663$ (circle), $0.861$ (square), giving a mean IoU of $0.836$.
 
 \section{In practice: FCN on a real photo}
 
@@ -67,8 +67,8 @@ Trained identically for 200 epochs:
 \hline
  & \textbf{pixel acc} & \textbf{mean IoU} \\
 \hline
-FCN (no skip)  & 98.1\% & 0.870 \\
-U-Net (skip)   & 99.5\% & 0.943 \\
+FCN (no skip)  & 97.6\% & 0.836 \\
+U-Net (skip)   & 99.6\% & 0.955 \\
 \hline
 \end{tabular}
 \end{center}
