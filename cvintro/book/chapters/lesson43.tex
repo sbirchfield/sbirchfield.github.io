@@ -45,7 +45,7 @@ for _ in range(6):
     votes_work[y0:y1, x0:x1] = 0  # suppress the neighborhood around this peak
 \end{lstlisting}
 
-Offset-voting recovers the correct instance count in $44/45$ test scenes ($97.8\%$), shown in Figure~\ref{fig:l43-2}.
+Offset-voting recovers the correct instance count in $43/45$ test scenes ($95.6\%$), shown in Figure~\ref{fig:l43-2}.
 
 \begin{figure}[h]
 \centering
@@ -79,7 +79,7 @@ class MaskHead(nn.Module):
         )
 \end{lstlisting}
 
-Trained for 300 epochs with binary cross-entropy: mask-head IoU (per-instance) $0.844$, versus a naive ``everything foreground in the crop'' baseline IoU of $0.687$ (Figure~\ref{fig:l43-3}).
+Trained for 300 epochs with binary cross-entropy: mask-head IoU (per-instance) $0.834$, versus a naive ``everything foreground in the crop'' baseline IoU of $0.687$ (Figure~\ref{fig:l43-3}).
 
 \begin{figure}[h]
 \centering
