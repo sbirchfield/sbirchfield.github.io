@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/notebook.css">
     <link rel="stylesheet" href="../css/quiz.css">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -26,7 +33,7 @@
             <div class="quiz-question" data-q="0">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does an overall accuracy of just over 50% on this lesson's 4-class CIFAR-10 task hide something important?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Because it doesn't reveal that the model is not equally good at all four classes</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Because it hides how well the model performs on each individual class</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Because 50% accuracy is actually below chance level for 4 classes</button>
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Because accuracy can only ever be computed for binary classifiers</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">Because the test set itself turns out to be imbalanced</button>

@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/notebook.css">
     <link rel="stylesheet" href="../css/quiz.css">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -59,7 +66,7 @@
                     <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">The point's distance from the image origin alone</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">Whichever class happens to have more training examples</button>
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(3, 2, 3)">The point's raw color channel values, unrelated to w or b</button>
-                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">The sign of the projected score <code>w^T x + b</code></button>
+                    <button class="quiz-choice" data-c="3" onclick="checkAnswer(3, 3, 3)">The sign of the projected score $w^\top x + b$</button>
                 </div>
                 <p class="quiz-explanation"><strong>Explanation:</strong> Points are classified by thresholding the projected score at zero: positive score means one class, negative means the other.</p>
             </div>

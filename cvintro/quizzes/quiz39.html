@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/notebook.css">
     <link rel="stylesheet" href="../css/quiz.css">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -44,7 +51,7 @@
                 <p class="quiz-explanation"><strong>Explanation:</strong> Grad-CAM's resolution matches whichever conv layer it uses, which is coarser than the full input resolution a saliency map operates at.</p>
             </div>
             <div class="quiz-question" data-q="2">
-                <p class="quiz-question-text"><span class="quiz-q-number"></span>. On *clean* test images (no marker present), why does Grad-CAM still catch <code>model_shortcut</code>'s reliance on the marker far more reliably than raw saliency does?</p>
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. On <em>clean</em> test images (no marker present), why does Grad-CAM still catch <code>model_shortcut</code>'s reliance on the marker far more reliably than raw saliency does?</p>
                 <div class="quiz-choices">
                     <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">Saliency maps cannot be computed at all on clean, unmarked images, only on marked ones</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">Grad-CAM was specifically trained in advance to detect markers, unlike saliency maps</button>

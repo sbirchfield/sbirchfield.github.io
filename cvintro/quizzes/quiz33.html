@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/notebook.css">
     <link rel="stylesheet" href="../css/quiz.css">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -24,9 +31,9 @@
         <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
         <div id="quiz-questions">
             <div class="quiz-question" data-q="0">
-                <p class="quiz-question-text"><span class="quiz-q-number"></span>. On the narrow, steep-in-y bowl loss surface, why does plain gradient descent zigzag instead of converging smoothly?</p>
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. On a narrow, elongated bowl-shaped loss surface -- steep in one direction and shallow in the other -- why does plain gradient descent zigzag instead of converging smoothly?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">A step size that makes progress along the shallow x-axis overshoots along the steep y-axis</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">A step size that makes progress along the shallow direction overshoots along the steep direction</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">Plain gradient descent cannot handle any 2D loss surface at all, by mathematical necessity</button>
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">The loss function being minimized has no minimum to converge to anywhere</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">The learning rate was mistakenly set to exactly zero for this particular run</button>
@@ -37,7 +44,7 @@
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What is the key mechanism behind momentum's benefit on the narrow bowl?</p>
                 <div class="quiz-choices">
                     <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">It sets the learning rate to exactly zero after a fixed number of steps</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">It accumulates a running velocity so consistent gradients</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">It accumulates a running velocity, so consistent gradients reinforce each other and accelerate while oscillating ones cancel out</button>
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">It removes the need for a loss function entirely during training</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">It only ever slows down training progress, never speeds it up</button>
                 </div>

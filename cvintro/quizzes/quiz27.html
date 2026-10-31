@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/notebook.css">
     <link rel="stylesheet" href="../css/quiz.css">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -54,7 +61,7 @@
                 <p class="quiz-explanation"><strong>Explanation:</strong> Radial distortion terms in the distortion model curve straight lines; the sign of <code>k1</code>/<code>k2</code> determines whether they bow outward (barrel) or inward (pincushion).</p>
             </div>
             <div class="quiz-question" data-q="3">
-                <p class="quiz-question-text"><span class="quiz-q-number"></span>. After applying <code>cv2.undistortPoints</code> with the *estimated* (not true) calibration, why don't the grid lines straighten out perfectly?</p>
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. After applying <code>cv2.undistortPoints</code> with the <em>estimated</em> (not true) calibration, why don't the grid lines straighten out perfectly?</p>
                 <div class="quiz-choices">
                     <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">Because <code>undistortPoints</code> only works correctly on color images, never grayscale</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">Because <code>undistortPoints</code> intentionally leaves a small amount of distortion for aesthetic reasons</button>

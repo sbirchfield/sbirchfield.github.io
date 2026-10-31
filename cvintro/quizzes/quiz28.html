@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/notebook.css">
     <link rel="stylesheet" href="../css/quiz.css">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -24,7 +31,7 @@
         <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
         <div id="quiz-questions">
             <div class="quiz-question" data-q="0">
-                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does the epipolar constraint <code>x2^T F x1 = 0</code> tell you about where a point's match must lie in the second image?</p>
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. What does the epipolar constraint $x_2^\top F x_1 = 0$ tell you about where a point's match must lie in the second image?</p>
                 <div class="quiz-choices">
                     <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">The match is constrained to lie on a specific 1D line</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">The match could be anywhere in the second image with equal probability</button>
@@ -54,7 +61,7 @@
                 <p class="quiz-explanation"><strong>Explanation:</strong> This is the Hartley normalization step: solving in centered, rescaled coordinates avoids numerical ill-conditioning that raw large pixel values would cause.</p>
             </div>
             <div class="quiz-question" data-q="3">
-                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why can <code>cv2.recoverPose</code> only recover the *direction* of the translation between the two cameras, not its magnitude?</p>
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why can <code>cv2.recoverPose</code> only recover the <em>direction</em> of the translation between the two cameras, not its magnitude?</p>
                 <div class="quiz-choices">
                     <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">Because of a known implementation bug in that specific OpenCV function, now fixed</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">Because the essential matrix only exists when the cameras are calibrated in advance</button>

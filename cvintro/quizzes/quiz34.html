@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/notebook.css">
     <link rel="stylesheet" href="../css/quiz.css">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -54,7 +61,7 @@
                 <p class="quiz-explanation"><strong>Explanation:</strong> Keeping only the max value in each window means small position shifts within that window don't change the pooled output.</p>
             </div>
             <div class="quiz-question" data-q="3">
-                <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the unseen-position generalization test, why does the flatten-based MLP perform near chance on shapes placed at corner positions never seen in training, while the CNN does not?</p>
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the unseen-position generalization test, why does the plain MLP perform near chance on shapes placed at corner positions never seen in training, while the CNN does not?</p>
                 <div class="quiz-choices">
                     <button class="quiz-choice" data-c="0" onclick="checkAnswer(3, 0, 3)">The MLP simply has more trainable parameters than the CNN, causing it to overfit faster</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(3, 1, 3)">The CNN happened to be trained for more epochs than the MLP in this comparison</button>

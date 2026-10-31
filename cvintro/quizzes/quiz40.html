@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/notebook.css">
     <link rel="stylesheet" href="../css/quiz.css">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -44,7 +51,7 @@
                 <p class="quiz-explanation"><strong>Explanation:</strong> Boxes here are stored as (cx, cy, w, h), with the center reported directly rather than a top-left corner.</p>
             </div>
             <div class="quiz-question" data-q="2">
-                <p class="quiz-question-text"><span class="quiz-q-number"></span>. After thresholding the sliding-window score map, why does a single true face typically produce a *cluster* of detections rather than one?</p>
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. After thresholding the sliding-window score map, why does a single true face typically produce a <em>cluster</em> of detections rather than one?</p>
                 <div class="quiz-choices">
                     <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">Because the window classifier is applied only a single time per image</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">Because faces are always detected exactly twice, due to a scoring bug</button>

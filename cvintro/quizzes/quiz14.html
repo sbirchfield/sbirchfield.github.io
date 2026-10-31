@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/notebook.css">
     <link rel="stylesheet" href="../css/quiz.css">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -51,7 +58,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">How spatially close it is, and how similar its intensity is to the center pixel</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Only how similar its intensity is to the center pixel, ignoring position entirely</button>
                 </div>
-                <p class="quiz-explanation"><strong>Explanation:</strong> The bilateral filter combines a spatial Gaussian (<code>G_sigma_s</code>) with a range/intensity Gaussian (<code>G_sigma_r</code>), so only neighbors that are both nearby and similar in intensity get high weight.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> The bilateral filter combines a spatial Gaussian ($G_{\sigma_s}$) with a range/intensity Gaussian ($G_{\sigma_r}$), so only neighbors that are both nearby and similar in intensity get high weight.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does the bilateral filter preserve a step edge while Gaussian blur smooths across it?</p>

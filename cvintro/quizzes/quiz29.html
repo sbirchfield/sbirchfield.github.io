@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/notebook.css">
     <link rel="stylesheet" href="../css/quiz.css">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -44,11 +51,11 @@
                 <p class="quiz-explanation"><strong>Explanation:</strong> The epipolar constraint doesn't rule out points that triangulate behind a camera; requiring positive depth in both views is a free extra filter that catches such bad matches.</p>
             </div>
             <div class="quiz-question" data-q="2">
-                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does the reconstruction from *estimated* poses need to be multiplied by the true baseline length before it matches the true-pose reconstruction?</p>
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why does the reconstruction from <em>estimated</em> poses need to be multiplied by the true baseline length before it matches the true-pose reconstruction?</p>
                 <div class="quiz-choices">
                     <button class="quiz-choice" data-c="0" onclick="checkAnswer(2, 0, 2)">Because the estimated poses use a different coordinate system entirely</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(2, 1, 2)">Because triangulation always underestimates distances by a fixed known factor</button>
-                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Because <code>recoverPose</code> only returns a translation *direction*</button>
+                    <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">Because <code>recoverPose</code> only returns a translation <em>direction</em></button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">This scaling step is unnecessary and is only done here for illustration</button>
                 </div>
                 <p class="quiz-explanation"><strong>Explanation:</strong> Since <code>t</code> from <code>recoverPose</code> is unit-length, every triangulated point comes out a fixed factor smaller than reality; rescaling by the true baseline fixes the metric scale (using outside knowledge, since two views alone can't supply it).</p>

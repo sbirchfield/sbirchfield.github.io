@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/notebook.css">
     <link rel="stylesheet" href="../css/quiz.css">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -37,11 +44,11 @@
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What specifically causes a homography to destroy parallelism, unlike an affine transform?</p>
                 <div class="quiz-choices">
                     <button class="quiz-choice" data-c="0" onclick="checkAnswer(1, 0, 1)">Using floating-point coordinates instead of integer ones</button>
-                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">A nonzero bottom row <code>(g, h)</code> in the 3x3 matrix</button>
+                    <button class="quiz-choice" data-c="1" onclick="checkAnswer(1, 1, 1)">A nonzero bottom row (other than the last entry) in the 3x3 matrix</button>
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(1, 2, 1)">Applying the transform to the image more than once in sequence</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(1, 3, 1)">The mere presence of a nonzero translation term in the matrix</button>
                 </div>
-                <p class="quiz-explanation"><strong>Explanation:</strong> An affine transform's bottom row is always (0, 0, 1); a homography's nonzero (g, h) introduces the division effect that makes parallel lines converge.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> An affine transform's bottom row is always (0, 0, 1); a homography's nonzero first two entries in that row introduce the division effect that makes parallel lines converge.</p>
             </div>
             <div class="quiz-question" data-q="2">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. How does the point-at-infinity trick locate a vanishing point?</p>

@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/notebook.css">
     <link rel="stylesheet" href="../css/quiz.css">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -26,7 +33,7 @@
             <div class="quiz-question" data-q="0">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. What can semantic segmentation not distinguish, that instance segmentation adds?</p>
                 <div class="quiz-choices">
-                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Which pixels belong to *this specific* object versus another object of the same class</button>
+                    <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Which pixels belong to <em>this specific</em> object versus another object of the same class</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">The precise color of each object in the scene, down to the exact RGB value</button>
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(0, 2, 0)">Whether a given object is moving or stationary, frame to frame</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(0, 3, 0)">The exact class name assigned to each pixel, with no instance information</button>

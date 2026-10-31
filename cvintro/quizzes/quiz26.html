@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/notebook.css">
     <link rel="stylesheet" href="../css/quiz.css">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -24,7 +31,7 @@
         <p class="quiz-score" id="quiz-score">Score: 0 / 4</p>
         <div id="quiz-questions">
             <div class="quiz-question" data-q="0">
-                <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the pinhole projection formula <code>x = f*X/Z</code>, <code>y = f*Y/Z</code>, what determines how much a 3D point's image position changes as its depth <code>Z</code> increases (with <code>X</code>, <code>Y</code> fixed)?</p>
+                <p class="quiz-question-text"><span class="quiz-q-number"></span>. In the pinhole projection formula <code>x = f*X/Z</code>, <code>y = f*Y/Z</code>, how does a 3D point's image position change as its depth <code>Z</code> increases (with <code>X</code>, <code>Y</code> fixed)?</p>
                 <div class="quiz-choices">
                     <button class="quiz-choice" data-c="0" onclick="checkAnswer(0, 0, 0)">Increasing <code>Z</code> shrinks the projected coordinates toward the center</button>
                     <button class="quiz-choice" data-c="1" onclick="checkAnswer(0, 1, 0)">The image position is completely independent of the depth <code>Z</code></button>
@@ -51,7 +58,7 @@
                     <button class="quiz-choice" data-c="2" onclick="checkAnswer(2, 2, 2)">It fails silently: every pixel still gets a value, but colors are badly and systematically wrong</button>
                     <button class="quiz-choice" data-c="3" onclick="checkAnswer(2, 3, 2)">Only the brightness channel is affected; the color channels stay correct regardless</button>
                 </div>
-                <p class="quiz-explanation"><strong>Explanation:</strong> Since every pixel gets *some* value regardless of the assumed pattern, a wrong pattern produces a plausible-looking but strongly color-shifted image rather than an obvious failure.</p>
+                <p class="quiz-explanation"><strong>Explanation:</strong> Since every pixel gets <em>some</em> value regardless of the assumed pattern, a wrong pattern produces a plausible-looking but strongly color-shifted image rather than an obvious failure.</p>
             </div>
             <div class="quiz-question" data-q="3">
                 <p class="quiz-question-text"><span class="quiz-q-number"></span>. Why is naively averaging two gamma-encoded pixel values (e.g. for blending or blurring) physically wrong?</p>
