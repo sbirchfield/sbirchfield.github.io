@@ -34,10 +34,11 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=3ca94f33"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=11268ffe"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-45:-The-Attention-Mechanism">Lesson 45: The Attention Mechanism<a class="anchor-link" href="#Lesson-45:-The-Attention-Mechanism">¶</a></h1><p>Every model in Part 3 processed spatial structure through convolution: a fixed, local neighborhood pattern, applied the same way everywhere (Lesson 10). <strong>Attention</strong> is a different way to mix information across a sequence or an image: instead of a fixed neighborhood, every position decides, dynamically, which <em>other</em> positions are relevant to it right now, and mixes them in proportion to that relevance. This lesson builds attention from scratch, validates it against PyTorch's own implementation, and shows concretely what it's doing: soft, content-based retrieval.</p>
+<p><em>Note on terminology:</em> attention, and the transformers built from it, were originally designed for — and remain most associated with — sequences of <strong>tokens</strong>: informally, the words of a sentence. A computer-vision sequence's tokens are typically image patches instead of words (Lesson 47 covers exactly how an image becomes such a sequence), but the same math applies either way — this course uses "position" and "token" interchangeably from here on.</p>
 </div>
 </div>
 </div>
@@ -147,7 +148,7 @@ max abs diff vs F.scaled_dot_product_attention: 2.38e-07
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=ff92fabc"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Attention-as-soft,-content-based-retrieval">Attention as soft, content-based retrieval<a class="anchor-link" href="#Attention-as-soft,-content-based-retrieval">¶</a></h2><p>Abstract formula aside, here's concretely what attention does: given a query, it looks up the most similar keys in the sequence and returns a blend of their values, weighted by similarity. Build a toy sequence of 5 distinct "tokens" (one-hot vectors, scaled up to make similarity differences sharper) and query for the token that matches position 2 exactly.</p>
+<h2 id="Attention-as-soft,-content-based-retrieval">Attention as soft, content-based retrieval<a class="anchor-link" href="#Attention-as-soft,-content-based-retrieval">¶</a></h2><p>Abstract formula aside, here's concretely what attention does: given a query, it looks up the most similar keys in the sequence and returns a blend of their values, weighted by similarity. Build a toy sequence of 5 distinct tokens (one-hot vectors, scaled up to make similarity differences sharper) and query for the token that matches position 2 exactly.</p>
 </div>
 </div>
 </div>

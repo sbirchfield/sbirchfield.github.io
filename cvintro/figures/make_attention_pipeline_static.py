@@ -53,14 +53,14 @@ W_QKV = SCALE * np.sqrt(D_K)    # Q, K, V, Output all have d_k or d_v columns
 W_TT = SCALE * np.sqrt(T)       # QK^T and softmax are both T x T -> square
 
 
-def box(ax, x, y, w, h, label, dim, face):
+def box(ax, x, y, w, h, label, dim, face, bold=True):
     ax.add_patch(FancyBboxPatch((x - w / 2, y - h / 2), w, h,
                                   boxstyle="round,pad=0.02,rounding_size=0.06",
                                   facecolor=face, edgecolor=EDGE_COLOR, linewidth=1.3, zorder=2))
     # Labels sit outside the box (above/below) so narrow, true-to-shape boxes
     # never have to fit text inside themselves.
     ax.text(x, y + h / 2 + 0.22, label, ha="center", va="bottom", fontsize=10.5,
-             color=TEXT_COLOR, fontweight="bold", zorder=3)
+             color=TEXT_COLOR, fontweight=("bold" if bold else "normal"), zorder=3)
     ax.text(x, y - h / 2 - 0.14, dim, ha="center", va="top", fontsize=9,
              color=DIM_COLOR, zorder=3)
 
@@ -115,7 +115,7 @@ box(ax, *X, W_X, H, "X", r"$T \times D$" + f"\n({T} x {D})", BOX_FACE)
 box(ax, *Q, W_QKV, H, r"$Q = XW_Q$", r"$T \times d_k$" + f"\n({T} x {D_K})", Q_FACE)
 box(ax, *K, W_QKV, H, r"$K = XW_K$", r"$T \times d_k$" + f"\n({T} x {D_K})", K_FACE)
 box(ax, *V, W_QKV, H, r"$V = XW_V$", r"$T \times d_v$" + f"\n({T} x {D_V})", V_FACE)
-box(ax, *SCORES, W_TT, H, r"QK$^\top$ / $\sqrt{d_k}$", r"$T \times T$" + f"\n({T} x {T})", OP_FACE)
+box(ax, *SCORES, W_TT, H, r"QK$^\top$ / $\sqrt{d_k}$", r"$T \times T$" + f"\n({T} x {T})", OP_FACE, bold=False)
 box(ax, *SOFTMAX, W_TT, H, "softmax\n(row-wise)", r"$T \times T$" + f"\n({T} x {T})", OP_FACE)
 box(ax, *OUT, W_QKV, H, "Output", r"$T \times d_v$" + f"\n({T} x {D_V})", OUT_FACE)
 
