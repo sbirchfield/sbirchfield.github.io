@@ -146,6 +146,20 @@ li {
     margin-top: 2px;
 }
 
+.subsection-heading {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #0076b9;
+    margin-top: 28px;
+    margin-bottom: 8px;
+}
+
+.subsection-heading:first-child {
+    margin-top: 0;
+}
+
 /* Header styles */
 .header {
     display: flex;

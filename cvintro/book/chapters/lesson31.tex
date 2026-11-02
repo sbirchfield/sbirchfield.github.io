@@ -1,4 +1,4 @@
-\chapter{Neural Network Fundamentals}
+\chapter{Gradient Descent and Backpropagation}
 \label{ch:lesson31}
 
 Chapter~\ref{ch:lesson30} hand-picked a projection direction $w$ (the difference of class means) to separate two classes. That worked, but it required a human to notice a good heuristic. This chapter replaces the human with \textbf{gradient descent}: an automatic procedure that \emph{learns} $w$ and $b$ directly from data by repeatedly nudging them to reduce a loss. The recipe --- forward pass, loss, backward pass, update --- is the entire training loop behind every neural network in this course, no matter how large.
@@ -156,4 +156,4 @@ Gradient descent actually does worse here than brute-force search --- it converg
 \end{enumerate}
 
 \vfill
-\fullcode{lesson31}{lesson31_neural_network_fundamentals}
+\fullcode{lesson31}{lesson31_gradient_descent_backpropagation}

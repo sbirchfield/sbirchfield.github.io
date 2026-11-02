@@ -26,24 +26,40 @@
 
         <div class="section">
             <h2>Part 1: Classical 2D Image Processing (1960&ndash;1990)</h2>
+            <h3 class="subsection-heading">Images and Basic Operations</h3>
             <ul class="lesson-list">
                 <li><a href="lessons/lesson01_images_as_arrays.html" class="lesson-link"><span class="lesson-title">Lesson 1: Images as Arrays</span><span class="lesson-summary">Build and display images as NumPy arrays, grayscale and color</span></a></li>
                 <li><a href="lessons/lesson02_image_arithmetic.html" class="lesson-link"><span class="lesson-title">Lesson 2: Image Arithmetic</span><span class="lesson-summary">Edit images with arithmetic: brightening, blending, and a common overflow pitfall</span></a></li>
+            </ul>
+            <h3 class="subsection-heading">Binary Images and Blob Analysis</h3>
+            <ul class="lesson-list">
                 <li><a href="lessons/lesson03_thresholding_morphology.html" class="lesson-link"><span class="lesson-title">Lesson 3: Thresholding, Erosion, and Dilation</span><span class="lesson-summary">Binarize images with thresholding, then clean up noise with erosion and dilation</span></a></li>
                 <li><a href="lessons/lesson04_floodfill_connected_components.html" class="lesson-link"><span class="lesson-title">Lesson 4: Flood Fill and Connected Components</span><span class="lesson-summary">Find and label connected blobs in a binary image with flood fill</span></a></li>
                 <li><a href="lessons/lesson05_moments.html" class="lesson-link"><span class="lesson-title">Lesson 5: Image Moments</span><span class="lesson-summary">Summarize a blob's shape with moments: area, centroid, and orientation</span></a></li>
                 <li><a href="lessons/lesson06_eigen_covariance.html" class="lesson-link"><span class="lesson-title">Lesson 6: Eigenvectors and Eigenvalues of the Covariance Matrix</span><span class="lesson-summary">Derive a blob's orientation and axes from its covariance matrix's eigenvectors</span></a></li>
                 <li><a href="lessons/lesson07_distance_measures.html" class="lesson-link"><span class="lesson-title">Lesson 7: Distance Measures</span><span class="lesson-summary">Compare Euclidean, Manhattan, and Mahalanobis distance on a pixel grid</span></a></li>
+            </ul>
+            <h3 class="subsection-heading">Geometric Transformations</h3>
+            <ul class="lesson-list">
                 <li><a href="lessons/lesson08_geometric_transformations.html" class="lesson-link"><span class="lesson-title">Lesson 8: Geometric Transformations</span><span class="lesson-summary">Move, resize, and reshape images with Euclidean, similarity, and affine transforms</span></a></li>
                 <li><a href="lessons/lesson09_warping_interpolation.html" class="lesson-link"><span class="lesson-title">Lesson 9: Image Warping, Inverse Mapping, and Bilinear Interpolation</span><span class="lesson-summary">Resample a warped image correctly using inverse mapping and bilinear interpolation</span></a></li>
+            </ul>
+            <h3 class="subsection-heading">Convolution and Filtering</h3>
+            <ul class="lesson-list">
                 <li><a href="lessons/lesson10_convolution.html" class="lesson-link"><span class="lesson-title">Lesson 10: Convolution</span><span class="lesson-summary">Build convolution from scratch, the operation behind blurring, sharpening, and edges</span></a></li>
                 <li><a href="lessons/lesson11_smoothing_pyramids.html" class="lesson-link"><span class="lesson-title">Lesson 11: Smoothing and Gaussian Pyramids</span><span class="lesson-summary">Blur before downsampling to avoid aliasing, building a Gaussian pyramid</span></a></li>
                 <li><a href="lessons/lesson12_differentiation_edges.html" class="lesson-link"><span class="lesson-title">Lesson 12: Differentiation and Edge Detection</span><span class="lesson-summary">Detect edges from image derivatives using Sobel, Prewitt, and Scharr kernels</span></a></li>
                 <li><a href="lessons/lesson13_laplacian_pyramids.html" class="lesson-link"><span class="lesson-title">Lesson 13: Second Derivatives and the Laplacian</span><span class="lesson-summary">Find edges as zero crossings of the second derivative with the Laplacian</span></a></li>
                 <li><a href="lessons/lesson14_nonlinear_filters.html" class="lesson-link"><span class="lesson-title">Lesson 14: Nonlinear Filters</span><span class="lesson-summary">Go beyond convolution with nonlinear filters like the median filter</span></a></li>
+            </ul>
+            <h3 class="subsection-heading">Frequency-Domain Methods</h3>
+            <ul class="lesson-list">
                 <li><a href="lessons/lesson15_fourier_frequency_filtering.html" class="lesson-link"><span class="lesson-title">Lesson 15: The Fourier Transform and Frequency-Domain Filtering</span><span class="lesson-summary">Decompose an image into sinusoids with the Fourier transform for frequency filtering</span></a></li>
                 <li><a href="lessons/lesson16_wavelets_gabor.html" class="lesson-link"><span class="lesson-title">Lesson 16: Wavelets and Gabor Filters</span><span class="lesson-summary">Localize frequency content in space with wavelets and Gabor filters</span></a></li>
                 <li><a href="lessons/lesson17_compression.html" class="lesson-link"><span class="lesson-title">Lesson 17: Image Compression &ndash; Lossless and Lossy</span><span class="lesson-summary">Compress images losslessly and lossily by exploiting redundancy</span></a></li>
+            </ul>
+            <h3 class="subsection-heading">Color and Clustering</h3>
+            <ul class="lesson-list">
                 <li><a href="lessons/lesson18_color_spaces.html" class="lesson-link"><span class="lesson-title">Lesson 18: Color Spaces</span><span class="lesson-summary">Compare RGB, HSV, YCbCr, and L*a*b* color spaces and what each is good for</span></a></li>
                 <li><a href="lessons/lesson19_clustering.html" class="lesson-link"><span class="lesson-title">Lesson 19: Clustering &ndash; k-Means, GMMs, and DBSCAN</span><span class="lesson-summary">Group pixels or points into clusters with k-means, GMMs, and DBSCAN</span></a></li>
             </ul>
@@ -51,13 +67,20 @@
 
         <div class="section">
             <h2>Part 2: Classical 3D Computer Vision (1980&ndash;2010)</h2>
+            <h3 class="subsection-heading">Correspondence and Matching</h3>
             <ul class="lesson-list">
                 <li><a href="lessons/lesson20_feature_detection_matching.html" class="lesson-link"><span class="lesson-title">Lesson 20: Feature Detection and Matching</span><span class="lesson-summary">Detect and match distinctive keypoints across images</span></a></li>
                 <li><a href="lessons/lesson21_optical_flow.html" class="lesson-link"><span class="lesson-title">Lesson 21: Optical Flow and Motion Estimation</span><span class="lesson-summary">Estimate per-pixel motion between video frames with Lucas-Kanade optical flow</span></a></li>
                 <li><a href="lessons/lesson22_stereo_matching.html" class="lesson-link"><span class="lesson-title">Lesson 22: Stereo Matching</span><span class="lesson-summary">Recover depth from two images by matching pixels along epipolar lines</span></a></li>
                 <li><a href="lessons/lesson23_model_fitting_ransac.html" class="lesson-link"><span class="lesson-title">Lesson 23: Model Fitting, Robust Estimation, and RANSAC</span><span class="lesson-summary">Fit models to noisy data robustly with RANSAC</span></a></li>
+            </ul>
+            <h3 class="subsection-heading">Planar Geometry</h3>
+            <ul class="lesson-list">
                 <li><a href="lessons/lesson24_projective_geometry.html" class="lesson-link"><span class="lesson-title">Lesson 24: Projective Geometry</span><span class="lesson-summary">Model homographies, the general 2D transform a camera induces on a plane</span></a></li>
                 <li><a href="lessons/lesson25_stitching_mosaicking.html" class="lesson-link"><span class="lesson-title">Lesson 25: Image Stitching and Mosaicking</span><span class="lesson-summary">Stitch two overlapping photos into a seamless panorama</span></a></li>
+            </ul>
+            <h3 class="subsection-heading">Camera Geometry and 3D Reconstruction</h3>
+            <ul class="lesson-list">
                 <li><a href="lessons/lesson26_image_formation.html" class="lesson-link"><span class="lesson-title">Lesson 26: Image Formation</span><span class="lesson-summary">Derive how a pinhole camera projects a 3D scene onto a 2D image</span></a></li>
                 <li><a href="lessons/lesson27_camera_calibration.html" class="lesson-link"><span class="lesson-title">Lesson 27: Camera Calibration</span><span class="lesson-summary">Recover a camera's intrinsic parameters from checkerboard images</span></a></li>
                 <li><a href="lessons/lesson28_epipolar_geometry.html" class="lesson-link"><span class="lesson-title">Lesson 28: Epipolar Geometry</span><span class="lesson-summary">Relate two camera views through the epipolar constraint and fundamental matrix</span></a></li>
@@ -67,21 +90,31 @@
 
         <div class="section">
             <h2>Part 3: Deep Learning for Computer Vision (2012&ndash;2022)</h2>
+            <h3 class="subsection-heading">Neural Network Fundamentals</h3>
             <ul class="lesson-list">
                 <li><a href="lessons/lesson30_projection.html" class="lesson-link"><span class="lesson-title">Lesson 30: Projection &ndash; The Central Idea</span><span class="lesson-summary">See classification, regression, and neurons as the same underlying linear projection</span></a></li>
-                <li><a href="lessons/lesson31_neural_network_fundamentals.html" class="lesson-link"><span class="lesson-title">Lesson 31: Neural Network Fundamentals</span><span class="lesson-summary">Replace hand-picked projections with gradient descent and backpropagation</span></a></li>
+                <li><a href="lessons/lesson31_gradient_descent_backpropagation.html" class="lesson-link"><span class="lesson-title">Lesson 31: Gradient Descent and Backpropagation</span><span class="lesson-summary">Replace hand-picked projections with gradient descent and backpropagation</span></a></li>
                 <li><a href="lessons/lesson32_multilayer_perceptrons.html" class="lesson-link"><span class="lesson-title">Lesson 32: Multi-Layer Perceptrons</span><span class="lesson-summary">Stack linear layers with nonlinearities to separate non-linearly-separable data</span></a></li>
                 <li><a href="lessons/lesson33_optimization.html" class="lesson-link"><span class="lesson-title">Lesson 33: Optimization</span><span class="lesson-summary">Speed up gradient descent with momentum, RMSProp, and Adam</span></a></li>
+            </ul>
+            <h3 class="subsection-heading">Convolutional Neural Networks</h3>
+            <ul class="lesson-list">
                 <li><a href="lessons/lesson34_convolutional_neural_networks.html" class="lesson-link"><span class="lesson-title">Lesson 34: Convolutional Neural Networks (CNNs)</span><span class="lesson-summary">Build convolutional layers that exploit the spatial structure of images</span></a></li>
                 <li><a href="lessons/lesson35_training_a_cnn.html" class="lesson-link"><span class="lesson-title">Lesson 35: Training a CNN</span><span class="lesson-summary">Train a CNN while diagnosing and fixing overfitting</span></a></li>
                 <li><a href="lessons/lesson36_evaluating_a_classifier.html" class="lesson-link"><span class="lesson-title">Lesson 36: Evaluating a Classifier</span><span class="lesson-summary">Evaluate a classifier properly with precision, recall, and confusion matrices</span></a></li>
                 <li><a href="lessons/lesson37_classic_architectures.html" class="lesson-link"><span class="lesson-title">Lesson 37: Classic Architectures</span><span class="lesson-summary">Trace CNN architecture history to the residual connection and vanishing gradients</span></a></li>
                 <li><a href="lessons/lesson38_transfer_learning.html" class="lesson-link"><span class="lesson-title">Lesson 38: Transfer Learning</span><span class="lesson-summary">Reuse a pretrained backbone to train on small, data-starved tasks</span></a></li>
                 <li><a href="lessons/lesson39_visualizing_cnns.html" class="lesson-link"><span class="lesson-title">Lesson 39: Visualizing and Understanding CNNs</span><span class="lesson-summary">Visualize what a CNN "sees" with saliency maps and Grad-CAM</span></a></li>
+            </ul>
+            <h3 class="subsection-heading">Detection and Segmentation</h3>
+            <ul class="lesson-list">
                 <li><a href="lessons/lesson40_object_detection_sliding_windows.html" class="lesson-link"><span class="lesson-title">Lesson 40: Object Detection from Sliding Windows</span><span class="lesson-summary">Detect objects by sliding a classifier window across the image</span></a></li>
                 <li><a href="lessons/lesson41_object_detection_regression.html" class="lesson-link"><span class="lesson-title">Lesson 41: Object Detection as Regression</span><span class="lesson-summary">Detect objects by directly regressing boxes instead of sliding windows</span></a></li>
                 <li><a href="lessons/lesson42_semantic_segmentation.html" class="lesson-link"><span class="lesson-title">Lesson 42: Semantic Segmentation</span><span class="lesson-summary">Label every pixel with a class using fully convolutional networks</span></a></li>
                 <li><a href="lessons/lesson43_instance_segmentation.html" class="lesson-link"><span class="lesson-title">Lesson 43: Instance Segmentation</span><span class="lesson-summary">Separate touching objects of the same class into distinct instances</span></a></li>
+            </ul>
+            <h3 class="subsection-heading">Training at Scale</h3>
+            <ul class="lesson-list">
                 <li><a href="lessons/lesson44_precision_and_parallel_training.html" class="lesson-link"><span class="lesson-title">Lesson 44: Precision and Parallel Training</span><span class="lesson-summary">Train faster with mixed precision and multiple GPUs</span></a></li>
             </ul>
         </div>

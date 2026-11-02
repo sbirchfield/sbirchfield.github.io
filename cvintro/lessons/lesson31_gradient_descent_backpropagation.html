@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson 31: Neural Network Fundamentals - Introduction to Computer Vision</title>
+    <title>Lesson 31: Gradient Descent Backpropagation - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson31_neural_network_fundamentals.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson31_gradient_descent_backpropagation.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson31_neural_network_fundamentals.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson31_gradient_descent_backpropagation.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=47a2dcb6"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-31:-Neural-Network-Fundamentals">Lesson 31: Neural Network Fundamentals<a class="anchor-link" href="#Lesson-31:-Neural-Network-Fundamentals">¶</a></h1><p>Lesson 30 hand-picked a projection direction $w$ (the difference of class means) to separate two classes. That worked, but it required a human to notice a good heuristic. This lesson replaces the human with <strong>gradient descent</strong>: an automatic procedure that <em>learns</em> $w$ and $b$ directly from data by repeatedly nudging them to reduce a loss. The recipe — forward pass, loss, backward pass, update — is the entire training loop behind every neural network in this course, no matter how large.</p>
+<h1 id="Lesson-31:-Gradient-Descent-and-Backpropagation">Lesson 31: Gradient Descent and Backpropagation<a class="anchor-link" href="#Lesson-31:-Gradient-Descent-and-Backpropagation">¶</a></h1><p>Lesson 30 hand-picked a projection direction $w$ (the difference of class means) to separate two classes. That worked, but it required a human to notice a good heuristic. This lesson replaces the human with <strong>gradient descent</strong>: an automatic procedure that <em>learns</em> $w$ and $b$ directly from data by repeatedly nudging them to reduce a loss. The recipe — forward pass, loss, backward pass, update — is the entire training loop behind every neural network in this course, no matter how large.</p>
 </div>
 </div>
 </div>
@@ -589,13 +589,7 @@ angle between them: 2.2 degrees
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>learned w = [-0.0791  0.0228] (norm=0.0824), b = 0.0005</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
+<pre>learned w = [-0.0791  0.0228] (norm=0.0824), b = 0.0005
 trained single-neuron accuracy: 50.0%
 (Lesson 30's exhaustive-search ceiling for ANY linear separator was 74%)
 </pre>
