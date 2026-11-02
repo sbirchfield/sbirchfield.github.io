@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson 55: Open Vocabulary Detection - Introduction to Computer Vision</title>
+    <title>Lesson 56: Open Vocabulary Detection - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson55_open_vocabulary_detection.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson56_open_vocabulary_detection.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson55_open_vocabulary_detection.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson56_open_vocabulary_detection.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=745baeca"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=343e59a1"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-55:-Open-Vocabulary-Detection">Lesson 55: Open-Vocabulary Detection<a class="anchor-link" href="#Lesson-55:-Open-Vocabulary-Detection">¶</a></h1><p>Lesson 41's detector predicts one of a small, fixed set of classes baked in at training time — exactly Lesson 36's classification limitation, just applied to boxes instead of whole images. <strong>Open-vocabulary detection</strong> (Grounding DINO, OWL-ViT) removes that limit by splitting detection into two separable skills: <em>finding</em> objects (a class-agnostic skill, surprisingly transferable across object categories) and <em>naming</em> them (delegated to a CLIP-style text-embedding match, Lesson 52, which can recognize any category describable in words). This lesson builds both halves and tests the combination on a category the detector's box regressor never received a single labeled box for.</p>
+<h1 id="Lesson-56:-Open-Vocabulary-Detection">Lesson 56: Open-Vocabulary Detection<a class="anchor-link" href="#Lesson-56:-Open-Vocabulary-Detection">¶</a></h1><p>Lesson 41's detector predicts one of a small, fixed set of classes baked in at training time — exactly Lesson 36's classification limitation, just applied to boxes instead of whole images. <strong>Open-vocabulary detection</strong> (Grounding DINO, OWL-ViT) removes that limit by splitting detection into two separable skills: <em>finding</em> objects (a class-agnostic skill, surprisingly transferable across object categories) and <em>naming</em> them (delegated to a CLIP-style text-embedding match, Lesson 53, which can recognize any category describable in words). This lesson builds both halves and tests the combination on a category the detector's box regressor never received a single labeled box for.</p>
 </div>
 </div>
 </div>
@@ -218,7 +218,7 @@
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Localization transfers to the novel shape reasonably well — never having seen a labeled square box, the regressor still finds squares with a respectable IoU, though noticeably less precisely than the base classes it was actually trained on. Class-agnostic "is there an object here" is a more generic, more transferable skill than exact class identity.</p>
-<h2 id="Half-2:-a-CLIP-style-classifier,-trained-on-all-three-classes">Half 2: a CLIP-style classifier, trained on all three classes<a class="anchor-link" href="#Half-2:-a-CLIP-style-classifier,-trained-on-all-three-classes">¶</a></h2><p>This is the "broad pretraining" stand-in — a dual image/text encoder (Lesson 52), contrastively trained on labeled crops of <strong>all three</strong> shapes, plus and circle and square. Real open-vocabulary detectors rely on exactly this asymmetry: the image-text encoder was pretrained on a vastly broader vocabulary (hundreds of millions of image-caption pairs) than any detection dataset's box annotations ever cover, so it already "knows" what a square looks like even though the detector's box-training data never had one.</p>
+<h2 id="Half-2:-a-CLIP-style-classifier,-trained-on-all-three-classes">Half 2: a CLIP-style classifier, trained on all three classes<a class="anchor-link" href="#Half-2:-a-CLIP-style-classifier,-trained-on-all-three-classes">¶</a></h2><p>This is the "broad pretraining" stand-in — a dual image/text encoder (Lesson 53), contrastively trained on labeled crops of <strong>all three</strong> shapes, plus and circle and square. Real open-vocabulary detectors rely on exactly this asymmetry: the image-text encoder was pretrained on a vastly broader vocabulary (hundreds of millions of image-caption pairs) than any detection dataset's box annotations ever cover, so it already "knows" what a square looks like even though the detector's box-training data never had one.</p>
 </div>
 </div>
 </div>
@@ -378,8 +378,8 @@
 
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson54_segment_anything.html">&larr; Lesson 54: Segment Anything</a></div>
-            <div class="lesson-nav-next"><a href="lesson56_monocular_depth_estimation.html">Lesson 56: Monocular Depth Estimation &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson55_video_segmentation.html">&larr; Lesson 55: Promptable Video Segmentation</a></div>
+            <div class="lesson-nav-next"><a href="lesson57_visual_question_answering.html">Lesson 57: Visual Question Answering (VQA) &rarr;</a></div>
         </div>
     </div>
 </body>

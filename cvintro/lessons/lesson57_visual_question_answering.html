@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson 53: Visual Question Answering - Introduction to Computer Vision</title>
+    <title>Lesson 57: Visual Question Answering - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson53_visual_question_answering.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson57_visual_question_answering.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson53_visual_question_answering.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson57_visual_question_answering.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=5a798be9"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=2e1d2d89"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-53:-Visual-Question-Answering-(VQA)">Lesson 53: Visual Question Answering (VQA)<a class="anchor-link" href="#Lesson-53:-Visual-Question-Answering-(VQA)">¶</a></h1><p>Lesson 52's CLIP matched a <em>fixed</em> set of text prompts against an image. <strong>Visual Question Answering (VQA)</strong> asks for something more flexible: given an image and an arbitrary natural-language question about it, produce an answer. This is the mechanism behind modern multimodal assistants that can look at a picture and answer questions about it — a generative-VLM capability, distinct from CLIP's contrastive matching. This lesson builds the classic (and still widely used) simplification: treat VQA as classification over a small, closed vocabulary of possible answers, fusing an image encoder and a question encoder before the final prediction.</p>
+<h1 id="Lesson-57:-Visual-Question-Answering-(VQA)">Lesson 57: Visual Question Answering (VQA)<a class="anchor-link" href="#Lesson-57:-Visual-Question-Answering-(VQA)">¶</a></h1><p>Lesson 53's CLIP matched a <em>fixed</em> set of text prompts against an image. <strong>Visual Question Answering (VQA)</strong> asks for something more flexible: given an image and an arbitrary natural-language question about it, produce an answer. This is the mechanism behind modern multimodal assistants that can look at a picture and answer questions about it — a generative-VLM capability, distinct from CLIP's contrastive matching. This lesson builds the classic (and still widely used) simplification: treat VQA as classification over a small, closed vocabulary of possible answers, fusing an image encoder and a question encoder before the final prediction.</p>
 </div>
 </div>
 </div>
@@ -163,7 +163,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=304afe47"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Fusing-an-image-encoder-and-a-question-encoder">Fusing an image encoder and a question encoder<a class="anchor-link" href="#Fusing-an-image-encoder-and-a-question-encoder">¶</a></h2><p>Both encoders map to the same-size vector, same pattern as Lesson 52's CLIP. The difference is what happens next: CLIP compared image and text embeddings with a dot product to check <em>if they match</em>. VQA needs to actually <em>combine</em> them into one joint representation and classify — a standard, simple fusion is elementwise multiplication (the image vector and the question vector gate each other), followed by a small classifier head over the fixed answer vocabulary.</p>
+<h2 id="Fusing-an-image-encoder-and-a-question-encoder">Fusing an image encoder and a question encoder<a class="anchor-link" href="#Fusing-an-image-encoder-and-a-question-encoder">¶</a></h2><p>Both encoders map to the same-size vector, same pattern as Lesson 53's CLIP. The difference is what happens next: CLIP compared image and text embeddings with a dot product to check <em>if they match</em>. VQA needs to actually <em>combine</em> them into one joint representation and classify — a standard, simple fusion is elementwise multiplication (the image vector and the question vector gate each other), followed by a small classifier head over the fixed answer vocabulary.</p>
 </div>
 </div>
 </div>
@@ -298,7 +298,7 @@ baseline (always predict the most common training answer, "yes"): 22.0%
 <h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Add a fifth question template asking about <em>position</em> (e.g. "is there a shape in the top half of the image", answer yes/no based on <code>cy &lt; SIZE // 2</code>). Retrain and check whether accuracy on this new question type matches the others — does the image encoder's global max pooling (Lesson 34) make position-based questions structurally harder to answer than presence/count questions?</li>
 <li>Replace elementwise multiplication fusion (<code>img_enc(img) * q_enc(q_ids)</code>) with concatenation followed by a linear layer (<code>nn.Linear(2 * dim, dim)</code> on <code>torch.cat([img_feat, q_feat], dim=-1)</code>). Does accuracy change noticeably, and which fusion method converges faster during training?</li>
-<li>This lesson's question encoder mean-pools word embeddings, so <code>"is there a circle"</code> and <code>"there a circle is"</code> encode identically (Lesson 52's exercise made the same point about captions). Construct a question pair for this dataset where that word-order-blindness would actually cause an answer error, if such a pair exists — or explain why this dataset's question templates are simple enough that it never matters.</li>
+<li>This lesson's question encoder mean-pools word embeddings, so <code>"is there a circle"</code> and <code>"there a circle is"</code> encode identically (Lesson 53's exercise made the same point about captions). Construct a question pair for this dataset where that word-order-blindness would actually cause an answer error, if such a pair exists — or explain why this dataset's question templates are simple enough that it never matters.</li>
 </ol>
 </div>
 </div>
@@ -306,8 +306,8 @@ baseline (always predict the most common training answer, "yes"): 22.0%
 
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson52_vision_language_models.html">&larr; Lesson 52: Vision-Language Models (VLMs)</a></div>
-            <div class="lesson-nav-next"><a href="lesson54_segment_anything.html">Lesson 54: Segment Anything &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson56_open_vocabulary_detection.html">&larr; Lesson 56: Open-Vocabulary Detection</a></div>
+            <div class="lesson-nav-next"><a href="lesson58_monocular_depth_estimation.html">Lesson 58: Monocular Depth Estimation &rarr;</a></div>
         </div>
     </div>
 </body>

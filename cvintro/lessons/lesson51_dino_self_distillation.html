@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson 50: Dino Self Distillation - Introduction to Computer Vision</title>
+    <title>Lesson 51: Dino Self Distillation - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson50_dino_self_distillation.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson51_dino_self_distillation.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson50_dino_self_distillation.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson51_dino_self_distillation.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=78858cda"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=7caec8a4"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-50:-DINO-and-Self-Distillation">Lesson 50: DINO and Self-Distillation<a class="anchor-link" href="#Lesson-50:-DINO-and-Self-Distillation">¶</a></h1><p>Lesson 49's contrastive loss needs explicit negative pairs (other images in the batch) to avoid the trivial solution of mapping every image to the same point. <strong>Self-distillation</strong>, the mechanism behind <strong>DINO</strong> (<a href="../references.html#caron-2021-dino">Caron et al., 2021</a>) and its successor <strong>DINOv2</strong> (<a href="../references.html#oquab-2023-dinov2">Oquab et al., 2023</a>), removes negatives entirely: a slowly-updated "teacher" network guides a "student" network, with no labels and no negative pairs at all. Without a careful safeguard, this setup collapses to the trivial solution immediately — this lesson builds the safeguard (centering) from scratch and shows exactly why it's needed.</p>
+<h1 id="Lesson-51:-DINO-and-Self-Distillation">Lesson 51: DINO and Self-Distillation<a class="anchor-link" href="#Lesson-51:-DINO-and-Self-Distillation">¶</a></h1><p>Lesson 49's contrastive loss needs explicit negative pairs (other images in the batch) to avoid the trivial solution of mapping every image to the same point. <strong>Self-distillation</strong>, the mechanism behind <strong>DINO</strong> (<a href="../references.html#caron-2021-dino">Caron et al., 2021</a>) and its successor <strong>DINOv2</strong> (<a href="../references.html#oquab-2023-dinov2">Oquab et al., 2023</a>), removes negatives entirely: a slowly-updated "teacher" network guides a "student" network, with no labels and no negative pairs at all. Without a careful safeguard, this setup collapses to the trivial solution immediately — this lesson builds the safeguard (centering) from scratch and shows exactly why it's needed.</p>
 </div>
 </div>
 </div>
@@ -204,7 +204,7 @@ teacher output std, WITHOUT centering: 0.0773  (closer to 0 = more collapsed)
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=8fb753a1"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Centering roughly triples the teacher's output spread compared to training without it — the mechanism visibly does what it's supposed to. Now check whether that translates into a useful representation, the same way Lesson 49 did: freeze the teacher and train a linear probe on a handful of labeled examples.</p>
+<p>Centering roughly triples the teacher's output spread compared to training without it — the mechanism visibly does what it's supposed to. Now check whether that translates into a useful representation, the same way Lesson 50 did: freeze the teacher and train a linear probe on a handful of labeled examples.</p>
 </div>
 </div>
 </div>
@@ -250,7 +250,7 @@ teacher output std, WITHOUT centering: 0.0773  (closer to 0 = more collapsed)
     <span class="n">probe_accs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">linear_probe_acc</span><span class="p">(</span><span class="n">teacher</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span> <span class="o">+</span> <span class="mi">50</span><span class="p">))</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'linear probe on DINO-style teacher features: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">probe_accs</span><span class="p">)</span><span class="si">:</span><span class="s1">.1%</span><span class="si">}</span><span class="s1">  (+/- </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">probe_accs</span><span class="p">)</span><span class="si">:</span><span class="s1">.1%</span><span class="si">}</span><span class="s1">)'</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'(Lesson 49 contrastive pretraining reached ~73% under the same probe setup)'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'(Lesson 50 contrastive pretraining reached ~73% under the same probe setup)'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -261,7 +261,7 @@ teacher output std, WITHOUT centering: 0.0773  (closer to 0 = more collapsed)
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>linear probe on DINO-style teacher features: 50.7%  (+/- 4.3%)
-(Lesson 49 contrastive pretraining reached ~73% under the same probe setup)
+(Lesson 50 contrastive pretraining reached ~73% under the same probe setup)
 </pre>
 </div>
 </div>
@@ -380,11 +380,11 @@ teacher output std, WITHOUT centering: 0.0773  (closer to 0 = more collapsed)
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=7d7aceef"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The collapse safeguard measurably works — the teacher's outputs stay spread out, not constant. But at this toy scale (a few hundred training epochs, a few hundred unlabeled images), the linear probe lands close to chance, well behind Lesson 49's contrastive result on the identical task. This is an honest result, not a bug: self-distillation is known to be <em>more</em> sensitive to hyperparameters (EMA momentum, temperature schedule, centering rate) and generally needs substantially more training signal to reach a useful representation than a contrastive loss with explicit negatives does. Avoiding collapse is necessary but not sufficient for learning something useful — it just clears the way for enough training to eventually do so.</p>
+<p>The collapse safeguard measurably works — the teacher's outputs stay spread out, not constant. But at this toy scale (a few hundred training epochs, a few hundred unlabeled images), the linear probe lands close to chance, well behind Lesson 50's contrastive result on the identical task. This is an honest result, not a bug: self-distillation is known to be <em>more</em> sensitive to hyperparameters (EMA momentum, temperature schedule, centering rate) and generally needs substantially more training signal to reach a useful representation than a contrastive loss with explicit negatives does. Avoiding collapse is necessary but not sufficient for learning something useful — it just clears the way for enough training to eventually do so.</p>
 <h2 id="What-DINOv2-adds-at-real-scale">What DINOv2 adds at real scale<a class="anchor-link" href="#What-DINOv2-adds-at-real-scale">¶</a></h2><p><strong>DINOv2</strong> (<a href="../references.html#oquab-2023-dinov2">Meta AI, 2023</a>) is this exact mechanism — student/teacher self-distillation with centering, plus a few refinements (multiple small "local crops" alongside full-image "global crops", to make the task harder and richer) — scaled up to a curated 142-million-image <em>unlabeled</em> dataset and a Vision Transformer (Lesson 47) backbone with up to 1.1 billion parameters. At that scale, the representation isn't just "usable with a linear probe" — it exhibits striking emergent properties nobody explicitly trained for: attention maps from a DINOv2 ViT often outline object boundaries and parts without ever seeing a segmentation label (a direct preview of Lesson 54), and k-nearest-neighbor classification directly on frozen DINOv2 features rivals supervised training on several benchmarks, all without fine-tuning a single weight.</p>
-<p>The throughline from this lesson to DINOv2 is exactly the gap this notebook exposed: the <em>mechanism</em> (student, teacher, centering) is the same code at any scale; what changes between this toy version and a real foundation model is data volume, model capacity, and training duration — the same story as Lesson 37 (LeNet to AlexNet) and Lesson 49 (SimCLR at toy scale vs. at 1000+ GPU scale), told once more.</p>
+<p>The throughline from this lesson to DINOv2 is exactly the gap this notebook exposed: the <em>mechanism</em> (student, teacher, centering) is the same code at any scale; what changes between this toy version and a real foundation model is data volume, model capacity, and training duration — the same story as Lesson 37 (LeNet to AlexNet) and Lesson 50 (SimCLR at toy scale vs. at 1000+ GPU scale), told once more.</p>
 <h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
-<li>Increase <code>epochs</code> in <code>train_dino</code> from 400 to 1200 (this will take longer to run). Does the linear probe accuracy improve noticeably, stay flat, or become unstable — and how does that compare to what more training epochs did for Lesson 49's contrastive approach?</li>
+<li>Increase <code>epochs</code> in <code>train_dino</code> from 400 to 1200 (this will take longer to run). Does the linear probe accuracy improve noticeably, stay flat, or become unstable — and how does that compare to what more training epochs did for Lesson 50's contrastive approach?</li>
 <li>Set <code>teacher_temp=0.1</code> (matching the student's temperature exactly, removing the sharpening asymmetry) in <code>dino_loss</code>. Does the collapse comparison (with vs. without centering) still show a clear gap, or does removing sharpening make collapse happen even with centering turned on?</li>
 <li>Try <code>momentum=0.5</code> (a much faster-updating teacher) instead of <code>0.9</code>. A teacher that updates almost as fast as the student loses its main purpose — providing a stable, slowly-changing target. Does training become less stable, and can you see it in the collapse metric?</li>
 </ol>
@@ -394,8 +394,8 @@ teacher output std, WITHOUT centering: 0.0773  (closer to 0 = more collapsed)
 
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson49_self_supervised_learning.html">&larr; Lesson 49: Self-Supervised and Contrastive Learning</a></div>
-            <div class="lesson-nav-next"><a href="lesson51_masked_autoencoders.html">Lesson 51: Masked Autoencoders &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson50_self_supervised_learning.html">&larr; Lesson 50: Self-Supervised and Contrastive Learning</a></div>
+            <div class="lesson-nav-next"><a href="lesson52_video_pretraining.html">Lesson 52: Video Transformers and Pretraining &rarr;</a></div>
         </div>
     </div>
 </body>

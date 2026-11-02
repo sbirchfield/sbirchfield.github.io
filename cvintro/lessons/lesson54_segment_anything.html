@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=f838dcff"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=85afa859"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-54:-Segment-Anything">Lesson 54: Segment Anything<a class="anchor-link" href="#Lesson-54:-Segment-Anything">¶</a></h1><p>Lesson 43's instance segmentation trained a network to output <em>every</em> instance's mask at once, then untangled them with center-voting. <strong>Segment Anything (SAM)</strong> (<a href="../references.html#kirillov-2023-sam">Kirillov et al., 2023</a>) takes a different approach: segment on demand. Give the model a <em>prompt</em> — a point, a box, a rough scribble — and it returns the mask of whichever single object that prompt points to. This lesson builds SAM's core idea: inject the prompt as an explicit spatial signal alongside the image, and train the network to produce exactly the prompted object's mask, nothing else.</p>
@@ -271,7 +271,7 @@ overlap (IoU) between the two prompted masks: 0.145  (low = genuinely different 
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The two prompts on the same, unchanged image produce two clearly different masks, each tightly following the circle the prompt actually landed in — the model is genuinely conditioning on the prompt, not just re-running semantic segmentation and ignoring it.</p>
-<p>This reframes instance segmentation entirely: Lesson 43 needed a specialized clustering step (vote, then assign) to recover instances from a single forward pass over the whole image. SAM sidesteps that by making "which instance" an <em>input</em> rather than something to be inferred — ambiguity about what a click means is resolved by the human (or an upstream detector, Lesson 41) providing the point, not by the segmentation model guessing. This is also what makes SAM's "segment anything" claim viable: it was never trained on specific object categories at all, only on the general task "here's a point, here's its object's boundary" across a huge, diverse dataset (SA-1B, over 1 billion masks) — a category-agnostic skill that transfers to object types never seen during training, much like Lesson 52's zero-shot classification transferred to unseen class names.</p>
+<p>This reframes instance segmentation entirely: Lesson 43 needed a specialized clustering step (vote, then assign) to recover instances from a single forward pass over the whole image. SAM sidesteps that by making "which instance" an <em>input</em> rather than something to be inferred — ambiguity about what a click means is resolved by the human (or an upstream detector, Lesson 41) providing the point, not by the segmentation model guessing. This is also what makes SAM's "segment anything" claim viable: it was never trained on specific object categories at all, only on the general task "here's a point, here's its object's boundary" across a huge, diverse dataset (SA-1B, over 1 billion masks) — a category-agnostic skill that transfers to object types never seen during training, much like Lesson 53's zero-shot classification transferred to unseen class names.</p>
 <h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Change the prompt sampling in the training loop to always pick a point near an instance's <em>edge</em> rather than anywhere inside it (<code>sample_point_prompt</code> currently samples uniformly). Does edge-prompt IoU come out lower than interior-prompt IoU, and why would a network find edge points more ambiguous?</li>
 <li>SAM in practice supports box prompts as well as point prompts, and typically outputs <em>several</em> candidate masks per prompt (since a single point can be ambiguous — a point on a shirt could mean "the shirt" or "the whole person"). Sketch how you'd change <code>TinySAM</code>'s final layer to output 3 candidate masks instead of 1, and what additional training signal you'd need to know which of the 3 to prefer.</li>
@@ -283,8 +283,8 @@ overlap (IoU) between the two prompted masks: 0.145  (low = genuinely different 
 
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson53_visual_question_answering.html">&larr; Lesson 53: Visual Question Answering (VQA)</a></div>
-            <div class="lesson-nav-next"><a href="lesson55_open_vocabulary_detection.html">Lesson 55: Open-Vocabulary Detection &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson53_vision_language_models.html">&larr; Lesson 53: Vision-Language Models (VLMs)</a></div>
+            <div class="lesson-nav-next"><a href="lesson55_video_segmentation.html">Lesson 55: Promptable Video Segmentation &rarr;</a></div>
         </div>
     </div>
 </body>

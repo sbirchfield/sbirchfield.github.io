@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson 51: Masked Autoencoders - Introduction to Computer Vision</title>
+    <title>Lesson 49: Masked Autoencoders - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson51_masked_autoencoders.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson49_masked_autoencoders.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson51_masked_autoencoders.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson49_masked_autoencoders.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=5838d9f2"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=7c5d204d"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-51:-Masked-Autoencoders">Lesson 51: Masked Autoencoders<a class="anchor-link" href="#Lesson-51:-Masked-Autoencoders">¶</a></h1><p>Lesson 48's autoencoder compressed a whole image through a narrow bottleneck vector. <strong>Masked autoencoders</strong> (MAE, <a href="../references.html#he-2021-mae">He et al., 2021</a>) create the information bottleneck a completely different way: chop the image into patches (Lesson 47's ViT patchify), hide most of them entirely — not noised, not blurred, just never shown to the encoder at all — and train the network to reconstruct the missing patches from whatever's left. This is the third self-supervised pretraining paradigm in this part, after contrastive learning (Lesson 49) and self-distillation (Lesson 50): no labels, no negative pairs, no teacher network — just a plausible-sounding fill-in-the-blank task invented directly from unlabeled images.</p>
+<h1 id="Lesson-49:-Masked-Autoencoders">Lesson 49: Masked Autoencoders<a class="anchor-link" href="#Lesson-49:-Masked-Autoencoders">¶</a></h1><p>Lesson 48's autoencoder compressed a whole image through a narrow bottleneck vector. <strong>Masked autoencoders</strong> (MAE, <a href="../references.html#he-2021-mae">He et al., 2021</a>) create the information bottleneck a completely different way: chop the image into patches (Lesson 47's ViT patchify), hide most of them entirely — not noised, not blurred, just never shown to the encoder at all — and train the network to reconstruct the missing patches from whatever's left. This is the third self-supervised pretraining paradigm in this part, after contrastive learning (Lesson 50) and self-distillation (Lesson 51): no labels, no negative pairs, no teacher network — just a plausible-sounding fill-in-the-blank task invented directly from unlabeled images.</p>
 </div>
 </div>
 </div>
@@ -419,14 +419,14 @@ linear probe on MAE-pretrained encoder:         40.3%  (+/- 0.3%)
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=6d67f201"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>That's a genuinely disappointing number — the MAE-pretrained encoder's frozen, average-pooled features probe <em>worse</em> than a random, untrained encoder's. This isn't a bug; it's a real, documented property of masked-reconstruction pretraining, and it's worth understanding why. Contrastive learning (Lesson 49) and self-distillation (Lesson 50) both directly optimize a pooled, whole-image embedding to be useful on its own — that's the entire training signal. MAE's training signal never touches a pooled representation at all: the encoder only has to produce per-patch tokens rich enough that attention <em>within the decoder</em> can fill in missing patches. Nothing forces the <em>average</em> of those tokens to be a good summary of "what shape is this" — a perfectly good reconstruction-supporting representation can average out to something a linear probe finds useless. The original MAE paper reports exactly this pattern at real scale: substantially lower linear-probe accuracy than contrastive methods, with MAE's real payoff only showing up after <strong>full fine-tuning</strong> (updating every encoder weight on the downstream task, not just a linear head on top of frozen features) — a genuinely different deployment story from Lessons 48 and 49, not a worse one.</p>
+<p>That's a genuinely disappointing number — the MAE-pretrained encoder's frozen, average-pooled features probe <em>worse</em> than a random, untrained encoder's. This isn't a bug; it's a real, documented property of masked-reconstruction pretraining, and it's worth understanding why. Contrastive learning (Lesson 50) and self-distillation (Lesson 51) both directly optimize a pooled, whole-image embedding to be useful on its own — that's the entire training signal. MAE's training signal never touches a pooled representation at all: the encoder only has to produce per-patch tokens rich enough that attention <em>within the decoder</em> can fill in missing patches. Nothing forces the <em>average</em> of those tokens to be a good summary of "what shape is this" — a perfectly good reconstruction-supporting representation can average out to something a linear probe finds useless. The original MAE paper reports exactly this pattern at real scale: substantially lower linear-probe accuracy than contrastive methods, with MAE's real payoff only showing up after <strong>full fine-tuning</strong> (updating every encoder weight on the downstream task, not just a linear head on top of frozen features) — a genuinely different deployment story from Lessons 48 and 49, not a worse one.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=ca9d4625"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Three-self-supervised-paradigms,-one-shared-pattern">Three self-supervised paradigms, one shared pattern<a class="anchor-link" href="#Three-self-supervised-paradigms,-one-shared-pattern">¶</a></h2><p>Contrastive learning (Lesson 49), self-distillation (Lesson 50), and masked reconstruction (this lesson) invent three completely different training signals from the same raw material — unlabeled images — yet all three exist to answer the same question: what's the cheapest information-destroying task whose solution forces a network to learn something genuinely useful about images? Contrastive learning destroys identity across augmented views and asks the network to recover it; self-distillation destroys the teacher's certainty and asks the student to match it anyway; masked reconstruction destroys most of the image outright and asks the network to fill in the rest. But this lesson's probe result is a real warning against assuming all three produce interchangeable representations: MAE's training signal is architecturally cheap (the encoder never even processes masked tokens, unlike the other two, which always see the whole image) and excellent for downstream <em>fine-tuning</em>, but it earns that efficiency by never once forcing a pooled, linearly-useful summary vector to exist — which is exactly what contrastive learning and self-distillation are built around. Choosing among these three in practice is a genuine engineering tradeoff, not a strict ranking.</p>
+<h2 id="Three-self-supervised-paradigms,-one-shared-pattern">Three self-supervised paradigms, one shared pattern<a class="anchor-link" href="#Three-self-supervised-paradigms,-one-shared-pattern">¶</a></h2><p>Contrastive learning (Lesson 50), self-distillation (Lesson 51), and masked reconstruction (this lesson) invent three completely different training signals from the same raw material — unlabeled images — yet all three exist to answer the same question: what's the cheapest information-destroying task whose solution forces a network to learn something genuinely useful about images? Contrastive learning destroys identity across augmented views and asks the network to recover it; self-distillation destroys the teacher's certainty and asks the student to match it anyway; masked reconstruction destroys most of the image outright and asks the network to fill in the rest. But this lesson's probe result is a real warning against assuming all three produce interchangeable representations: MAE's training signal is architecturally cheap (the encoder never even processes masked tokens, unlike the other two, which always see the whole image) and excellent for downstream <em>fine-tuning</em>, but it earns that efficiency by never once forcing a pooled, linearly-useful summary vector to exist — which is exactly what contrastive learning and self-distillation are built around. Choosing among these three in practice is a genuine engineering tradeoff, not a strict ranking.</p>
 <h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Increase <code>mask_ratio</code> to <code>0.9</code> (only 1-2 patches visible). Does reconstruction MSE still beat the mean-pixel baseline, or does it collapse to roughly the baseline's error — and does that reveal a point past which this dataset's redundancy runs out?</li>
 <li>The decoder here is deliberately tiny (<code>n_layers=1</code>, <code>decoder_dim=16</code>, smaller than the encoder). Try making the decoder <em>larger</em> than the encoder (e.g. <code>decoder_dim=64</code>, <code>n_layers=3</code>) while keeping the encoder fixed. Does reconstruction quality improve much — and does that match real MAE's design choice of a small decoder, on the reasoning that the decoder is discarded after pretraining anyway?</li>
@@ -438,8 +438,8 @@ linear probe on MAE-pretrained encoder:         40.3%  (+/- 0.3%)
 
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson50_dino_self_distillation.html">&larr; Lesson 50: DINOv2 and Self-Distillation</a></div>
-            <div class="lesson-nav-next"><a href="lesson52_vision_language_models.html">Lesson 52: Vision-Language Models (VLMs) &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson48_autoencoders.html">&larr; Lesson 48: Autoencoders</a></div>
+            <div class="lesson-nav-next"><a href="lesson50_self_supervised_learning.html">Lesson 50: Self-Supervised and Contrastive Learning &rarr;</a></div>
         </div>
     </div>
 </body>

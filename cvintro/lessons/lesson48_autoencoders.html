@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=ea2009da"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=3474fe84"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-48:-Autoencoders">Lesson 48: Autoencoders<a class="anchor-link" href="#Lesson-48:-Autoencoders">¶</a></h1><p>Every network up to this point learned from labeled examples: an image and its correct class, box, or mask. <strong>Autoencoders</strong> need none of that — they're a foundational example of <strong>unsupervised learning</strong>, where the only training signal comes from the data itself, never a human-provided label. Train a network to reconstruct its own input, through a deliberately narrow bottleneck, and the bottleneck is forced to discover a compressed, meaningful representation of the data — not because anyone labeled anything, but because reconstruction through a narrow-enough pipe is only solvable by throwing away what a shape looks like pixel-for-pixel and keeping what a shape <em>is</em>. This lesson builds one from scratch (<a href="../references.html#hinton-2006-autoencoder">Hinton &amp; Salakhutdinov, 2006</a>), compares it against the classical linear alternative (PCA), and shows what the bottleneck actually buys you: denoising, and a smoothly interpolable latent space.</p>
@@ -436,7 +436,7 @@ denoiser output vs. clean target MSE: 0.0151
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=3ea19dcc"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Where-this-goes-next">Where this goes next<a class="anchor-link" href="#Where-this-goes-next">¶</a></h2><p>None of this lesson used a single label — every result came from the reconstruction objective alone. That pattern, a network forced to compress and then rebuild its own input, is the ancestor of a surprising amount of what the rest of this part does with unlabeled data: Lesson 49's contrastive learning and Lesson 50's self-distillation both replace "reconstruct the pixels" with other self-supervised objectives, but keep the same "no labels, invent the training signal from the data itself" structure. Lesson 51 builds a <strong>masked</strong> autoencoder — the same encoder-decoder shape as this lesson, but with <em>randomly hidden patches</em> as the information bottleneck instead of a narrow vector. And the denoising objective built here, applied one small noise-step at a time and chained together, is exactly the mechanism Lesson 60's diffusion models scale up to generate entirely new images from pure noise.</p>
+<h2 id="Where-this-goes-next">Where this goes next<a class="anchor-link" href="#Where-this-goes-next">¶</a></h2><p>None of this lesson used a single label — every result came from the reconstruction objective alone. That pattern, a network forced to compress and then rebuild its own input, is the ancestor of a surprising amount of what the rest of this part does with unlabeled data: Lesson 50's contrastive learning and Lesson 51's self-distillation both replace "reconstruct the pixels" with other self-supervised objectives, but keep the same "no labels, invent the training signal from the data itself" structure. Lesson 49 builds a <strong>masked</strong> autoencoder — the same encoder-decoder shape as this lesson, but with <em>randomly hidden patches</em> as the information bottleneck instead of a narrow vector. And the denoising objective built here, applied one small noise-step at a time and chained together, is exactly the mechanism Lesson 62's diffusion models scale up to generate entirely new images from pure noise.</p>
 <h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Try <code>bottleneck=64</code> and <code>bottleneck=128</code> in the sweep above. Does reconstruction MSE keep improving all the way, or does it plateau — and what does a plateau suggest about how many degrees of freedom this dataset actually has (shape identity plus a 2D position)?</li>
 <li>The denoising autoencoder above was trained and evaluated at <code>level=0.3</code>. Retrain and re-evaluate at <code>level=0.6</code>. Does the denoiser still recover something recognizable, or does reconstruction collapse into an ambiguous blur?</li>
@@ -449,7 +449,7 @@ denoiser output vs. clean target MSE: 0.0151
 
         <div class="lesson-nav">
             <div class="lesson-nav-prev"><a href="lesson47_vision_transformers.html">&larr; Lesson 47: Vision Transformers (ViT)</a></div>
-            <div class="lesson-nav-next"><a href="lesson49_self_supervised_learning.html">Lesson 49: Self-Supervised and Contrastive Learning &rarr;</a></div>
+            <div class="lesson-nav-next"><a href="lesson49_masked_autoencoders.html">Lesson 49: Masked Autoencoders &rarr;</a></div>
         </div>
     </div>
 </body>

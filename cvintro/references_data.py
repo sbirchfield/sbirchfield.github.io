@@ -571,6 +571,15 @@ REFERENCES = [
         "landmark": False,
     },
     {
+        "id": "ravi-2024-sam2",
+        "authors": "Ravi, N., Gabeur, V., Hu, Y.-T., et al.",
+        "sort_name": "Ravi",
+        "year": 2024,
+        "title": "SAM 2: Segment Anything in Images and Videos",
+        "url": "https://arxiv.org/abs/2408.00714",
+        "landmark": False,
+    },
+    {
         "id": "yang-2024-depthanything",
         "authors": "Yang, L., Kang, B., Huang, Z., Xu, X., Feng, J., & Zhao, H.",
         "sort_name": "Yang",
@@ -625,6 +634,15 @@ REFERENCES = [
         "landmark": False,
     },
     {
+        "id": "ho-2022-videodiffusion",
+        "authors": "Ho, J., Salimans, T., Gritsenko, A., Chan, W., Norouzi, M., & Fleet, D. J.",
+        "sort_name": "Ho",
+        "year": 2022,
+        "title": "Video Diffusion Models",
+        "url": "https://arxiv.org/abs/2204.03458",
+        "landmark": False,
+    },
+    {
         "id": "mildenhall-2020-nerf",
         "authors": "Mildenhall, B., Srinivasan, P. P., Tancik, M., Barron, J. T., Ramamoorthi, R., & Ng, R.",
         "sort_name": "Mildenhall",
@@ -658,6 +676,15 @@ REFERENCES = [
         "year": 2021,
         "title": "Masked Autoencoders Are Scalable Vision Learners",
         "url": "https://arxiv.org/abs/2111.06377",
+        "landmark": False,
+    },
+    {
+        "id": "tong-2022-videomae",
+        "authors": "Tong, Z., Song, Y., Wang, J., & Wang, L.",
+        "sort_name": "Tong",
+        "year": 2022,
+        "title": "VideoMAE: Masked Autoencoders are Data-Efficient Learners for Self-Supervised Video Pre-Training",
+        "url": "https://arxiv.org/abs/2203.12602",
         "landmark": False,
     },
     {

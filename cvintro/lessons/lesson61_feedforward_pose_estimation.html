@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson 59: Feedforward Pose Estimation - Introduction to Computer Vision</title>
+    <title>Lesson 61: Feedforward Pose Estimation - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson59_feedforward_pose_estimation.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson61_feedforward_pose_estimation.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson59_feedforward_pose_estimation.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson61_feedforward_pose_estimation.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=d57014c8"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=6723309f"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-59:-Feed-Forward-Camera-Pose-Estimation">Lesson 59: Feed-Forward Camera Pose Estimation<a class="anchor-link" href="#Lesson-59:-Feed-Forward-Camera-Pose-Estimation">¶</a></h1><p>Lesson 23's RANSAC and Lesson 29's structure from motion recover camera geometry through an iterative pipeline: detect features, match them, run RANSAC to reject outliers, solve for the essential matrix, decompose it into rotation and translation. Each stage is a separate, hand-designed algorithm. <strong>VGGT</strong> (Visual Geometry Grounded Transformer, <a href="../references.html#wang-2024-vggt">Wang et al., 2025</a>) replaces the entire pipeline with a single feed-forward network: feed it correspondences (or even raw images) from multiple views, and it directly regresses camera poses in one forward pass, with no explicit RANSAC step anywhere. This lesson builds a small version of that idea and compares it against the classical pipeline it replaces — including exactly where each one wins.</p>
+<h1 id="Lesson-61:-Feed-Forward-Camera-Pose-Estimation">Lesson 61: Feed-Forward Camera Pose Estimation<a class="anchor-link" href="#Lesson-61:-Feed-Forward-Camera-Pose-Estimation">¶</a></h1><p>Lesson 23's RANSAC and Lesson 29's structure from motion recover camera geometry through an iterative pipeline: detect features, match them, run RANSAC to reject outliers, solve for the essential matrix, decompose it into rotation and translation. Each stage is a separate, hand-designed algorithm. <strong>VGGT</strong> (Visual Geometry Grounded Transformer, <a href="../references.html#wang-2024-vggt">Wang et al., 2025</a>) replaces the entire pipeline with a single feed-forward network: feed it correspondences (or even raw images) from multiple views, and it directly regresses camera poses in one forward pass, with no explicit RANSAC step anywhere. This lesson builds a small version of that idea and compares it against the classical pipeline it replaces — including exactly where each one wins.</p>
 </div>
 </div>
 </div>
@@ -60,7 +60,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=677dd18d"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Synthetic-two-view-correspondences,-with-outliers">Synthetic two-view correspondences, with outliers<a class="anchor-link" href="#Synthetic-two-view-correspondences,-with-outliers">¶</a></h2><p>A random 3D point cloud, projected into two camera views related by a known random rotation and translation <em>direction</em> (Lesson 26's pinhole projection). Translation <em>direction</em> is the most a calibrated two-view pair can ever recover — absolute scale is fundamentally unobservable from two views alone (the same monocular scale ambiguity from Lesson 56, in a different guise). A controllable fraction of the correspondences are replaced with random mismatches, simulating the false matches Lesson 23's RANSAC was built to survive.</p>
+<h2 id="Synthetic-two-view-correspondences,-with-outliers">Synthetic two-view correspondences, with outliers<a class="anchor-link" href="#Synthetic-two-view-correspondences,-with-outliers">¶</a></h2><p>A random 3D point cloud, projected into two camera views related by a known random rotation and translation <em>direction</em> (Lesson 26's pinhole projection). Translation <em>direction</em> is the most a calibrated two-view pair can ever recover — absolute scale is fundamentally unobservable from two views alone (the same monocular scale ambiguity from Lesson 58, in a different guise). A controllable fraction of the correspondences are replaced with random mismatches, simulating the false matches Lesson 23's RANSAC was built to survive.</p>
 </div>
 </div>
 </div>
@@ -291,7 +291,13 @@ outlier_frac=0.2: classical rot err=5.10 deg, trans dir err=23.81 deg
 <pre>outlier_frac=0.0:
   learned:   rot err=7.83 deg, trans dir err=36.60 deg
   classical: rot err=2.89 deg, trans dir err=8.87 deg
-outlier_frac=0.2:
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>outlier_frac=0.2:
   learned:   rot err=6.80 deg, trans dir err=23.65 deg
   classical: rot err=7.48 deg, trans dir err=32.12 deg
 </pre>
@@ -313,7 +319,7 @@ outlier_frac=0.2:
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Where-each-approach-wins">Where each approach wins<a class="anchor-link" href="#Where-each-approach-wins">¶</a></h2><p>On clean data (no outliers), classical RANSAC wins clearly — an exact, well-conditioned geometric solve is hard to beat when the input genuinely satisfies its assumptions. As the outlier fraction increases, the gap closes and then <strong>reverses</strong>: the feed-forward network, trained across a whole range of outlier ratios, becomes <em>more</em> robust than RANSAC with a fixed threshold and iteration budget. This isn't a fluke of this toy setup — it's the actual, documented motivation for VGGT-style architectures: RANSAC's robustness is bounded by its hyperparameters and by the geometric model it assumes (a single rigid essential matrix relating exactly two views), while a network trained on enough varied, messy, real-world correspondence data learns something closer to "what does a plausible pose look like given evidence like this," which degrades more gracefully.</p>
-<p>This mirrors Lesson 58's stereo story almost exactly: a fixed, hand-designed algorithm (block matching, RANSAC) is precise under its ideal assumptions and brittle outside them; a network trained across a distribution of conditions trades a little of that peak precision for much better robustness across the full range of real conditions it will actually see. Neither replaces the other outright — production 3D vision pipelines increasingly use exactly this kind of feed-forward network as a fast, robust <em>initialization</em>, with a classical geometric refinement (bundle adjustment, Lesson 29) as a final, exact-precision cleanup step where compute allows.</p>
+<p>This mirrors Lesson 60's stereo story almost exactly: a fixed, hand-designed algorithm (block matching, RANSAC) is precise under its ideal assumptions and brittle outside them; a network trained across a distribution of conditions trades a little of that peak precision for much better robustness across the full range of real conditions it will actually see. Neither replaces the other outright — production 3D vision pipelines increasingly use exactly this kind of feed-forward network as a fast, robust <em>initialization</em>, with a classical geometric refinement (bundle adjustment, Lesson 29) as a final, exact-precision cleanup step where compute allows.</p>
 <h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
 <li>Increase <code>max_angle_deg</code> in <code>random_rotation</code> from 30 to 90. Does the gap between learned and classical performance change, and does classical RANSAC's known preference for small, well-conditioned baselines explain the direction of the shift?</li>
 <li>Remove the self-attention (<code>self.encoder(self.embed(corr))</code> → just <code>self.embed(corr)</code>, then mean-pool directly) and retrain. Does removing attention between correspondences hurt rotation accuracy, translation accuracy, or both — and does that match the claim that translation direction specifically needs <em>relational</em> reasoning across points?</li>
@@ -325,8 +331,8 @@ outlier_frac=0.2:
 
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson58_stereo_foundationstereo.html">&larr; Lesson 58: Stereo Depth and FoundationStereo</a></div>
-            <div class="lesson-nav-next"><a href="lesson60_diffusion_models.html">Lesson 60: Generative and Diffusion Models &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson60_stereo_foundationstereo.html">&larr; Lesson 60: Stereo Depth with Foundation Models</a></div>
+            <div class="lesson-nav-next"><a href="lesson62_diffusion_models.html">Lesson 62: Generative and Diffusion Models &rarr;</a></div>
         </div>
     </div>
 </body>

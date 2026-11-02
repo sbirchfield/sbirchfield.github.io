@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 63: Video Diffusion - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/pygments.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <div class="notebook-links">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson63_video_diffusion.ipynb" target="_blank" rel="noopener">
+                <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
+            </a>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson63_video_diffusion.ipynb" download>
+                <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
+            </a>
+        </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=7521ec56"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Lesson-63:-Video-Diffusion-and-Generation">Lesson 63: Video Diffusion and Generation<a class="anchor-link" href="#Lesson-63:-Video-Diffusion-and-Generation">¶</a></h1><p>Lesson 62's diffusion models learn to reverse a noising process one still image at a time. This lesson extends that same denoising recipe to video: generate a whole clip at once (or frame-by-frame, autoregressively) while keeping it temporally consistent — the new failure mode a video generator has that an image generator never faces is flicker, where independently-denoised frames disagree slightly from one frame to the next. The fix is architectural: spatio-temporal attention or temporal convolution layers woven into the denoising network so nearby frames can attend to each other, plus techniques like noise scheduling shared across frames, that keep the generated motion coherent.</p>
+<p><em>This lesson is a placeholder outlining its planned scope; the full lecture notes with working code are still being written.</em></p>
+<p><strong>Planned topics:</strong></p>
+<ul>
+<li>From single-image denoising (Lesson 62) to a temporally-consistent video denoiser</li>
+<li>Spatio-temporal attention/temporal layers inside a video diffusion U-Net</li>
+<li>Image-to-video and text-to-video conditioning</li>
+<li>Practical tricks for temporal consistency (shared noise, frame conditioning, autoregressive rollout)</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="lesson62_diffusion_models.html">&larr; Lesson 62: Generative and Diffusion Models</a></div>
+            <div class="lesson-nav-next"><a href="lesson64_neural_rendering.html">Lesson 64: Neural Rendering and Gaussian Splatting &rarr;</a></div>
+        </div>
+    </div>
+</body>
+</html>

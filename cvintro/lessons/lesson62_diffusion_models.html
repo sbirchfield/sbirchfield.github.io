@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson 60: Diffusion Models - Introduction to Computer Vision</title>
+    <title>Lesson 62: Diffusion Models - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson60_diffusion_models.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson62_diffusion_models.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson60_diffusion_models.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson62_diffusion_models.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=9b565b4b"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=135ba336"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-60:-Generative-and-Diffusion-Models">Lesson 60: Generative and Diffusion Models<a class="anchor-link" href="#Lesson-60:-Generative-and-Diffusion-Models">¶</a></h1><p>Every network so far has mapped an image to something smaller: a label, a box, a mask, an embedding. <strong>Diffusion models</strong> (<a href="../references.html#sohl-dickstein-2015">Sohl-Dickstein et al., 2015</a>; <a href="../references.html#ho-2020-ddpm">Ho et al., 2020</a>) run the idea in reverse: learn to map pure noise to a realistic image. The core trick is deceptively simple — train a network to undo one small step of noise-corruption at a time, then chain many such steps together, starting from noise and ending at something that looks like the training data.</p>
+<h1 id="Lesson-62:-Generative-and-Diffusion-Models">Lesson 62: Generative and Diffusion Models<a class="anchor-link" href="#Lesson-62:-Generative-and-Diffusion-Models">¶</a></h1><p>Every network so far has mapped an image to something smaller: a label, a box, a mask, an embedding. <strong>Diffusion models</strong> (<a href="../references.html#sohl-dickstein-2015">Sohl-Dickstein et al., 2015</a>; <a href="../references.html#ho-2020-ddpm">Ho et al., 2020</a>) run the idea in reverse: learn to map pure noise to a realistic image. The core trick is deceptively simple — train a network to undo one small step of noise-corruption at a time, then chain many such steps together, starting from noise and ending at something that looks like the training data.</p>
 </div>
 </div>
 </div>
@@ -166,7 +166,7 @@ closed-form single jump:      mean=-0.6819, std=0.7318
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=655a33e5"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Training:-predict-the-noise,-not-the-image">Training: predict the noise, not the image<a class="anchor-link" href="#Training:-predict-the-noise,-not-the-image">¶</a></h2><p>The network's job is simple to state: given a noisy image $x_t$ and the noise level $t$, predict the noise $\varepsilon$ that was added. The training signal comes for free — pick a random image and a random $t$, add known noise via the closed form above, and check whether the network can recover it. No labels needed at all, only unlabeled images (the same self-supervised spirit as Lesson 49's contrastive learning, applied to a completely different task). The network needs to know $t$ because the right <em>amount</em> of correction to apply is very different for a barely-noised image than for one that's almost pure noise — this is injected via a sinusoidal time embedding, the same construction as Lesson 46's positional encoding, indexing "how far along" instead of "where in the sequence."</p>
+<h2 id="Training:-predict-the-noise,-not-the-image">Training: predict the noise, not the image<a class="anchor-link" href="#Training:-predict-the-noise,-not-the-image">¶</a></h2><p>The network's job is simple to state: given a noisy image $x_t$ and the noise level $t$, predict the noise $\varepsilon$ that was added. The training signal comes for free — pick a random image and a random $t$, add known noise via the closed form above, and check whether the network can recover it. No labels needed at all, only unlabeled images (the same self-supervised spirit as Lesson 50's contrastive learning, applied to a completely different task). The network needs to know $t$ because the right <em>amount</em> of correction to apply is very different for a barely-noised image than for one that's almost pure noise — this is injected via a sinusoidal time embedding, the same construction as Lesson 46's positional encoding, indexing "how far along" instead of "where in the sequence."</p>
 </div>
 </div>
 </div>
@@ -336,7 +336,7 @@ mean # connected foreground blobs, pure random noise:    4.5
 <p>Generated samples land much closer to real images' single-blob structure than pure noise does — the reverse process has learned to reassemble coherent, connected shapes from nothing, not just to locally smooth random pixels.</p>
 <h2 id="From-this-toy-model-to-Stable-Diffusion">From this toy model to Stable Diffusion<a class="anchor-link" href="#From-this-toy-model-to-Stable-Diffusion">¶</a></h2><p>Three changes separate this lesson's model from a real text-to-image system like Stable Diffusion:</p>
 <ul>
-<li><strong>Conditioning</strong>: feed a text embedding (Lesson 52's CLIP text encoder, or a dedicated language model) into the denoising network at every step — e.g. via cross-attention (Lesson 45), the same query/key/value mechanism used throughout Part 4, just with the <em>queries</em> coming from image features and the <em>keys/values</em> from the text embedding. This is what turns "generate a plausible image" into "generate an image matching this prompt."</li>
+<li><strong>Conditioning</strong>: feed a text embedding (Lesson 53's CLIP text encoder, or a dedicated language model) into the denoising network at every step — e.g. via cross-attention (Lesson 45), the same query/key/value mechanism used throughout Part 4, just with the <em>queries</em> coming from image features and the <em>keys/values</em> from the text embedding. This is what turns "generate a plausible image" into "generate an image matching this prompt."</li>
 <li><strong>Classifier-free guidance</strong>: train the network both with and without the text conditioning (randomly dropping it during training), then at sampling time extrapolate <em>away</em> from the unconditional prediction toward the conditional one — this single trick is responsible for a large fraction of the prompt-adherence quality jump in modern text-to-image models.</li>
 <li><strong>Latent diffusion</strong>: run the entire diffusion process in a compressed latent space (a pretrained autoencoder's bottleneck, Lesson 48 — not raw pixels) rather than on full-resolution images — the reason Stable Diffusion can generate a 512x512 image in a reasonable number of steps on a single GPU, instead of the pixel-space diffusion this lesson used.</li>
 </ul>
@@ -352,8 +352,8 @@ mean # connected foreground blobs, pure random noise:    4.5
 
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson59_feedforward_pose_estimation.html">&larr; Lesson 59: Feed-Forward Camera Pose Estimation</a></div>
-            <div class="lesson-nav-next"><a href="lesson61_neural_rendering.html">Lesson 61: Neural Rendering &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson61_feedforward_pose_estimation.html">&larr; Lesson 61: Feed-Forward Camera Pose Estimation</a></div>
+            <div class="lesson-nav-next"><a href="lesson63_video_diffusion.html">Lesson 63: Video Diffusion and Generation &rarr;</a></div>
         </div>
     </div>
 </body>

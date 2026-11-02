@@ -125,7 +125,7 @@
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>model dim = 768, heads = 12, dim per head = 64
-max abs diff vs nn.MultiheadAttention: 1.79e-07
+max abs diff vs nn.MultiheadAttention: 1.94e-07
 </pre>
 </div>
 </div>
@@ -494,7 +494,7 @@ with positional encoding:    mean test acc = 100.0%  (+/- 0.0%)
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Without positional encoding, the model is stuck at chance — it can only report which two tokens showed up, but not their relative order. Adding the fixed sinusoid gives every position a distinct signature the model can key off, and the task becomes trivial.</p>
-<h2 id="Recap,-and-what's-next">Recap, and what's next<a class="anchor-link" href="#Recap,-and-what's-next">¶</a></h2><p>Everything in this lesson has been about the Transformer <strong>encoder</strong>: a block that reads an entire sequence at once (bidirectional, no masking) and produces a representation of it — exactly what Lesson 47's Vision Transformer builds on directly. The literature also talks about Transformer <em>decoders</em>, and about encoder-decoder, encoder-only, and decoder-only architectures. The distinction matters a lot (it's how a Transformer actually <em>generates</em> text, an image caption, or anything else one step at a time), but it leans on a clean notion of "encoding" versus "decoding" that Lesson 48's autoencoders will give us first. Lesson 53 picks the thread back up once that vocabulary is in place.</p>
+<h2 id="Recap,-and-what's-next">Recap, and what's next<a class="anchor-link" href="#Recap,-and-what's-next">¶</a></h2><p>Everything in this lesson has been about the Transformer <strong>encoder</strong>: a block that reads an entire sequence at once (bidirectional, no masking) and produces a representation of it — exactly what Lesson 47's Vision Transformer builds on directly. The literature also talks about Transformer <em>decoders</em>, and about encoder-decoder, encoder-only, and decoder-only architectures. The distinction matters a lot (it's how a Transformer actually <em>generates</em> text, an image caption, or anything else one step at a time), but it leans on a clean notion of "encoding" versus "decoding" that Lesson 48's autoencoders will give us first. Lesson 57 picks the thread back up once that vocabulary is in place.</p>
 </div>
 </div>
 </div>
