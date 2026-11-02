@@ -580,6 +580,15 @@ REFERENCES = [
         "landmark": False,
     },
     {
+        "id": "carion-2025-sam3",
+        "authors": "Carion, N., Gustafson, L., Hu, Y.-T., Ravi, N., Saenko, K., Zhang, P., et al.",
+        "sort_name": "Carion",
+        "year": 2025,
+        "title": "SAM 3: Segment Anything with Concepts",
+        "url": "https://arxiv.org/abs/2511.16719",
+        "landmark": False,
+    },
+    {
         "id": "yang-2024-depthanything",
         "authors": "Yang, L., Kang, B., Huang, Z., Xu, X., Feng, J., & Zhao, H.",
         "sort_name": "Yang",

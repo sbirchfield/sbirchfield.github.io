@@ -1123,7 +1123,7 @@ QUIZZES = {
                 "Convert to grayscale, blur, edge-detect, Hough transform, then overlay lines",
             ],
             "correct": 0,
-            "explanation": "The pipeline is: SIFT + ratio-test matching (Lesson {{lesson:feature_detection_matching}}), RANSAC homography (Lessons {{lesson:model_fitting_ransac}}-24), <code>cv2.warpPerspective</code> (Lesson {{lesson:warping_interpolation}}), then feathered blending.",
+            "explanation": "The pipeline is: SIFT + ratio-test matching (Lesson {{lesson:feature_detection_matching}}), RANSAC homography (Lessons {{lesson:model_fitting_ransac}}-{{lesson:projective_geometry}}), <code>cv2.warpPerspective</code> (Lesson {{lesson:warping_interpolation}}), then feathered blending.",
         },
         {
             "question": "In the final composite, what does the linear feather blend do across the overlap region?",
