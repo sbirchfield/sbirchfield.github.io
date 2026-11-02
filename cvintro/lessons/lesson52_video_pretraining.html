@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=ee5de57a"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=4e625e7a"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-52:-Video-Transformers-and-Pretraining">Lesson 52: Video Transformers and Pretraining<a class="anchor-link" href="#Lesson-52:-Video-Transformers-and-Pretraining">¶</a></h1><p>Every lesson so far in this part has treated an image as a bag of patch tokens (Lesson 47's ViT) and pretrained on it with contrastive learning (Lesson 50), self-distillation (Lesson 51), or masked reconstruction (Lesson 49). A video is the same idea with one more axis: a sequence of frames, each itself a grid of patches, so a token now needs a spatial position <em>and</em> a time index. This lesson extends the self-supervised pretraining story from still images to video — spatio-temporal attention (treating space and time as one combined token sequence, or factoring attention into separate spatial and temporal passes for efficiency), and masked video pretraining in the style of VideoMAE (<a href="../references.html#tong-2022-videomae">Tong et al., 2022</a>, extending Lesson 49's masking idea to space-time tubes, exploiting the heavy redundancy between nearby frames with very high masking ratios). It closes out this part's self-supervised-pretraining cluster before the course turns to vision-language models.</p>

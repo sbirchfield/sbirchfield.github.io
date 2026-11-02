@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=3680b83d"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=0a698953"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-55:-Promptable-Video-Segmentation">Lesson 55: Promptable Video Segmentation<a class="anchor-link" href="#Lesson-55:-Promptable-Video-Segmentation">¶</a></h1><p>Lesson 54's Segment Anything Model turns a point or box prompt into a mask for a <em>single</em> image. This lesson extends that same promptable idea to video, in the style of SAM 2: prompt an object once, on any frame, and propagate its mask forward (and backward) through the rest of the video by tracking it from frame to frame. The key new mechanism is a streaming memory — a compact representation of the object's appearance from previous frames that the model attends to when segmenting the current one, so the object can be re-found after occlusion or appearance change without being re-prompted every frame.</p>

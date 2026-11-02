@@ -699,7 +699,7 @@ QUIZZES = {
     ],
     16: [
         {
-            "question": "What does the Fourier transform (Lesson 15) fail to tell you, that wavelets and Gabor filters are designed to capture?",
+            "question": "What does the Fourier transform (Lesson {{lesson:fourier_frequency_filtering}}) fail to tell you, that wavelets and Gabor filters are designed to capture?",
             "choices": [
                 "Where in the image the frequencies occur",
                 "The overall average brightness of the image, summed across every pixel",
@@ -886,13 +886,13 @@ QUIZZES = {
         {
             "question": "The structure tensor <code>M</code> built from image gradients is exactly analogous to which earlier concept?",
             "choices": [
-                "The moment covariance matrix from Lesson 6, built from gradients",
-                "The Hough accumulator from Lesson 12, applied here to local gradient directions",
-                "The DCT quantization table from Lesson 17, applied here to a local window",
-                "The Laplacian pyramid from Lesson 13, applied here to a local window",
+                "The moment covariance matrix from Lesson {{lesson:eigen_covariance}}, built from gradients",
+                "The Hough accumulator from Lesson {{lesson:differentiation_edges}}, applied here to local gradient directions",
+                "The DCT quantization table from Lesson {{lesson:compression}}, applied here to a local window",
+                "The Laplacian pyramid from Lesson {{lesson:laplacian_pyramids}}, applied here to a local window",
             ],
             "correct": 0,
-            "explanation": "Both are 2x2 covariance-style matrices; Lesson 6 built one from pixel coordinates, this lesson builds the same kind of matrix from local image gradients.",
+            "explanation": "Both are 2x2 covariance-style matrices; Lesson {{lesson:eigen_covariance}} built one from pixel coordinates, this lesson builds the same kind of matrix from local image gradients.",
         },
         {
             "question": "What do both eigenvalues of the structure tensor being large indicate about a point?",
@@ -1123,7 +1123,7 @@ QUIZZES = {
                 "Convert to grayscale, blur, edge-detect, Hough transform, then overlay lines",
             ],
             "correct": 0,
-            "explanation": "The pipeline is: SIFT + ratio-test matching (Lesson 20), RANSAC homography (Lessons 23-24), <code>cv2.warpPerspective</code> (Lesson 9), then feathered blending.",
+            "explanation": "The pipeline is: SIFT + ratio-test matching (Lesson {{lesson:feature_detection_matching}}), RANSAC homography (Lessons {{lesson:model_fitting_ransac}}-24), <code>cv2.warpPerspective</code> (Lesson {{lesson:warping_interpolation}}), then feathered blending.",
         },
         {
             "question": "In the final composite, what does the linear feather blend do across the overlap region?",
@@ -1134,7 +1134,7 @@ QUIZZES = {
                 "Discards the overlap region entirely, leaving a visible black gap",
             ],
             "correct": 1,
-            "explanation": "A spatially-varying alpha ramp (same weighted-sum idea as <code>cv2.addWeighted</code>, Lesson 2) is used only within the overlap, so the seam fades smoothly rather than showing a hard cut.",
+            "explanation": "A spatially-varying alpha ramp (same weighted-sum idea as <code>cv2.addWeighted</code>, Lesson {{lesson:image_arithmetic}}) is used only within the overlap, so the seam fades smoothly rather than showing a hard cut.",
         },
         {
             "question": "With no synthetic ground truth available for a real photo pair, how does the lesson measure how good the estimated homography's fit is?",
@@ -1346,7 +1346,7 @@ QUIZZES = {
 
     30: [
         {
-            "question": "According to this lesson, what do PCA (Lesson 6) and camera projection (P = K[R|t]) have in common?",
+            "question": "According to this lesson, what do PCA (Lesson {{lesson:eigen_covariance}}) and camera projection (P = K[R|t]) have in common?",
             "choices": [
                 "Both are examples of the same underlying operation: y = w^T x + b, a linear projection",
                 "Both require labeled training data in order to be computed",
@@ -1446,7 +1446,7 @@ QUIZZES = {
                 "Linear layers can only be stacked if they share the exact same width at every layer",
             ],
             "correct": 0,
-            "explanation": "Without a nonlinearity, z = w2^T(W1 x + b1) + b2 simplifies algebraically into a single w'^T x + b', exactly Lesson 31's single neuron again.",
+            "explanation": "Without a nonlinearity, z = w2^T(W1 x + b1) + b2 simplifies algebraically into a single w'^T x + b', exactly Lesson {{lesson:gradient_descent_backpropagation}}'s single neuron again.",
         },
         {
             "question": "What role does the ReLU nonlinearity play in an MLP's hidden layer?",
@@ -1464,7 +1464,7 @@ QUIZZES = {
             "choices": [
                 "Consistently 100% accuracy, no matter the random seed",
                 "Exactly 0% accuracy every single time it is trained",
-                "A ceiling near Lesson 30's ~74% linear limit",
+                "A ceiling near Lesson {{lesson:projection}}'s ~74% linear limit",
                 "Accuracy that improves without bound given enough training epochs",
             ],
             "correct": 2,
@@ -1794,7 +1794,7 @@ QUIZZES = {
             "explanation": "The lesson reports Grad-CAM's peak lands in the marker region 92% of the time on clean images versus only 56% for saliency, attributed to Grad-CAM's channel-level pooling smoothing out pixel noise.",
         },
         {
-            "question": "What does t-SNE do differently from a linear projection like PCA (Lesson 6)?",
+            "question": "What does t-SNE do differently from a linear projection like PCA (Lesson {{lesson:eigen_covariance}})?",
             "choices": [
                 "t-SNE requires labeled training data, while PCA does not need any labels at all",
                 "PCA can only ever be applied to images, never to general feature vectors directly",
@@ -1899,7 +1899,7 @@ QUIZZES = {
     ],
     42: [
         {
-            "question": "What is the fundamental difference between semantic segmentation and detection (Lesson 41)?",
+            "question": "What is the fundamental difference between semantic segmentation and detection (Lesson {{lesson:object_detection_regression}})?",
             "choices": [
                 "Segmentation labels every pixel with a class; detection only draws boxes around a handful of objects",
                 "Segmentation only works correctly on grayscale images, never color, due to its design",
@@ -1956,7 +1956,7 @@ QUIZZES = {
             "explanation": "Semantic segmentation only assigns a class per pixel; it has no notion of separate identity, so two touching objects of the same class merge into one labeled region.",
         },
         {
-            "question": "How does this lesson turn Lesson 42's segmentation network into an instance segmentation network?",
+            "question": "How does this lesson turn Lesson {{lesson:semantic_segmentation}}'s segmentation network into an instance segmentation network?",
             "choices": [
                 "By training a completely new, entirely unrelated architecture from scratch, with no reuse",
                 "By adding a second head predicting, per pixel, an offset toward its instance's center",
@@ -1978,7 +1978,7 @@ QUIZZES = {
             "explanation": "Given a box already centered on one instance, the mask head's job narrows to a local same-box question, which is why Mask R-CNN's real mask branch can be small and fast — a good box already does most of the work.",
         },
         {
-            "question": "What is the one new piece Mask R-CNN adds on top of Faster R-CNN (Lesson 41), and what other change does it require?",
+            "question": "What is the one new piece Mask R-CNN adds on top of Faster R-CNN (Lesson {{lesson:object_detection_regression}}), and what other change does it require?",
             "choices": [
                 "A completely new region proposal network, plus a substantially bigger backbone, from scratch",
                 "A third detection stage, plus doubling the total number of anchor boxes used",

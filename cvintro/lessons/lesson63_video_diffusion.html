@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=fc7ab0cd"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=196a0a09"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-63:-Video-Diffusion-and-Generation">Lesson 63: Video Diffusion and Generation<a class="anchor-link" href="#Lesson-63:-Video-Diffusion-and-Generation">¶</a></h1><p>Lesson 62's diffusion models learn to reverse a noising process one still image at a time. This lesson extends that same denoising recipe to video: generate a whole clip at once while keeping it temporally consistent — the new failure mode a video generator has that an image generator never faces is <strong>flicker</strong>, where independently-denoised frames disagree slightly from one frame to the next, so a shape's position or appearance jitters instead of moving smoothly. The fix has two parts: architecture (a temporal-attention layer, plus a frame-position embedding so the network knows <em>which</em> frame of the clip it is denoising) and sampling (correlating, rather than fully independently drawing, the random noise injected into each frame at every step). Both parts turn out to matter, and this lesson shows why with a concrete, measurable failure mode along the way.</p>

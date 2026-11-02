@@ -6,6 +6,13 @@ Usage:
     python build.py               # build every notebook, then all quiz pages
     python build.py lesson31      # build only notebooks matching this substring, then all quiz pages
     python build.py --quizzes-only  # skip notebook execution; just regenerate quizzes/*.html
+
+Cross-referencing another lesson by number in a notebook's markdown: write
+{{lesson:slug}} (the slug is the part of that lesson's filename after lessonNN_,
+e.g. {{lesson:masked_autoencoders}}) instead of a hardcoded "Lesson NN". It's
+resolved to that lesson's current number at build time, so renumbering/reordering
+lessons never requires hunting down stale mentions elsewhere. A typo'd or
+nonexistent slug fails the build loudly instead of silently rendering wrong.
 """
 import pathlib
 import re
@@ -98,9 +105,51 @@ def get_lesson_sequence():
     return sorted(NOTEBOOKS_DIR.glob("lesson*.ipynb"))
 
 
+LESSON_MACRO = re.compile(r"\{\{lesson:([a-z0-9_]+)\}\}")
+
+
+def slug_to_number_map(sequence=None):
+    """{'masked_autoencoders': 49, ...} built fresh from the notebooks currently on
+    disk, so it's always correct no matter how lessons have been renumbered."""
+    sequence = sequence if sequence is not None else get_lesson_sequence()
+    mapping = {}
+    for p in sequence:
+        m = re.match(r"lesson0*(\d+)_(.+)", p.stem)
+        if m:
+            mapping[m.group(2)] = int(m.group(1))
+    return mapping
+
+
+def resolve_macro_text(text: str, mapping: dict, context: str) -> str:
+    """Replace every {{lesson:slug}} in a plain string with that lesson's current
+    number, raising a clear error (naming `context`, e.g. a filename or quiz id) on
+    an unknown slug instead of silently leaving the macro unresolved."""
+    def sub(m):
+        slug = m.group(1)
+        if slug not in mapping:
+            raise ValueError(
+                f"{context}: {{{{lesson:{slug}}}}} does not match any notebook "
+                f"(expected a file named lesson<NN>_{slug}.ipynb)"
+            )
+        return str(mapping[slug])
+
+    return LESSON_MACRO.sub(sub, text)
+
+
+def resolve_lesson_macros(nb, nb_path: pathlib.Path, mapping: dict):
+    """Replace every {{lesson:slug}} in this notebook's cells with that lesson's
+    current number. (Cell 0's own '# Lesson N: Title' line is always written as a
+    literal number, never a macro, so it's unaffected either way.) Cross-references
+    should be written this way instead of a hardcoded 'Lesson NN', so reordering/
+    renumbering lessons never requires hunting down stale mentions."""
+    for cell in nb.cells:
+        cell.source = resolve_macro_text(cell.source, mapping, nb_path.name)
+
+
 def build_notebook(nb_path: pathlib.Path, sequence=None):
     print(f"Executing {nb_path.name} ...")
     nb = nbformat.read(nb_path, as_version=4)
+    resolve_lesson_macros(nb, nb_path, slug_to_number_map(sequence))
     ExecutePreprocessor(timeout=600, kernel_name="python3").preprocess(
         nb, {"metadata": {"path": str(NOTEBOOKS_DIR)}}
     )
@@ -241,17 +290,23 @@ def build_quiz_page(lesson_num: int, questions: list, sequence, quiz_lesson_nums
     subtitle = title.split(":", 1)[1].strip() if ":" in title else title
     quiz_heading = f"Quiz {lesson_num}: {subtitle}"
 
+    mapping = slug_to_number_map(sequence)
+    ctx = f"quiz{lesson_num:02d}"
+
     questions_html = []
     for q_index, q in enumerate(questions):
         choices_html = "\n".join(
-            QUIZ_CHOICE_TEMPLATE.format(q_index=q_index, c_index=c_index, correct_index=q["correct"], choice=choice)
+            QUIZ_CHOICE_TEMPLATE.format(
+                q_index=q_index, c_index=c_index, correct_index=q["correct"],
+                choice=resolve_macro_text(choice, mapping, ctx),
+            )
             for c_index, choice in enumerate(q["choices"])
         )
         questions_html.append(QUIZ_QUESTION_TEMPLATE.format(
             q_index=q_index,
-            question=q["question"],
+            question=resolve_macro_text(q["question"], mapping, ctx),
             choices_html=choices_html,
-            explanation=q["explanation"],
+            explanation=resolve_macro_text(q["explanation"], mapping, ctx),
         ))
 
     idx = quiz_lesson_nums.index(lesson_num)

@@ -34,7 +34,7 @@
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=34f74e4e"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=5e521368"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lesson-64:-Neural-Rendering-and-Gaussian-Splatting">Lesson 64: Neural Rendering and Gaussian Splatting<a class="anchor-link" href="#Lesson-64:-Neural-Rendering-and-Gaussian-Splatting">¶</a></h1><p>Lesson 29's structure from motion recovers a sparse 3D point cloud from multiple images. <strong>Neural rendering</strong> — most famously <strong>NeRF</strong> (<a href="../references.html#mildenhall-2020-nerf">Mildenhall et al., 2020</a>) — asks for something richer: a <em>continuous</em> representation of an entire 3D scene, dense enough to render a photorealistic image from any camera viewpoint, including ones never observed during training. The representation isn't a mesh or a point cloud at all; it's the weights of a small neural network. This lesson builds one from scratch: a coordinate network trained purely by comparing rendered pixels to real ones, with no 3D supervision anywhere in the loss. It then contrasts this implicit, MLP-based representation with <strong>3D Gaussian Splatting</strong>, the explicit representation that has displaced NeRF as the dominant approach for real-time novel-view synthesis.</p>
