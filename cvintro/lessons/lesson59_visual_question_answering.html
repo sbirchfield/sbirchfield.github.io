@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson 58: Visual Question Answering - Introduction to Computer Vision</title>
+    <title>Lesson 59: Visual Question Answering - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson58_visual_question_answering.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson59_visual_question_answering.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson58_visual_question_answering.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson59_visual_question_answering.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=ea9aeaf3"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-58:-Visual-Question-Answering-(VQA)">Lesson 58: Visual Question Answering (VQA)<a class="anchor-link" href="#Lesson-58:-Visual-Question-Answering-(VQA)">¶</a></h1><p>Lesson 55's CLIP matched a <em>fixed</em> set of text prompts against an image. <strong>Visual Question Answering (VQA)</strong> asks for something more flexible: given an image and an arbitrary natural-language question about it, produce an answer. This is the mechanism behind modern multimodal assistants that can look at a picture and answer questions about it — a generative-VLM capability, distinct from CLIP's contrastive matching. This lesson builds the classic (and still widely used) simplification: treat VQA as classification over a small, closed vocabulary of possible answers, fusing an image encoder and a question encoder before the final prediction.</p>
+<h1 id="Lesson-59:-Visual-Question-Answering-(VQA)">Lesson 59: Visual Question Answering (VQA)<a class="anchor-link" href="#Lesson-59:-Visual-Question-Answering-(VQA)">¶</a></h1><p>Lesson 55's CLIP matched a <em>fixed</em> set of text prompts against an image. <strong>Visual Question Answering (VQA)</strong> asks for something more flexible: given an image and an arbitrary natural-language question about it, produce an answer. This is the mechanism behind modern multimodal assistants that can look at a picture and answer questions about it — a generative-VLM capability, distinct from CLIP's contrastive matching. This lesson builds the classic (and still widely used) simplification: treat VQA as classification over a small, closed vocabulary of possible answers, fusing an image encoder and a question encoder before the final prediction.</p>
 </div>
 </div>
 </div>
@@ -341,7 +341,7 @@ baseline (always predict the most common training answer, "yes"): 22.0%
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The same fixed image produces three different, individually correct answers depending on what's asked — the fusion step is genuinely reading both inputs, not just memorizing image-to-answer shortcuts.</p>
-<h2 id="From-closed-vocabulary-classification-to-real-generative-VQA">From closed-vocabulary classification to real generative VQA<a class="anchor-link" href="#From-closed-vocabulary-classification-to-real-generative-VQA">¶</a></h2><p>Treating VQA as classification over a small fixed answer set (as above) was the dominant approach for years and is still used when the answer space genuinely is small and known in advance. It breaks down the moment an answer needs to be open-ended text — "describe what's unusual about this image," or an answer word that never appeared in training. Modern VQA and image-captioning systems solve this the way Lesson 46 promised they would: replace the classification head with an <strong>autoregressive text decoder</strong> — causal self-attention over previously generated words, cross-attention into the image features — that generates the answer one token at a time, exactly the mechanism behind large multimodal assistants that can describe, question, and reason about an image in free-form language rather than picking from a fixed list. The rest of this lesson builds exactly that decoder, and uses it to finally pin down what "encoder" and "decoder" have actually meant throughout this part of the course.</p>
+<h2 id="From-closed-vocabulary-classification-to-real-generative-VQA">From closed-vocabulary classification to real generative VQA<a class="anchor-link" href="#From-closed-vocabulary-classification-to-real-generative-VQA">¶</a></h2><p>Treating VQA as classification over a small fixed answer set (as above) was the dominant approach for years and is still used when the answer space genuinely is small and known in advance. It breaks down the moment an answer needs to be open-ended text — "describe what's unusual about this image," or an answer word that never appeared in training. Modern VQA and image-captioning systems solve this the way Lesson 46 promised they would: replace the classification head with an <strong>autoregressive text decoder</strong> — causal self-attention over previously generated words, cross-attention into the image features — that generates the answer one token at a time, exactly the mechanism behind large multimodal assistants that can describe, question, and reason about an image in free-form language rather than picking from a fixed list. Lesson 58 already built the causal-self-attention half of that recipe and defined self-attention vs. cross-attention precisely; the rest of this lesson adds the cross-attention half, completing the picture with the third and last Transformer model family.</p>
 </div>
 </div>
 </div>
@@ -418,8 +418,8 @@ baseline (always predict the most common training answer, "yes"): 22.0%
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=ac843df8"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="A-causal,-cross-attending-decoder-%E2%80%94-built-explicitly,-so-it-can-be-cached-later">A causal, cross-attending decoder — built explicitly, so it can be cached later<a class="anchor-link" href="#A-causal,-cross-attending-decoder-%E2%80%94-built-explicitly,-so-it-can-be-cached-later">¶</a></h3><p>This decoder reuses Lesson 46's two attention patterns in one block: <strong>causal self-attention</strong> over the answer generated so far (each word can only look at itself and earlier words — it can't peek at a word it hasn't generated yet), followed by <strong>cross-attention into the image features</strong> (the fused image-and-question embeddings from above, treated as a two-token "memory"). This is the classic encoder-decoder captioning pattern: a separate encoder (the image/question encoders above) produces a fixed representation, and the decoder repeatedly attends back into it while generating.</p>
-<p>Every other lesson in this course that used attention reached for <code>nn.MultiheadAttention</code>. Here the query/key/value projections are written out explicitly instead, for one concrete reason: generating a sequence one token at a time can either recompute attention over the whole growing sequence at every step, or <strong>cache</strong> the keys and values already computed for earlier tokens and only do the work for the new one. That choice — explored below — needs direct access to the keys and values, which <code>nn.MultiheadAttention</code> doesn't expose.</p>
+<h3 id="A-causal,-cross-attending-decoder-%E2%80%94-built-explicitly,-so-it-can-be-cached-later">A causal, cross-attending decoder — built explicitly, so it can be cached later<a class="anchor-link" href="#A-causal,-cross-attending-decoder-%E2%80%94-built-explicitly,-so-it-can-be-cached-later">¶</a></h3><p>This decoder combines the two attention patterns Lesson 58 distinguished: <strong>causal self-attention</strong> over the answer generated so far (each word can only look at itself and earlier words — it can't peek at a word it hasn't generated yet, exactly Lesson 58's decoder-only block), followed by <strong>cross-attention into the image features</strong> (the fused image-and-question embeddings from above, treated as a two-token "memory" — queries from the answer tokens, keys and values from this separate memory, the defining feature Lesson 58 deliberately left out). This is the classic encoder-decoder captioning pattern: a separate encoder (the image/question encoders above) produces a fixed representation, and the decoder repeatedly attends back into it while generating.</p>
+<p>Lesson 58 already used explicit Q/K/V projections instead of <code>nn.MultiheadAttention</code> for its own decoder, for the same reason this one does: generating a sequence one token at a time can either recompute attention over the whole growing sequence at every step, or <strong>cache</strong> the keys and values already computed for earlier tokens and only do the work for the new one, which needs direct access to the keys and values that <code>nn.MultiheadAttention</code> doesn't expose. This decoder now has two attention sub-layers that could each, in principle, be cached — but only the self-attention one actually needs to be: the cross-attention memory is the same fixed two tokens at every generation step, so its keys/values can simply be computed once and reused, with nothing to "grow" the way the self-attention cache does.</p>
 </div>
 </div>
 </div>
@@ -629,7 +629,7 @@ exact-phrase accuracy on held-out test scenes: 148/150 = 98.7%
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=7abdc939"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Measuring-the-KV-cache's-actual-speedup">Measuring the KV cache's actual speedup<a class="anchor-link" href="#Measuring-the-KV-cache's-actual-speedup">¶</a></h3><p>Recomputing self-attention from scratch at generation step $t$ costs $O(t)$ work (attending over all $t$ tokens so far); doing that at every step from $1$ to $T$ costs $O(T^2)$ in total. Caching makes every step cost $O(1)$ new work (just the newest token's attention against the growing cache), for $O(T)$ total — the whole reason real LLMs can generate long outputs without generation cost exploding quadratically with length.</p>
+<h3 id="Measuring-the-KV-cache's-actual-speedup">Measuring the KV cache's actual speedup<a class="anchor-link" href="#Measuring-the-KV-cache's-actual-speedup">¶</a></h3><p>Recomputing self-attention from scratch at generation step $t$ costs $O(t)$ work (attending over all $t$ tokens so far); doing that at every step from $1$ to $T$ costs $O(T^2)$ in total. Caching makes every step cost $O(1)$ new work (just the newest token's attention against the growing cache), for $O(T)$ total — the whole reason real LLMs can generate long outputs without generation cost exploding quadratically with length. This is the identical idea Lesson 58 measured in its simpler, pure-self-attention setting; the only difference here is the extra (uncached) cross-attention step riding along at every generation step.</p>
 <p>At this lesson's toy scale (a few hundred examples, <code>dim=32</code>, <code>MAX_LEN=20</code> tokens) that asymptotic gap is small in absolute terms, and most of the wall-clock time is Python/PyTorch call overhead rather than attention FLOPs — so to actually <em>see</em> the effect, this benchmark generates a large batch at once and repeats it several times, exactly the regime (long sequences, large batches) where KV caching earns its keep in practice.</p>
 </div>
 </div>
@@ -671,9 +671,9 @@ exact-phrase accuracy on held-out test scenes: 148/150 = 98.7%
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>uncached (full recompute every step): 907 ms total, 6 generations of a batch of 512
-cached (KV cache):                    478 ms total
-speedup: 1.90x
+<pre>uncached (full recompute every step): 1465 ms total, 6 generations of a batch of 512
+cached (KV cache):                    735 ms total
+speedup: 1.99x
 </pre>
 </div>
 </div>
@@ -683,38 +683,8 @@ speedup: 1.90x
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=733ff88e"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Encoder-only,-decoder-only,-encoder-decoder:-pinning-it-down">Encoder-only, decoder-only, encoder-decoder: pinning it down<a class="anchor-link" href="#Encoder-only,-decoder-only,-encoder-decoder:-pinning-it-down">¶</a></h2><p>This part of the course has used "encoder" and "decoder" in several different senses — the autoencoder's compress/reconstruct pair (Lesson 48), the Transformer's two block types (Lesson 46), and now a full generative decoder in this lesson — without ever lining them up side by side. Now that one example of each model family has actually been built, here's the full picture:</p>
-<table>
-<thead>
-<tr>
-<th>Model family</th>
-<th>What it does</th>
-<th>Generates autoregressively?</th>
-<th>Built in this course</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Encoder-only</strong></td>
-<td>Maps an input to a fixed representation (an embedding, or per-token features) and stops. Bidirectional self-attention — every token can see every other token, including ones "after" it.</td>
-<td>No</td>
-<td>Every Transformer block actually built in this course from Lesson 46 through Lesson 57 is one of these — even Lesson 49's and Lesson 52's "decoder" stage, which turns out to be more self-attention blocks with no causal masking and no cross-attention, not a different block type at all (concretely: Lesson 47's ViT, Lesson 53's image encoder, Lesson 55's CLIP)</td>
-</tr>
-<tr>
-<td><strong>Encoder-decoder</strong></td>
-<td>A separate encoder produces a representation; a decoder generates an output step by step, cross-attending back into that representation at every step. Classic sequence-to-sequence / image-captioning design.</td>
-<td>Yes</td>
-<td>This lesson's generative VQA decoder (image+question encoders feed the cross-attention memory)</td>
-</tr>
-<tr>
-<td><strong>Decoder-only</strong></td>
-<td>A single causal stream, no separate encoder or cross-attention. Everything — prompt and generated output alike — is just more tokens in one sequence, each attending only backward. GPT-style LLMs; modern LLaVA-style VLMs prepend image patch embeddings as extra tokens into this same stream instead of cross-attending into a separate encoder.</td>
-<td>Yes</td>
-<td>Not built from scratch in this course, but worth naming: it's a real, different design from the encoder-decoder pattern above, not just a synonym for it</td>
-</tr>
-</tbody>
-</table>
-<p><strong>The wrinkle worth naming directly:</strong> Lesson 53's "mask decoder" and Lesson 57's detector are <em>also</em> decoders in the generic Transformer-block sense — they cross-attend into an encoder's output and produce something. But they're <strong>non-autoregressive</strong>: one forward pass produces a fixed-size result (a set of masks) all at once, nothing is generated token-by-token, and there's no causal self-attention anywhere in them. That's architecturally close to DETR, not to GPT. So "decoder" alone is ambiguous in this course — the useful question to always ask is: <em>does it generate a sequence one step at a time, or does it just produce a fixed-size output in a single pass?</em> Only the former is what "a decoder" usually means in modern LLM/VLM conversation, and it's exactly the ingredient — and the only ingredient — that makes a KV cache meaningful at all: caching speeds up <em>repeated</em> forward passes during step-by-step generation, so it has nothing to offer a model that was never going to take more than one forward pass in the first place.</p>
+<h2 id="The-third-family:-encoder-decoder">The third family: encoder-decoder<a class="anchor-link" href="#The-third-family:-encoder-decoder">¶</a></h2><p>Lesson 58 laid out two of the three Transformer model families: <strong>encoder-only</strong> (every prior Transformer in this course — maps an input to a representation and stops, bidirectional self-attention, no generation) and <strong>decoder-only</strong> (a single causal stream, no separate encoder, no cross-attention). This lesson's generative decoder is the third: <strong>encoder-decoder</strong> — a separate encoder (the image/question encoders above) produces a representation, and a decoder generates an output step by step, cross-attending back into that representation at every step. Unlike decoder-only, there are now two distinct token sets in play (the growing answer, and the fixed image+question memory), and unlike encoder-only, generation happens autoregressively, one token at a time.</p>
+<p><strong>The wrinkle worth naming directly:</strong> Lesson 53's "mask decoder" and Lesson 57's detector are <em>also</em> decoders in the generic Transformer-block sense — they cross-attend into an encoder's output and produce something. But they're <strong>non-autoregressive</strong>: one forward pass produces a fixed-size result (a set of masks) all at once, nothing is generated token-by-token, and there's no causal self-attention anywhere in them. That's architecturally close to DETR, not to GPT, and not to this lesson's decoder either. So "decoder" alone is still ambiguous even now that all three families are on the table — the useful question to always ask is: <em>does it generate a sequence one step at a time, or does it just produce a fixed-size output in a single pass?</em> Only the former is what "a decoder" usually means in modern LLM/VLM conversation, and it's exactly the ingredient — and the only ingredient — that makes a KV cache meaningful at all: caching speeds up <em>repeated</em> forward passes during step-by-step generation, so it has nothing to offer a model that was never going to take more than one forward pass in the first place.</p>
 </div>
 </div>
 </div>
@@ -733,8 +703,8 @@ speedup: 1.90x
 
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson57_open_vocabulary_segmentation.html">&larr; Lesson 57: Open-Vocabulary Segmentation</a></div>
-            <div class="lesson-nav-next"><a href="lesson59_monocular_depth_estimation.html">Lesson 59: Monocular Depth Estimation &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson58_decoder_only_language_models.html">&larr; Lesson 58: Decoder-Only Language Models</a></div>
+            <div class="lesson-nav-next"><a href="lesson60_monocular_depth_estimation.html">Lesson 60: Monocular Depth Estimation &rarr;</a></div>
         </div>
     </div>
 </body>

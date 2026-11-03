@@ -229,6 +229,15 @@ REFERENCES = [
         "landmark": True,
     },
     {
+        "id": "radford-2019-gpt2",
+        "authors": "Radford, A., Wu, J., Child, R., Luan, D., Amodei, D., & Sutskever, I.",
+        "sort_name": "Radford",
+        "year": 2019,
+        "title": "Language Models are Unsupervised Multitask Learners",
+        "url": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf",
+        "landmark": False,
+    },
+    {
         "id": "lecun-1998",
         "authors": "LeCun, Y., Bottou, L., Bengio, Y., & Haffner, P.",
         "sort_name": "LeCun",

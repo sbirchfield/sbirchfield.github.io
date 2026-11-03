@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson 60: Depth Anything - Introduction to Computer Vision</title>
+    <title>Lesson 61: Depth Anything - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson60_depth_anything.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson61_depth_anything.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson60_depth_anything.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson61_depth_anything.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=23a454e9"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-60:-Depth-Anything">Lesson 60: Depth Anything<a class="anchor-link" href="#Lesson-60:-Depth-Anything">¶</a></h1><p>Lesson 56 showed monocular depth's central weakness: a network trained on a small, narrow dataset only learns priors valid <em>within</em> that dataset's distribution, and gets confidently fooled outside it. <strong>Depth Anything</strong> (<a href="../references.html#yang-2024-depthanything">Yang et al., 2024</a>) is a monocular depth foundation model built specifically to close that gap, using <strong>self-training on unlabeled data</strong>: a teacher model pseudo-labels a huge pool of unlabeled images, and a student trains on labeled data plus those pseudo-labels, at a scale (over 60 million unlabeled images) no manually-annotated depth dataset gets close to. This lesson builds that pipeline — and its result is a genuine, useful negative finding: pseudo-labeling from a biased teacher does not, by itself, fix the bias. Understanding <em>why</em> is what actually explains what Depth Anything gets right that a naive version of the same idea doesn't.</p>
+<h1 id="Lesson-61:-Depth-Anything">Lesson 61: Depth Anything<a class="anchor-link" href="#Lesson-61:-Depth-Anything">¶</a></h1><p>Lesson 56 showed monocular depth's central weakness: a network trained on a small, narrow dataset only learns priors valid <em>within</em> that dataset's distribution, and gets confidently fooled outside it. <strong>Depth Anything</strong> (<a href="../references.html#yang-2024-depthanything">Yang et al., 2024</a>) is a monocular depth foundation model built specifically to close that gap, using <strong>self-training on unlabeled data</strong>: a teacher model pseudo-labels a huge pool of unlabeled images, and a student trains on labeled data plus those pseudo-labels, at a scale (over 60 million unlabeled images) no manually-annotated depth dataset gets close to. This lesson builds that pipeline — and its result is a genuine, useful negative finding: pseudo-labeling from a biased teacher does not, by itself, fix the bias. Understanding <em>why</em> is what actually explains what Depth Anything gets right that a naive version of the same idea doesn't.</p>
 </div>
 </div>
 </div>
@@ -59,7 +59,7 @@
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=b4c29825"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Setup:-a-small-labeled-set,-a-large-unlabeled-pool,-a-distribution-gap">Setup: a small labeled set, a large unlabeled pool, a distribution gap<a class="anchor-link" href="#Setup:-a-small-labeled-set,-a-large-unlabeled-pool,-a-distribution-gap">¶</a></h2><p>Reuse Lesson 59's size-cue depth scenes. The <strong>labeled</strong> set is small (20 scenes) and covers only a narrow depth range (0.4-0.6). The <strong>unlabeled</strong> pool is much larger (150 scenes, no depth labels — just images) and, like real-world unlabeled photo collections, spans the <em>full</em> range of conditions (depths 0.2-0.9). The <strong>test</strong> set matches that full range too — deliberately including depths the labeled set never showed.</p>
+<h2 id="Setup:-a-small-labeled-set,-a-large-unlabeled-pool,-a-distribution-gap">Setup: a small labeled set, a large unlabeled pool, a distribution gap<a class="anchor-link" href="#Setup:-a-small-labeled-set,-a-large-unlabeled-pool,-a-distribution-gap">¶</a></h2><p>Reuse Lesson 60's size-cue depth scenes. The <strong>labeled</strong> set is small (20 scenes) and covers only a narrow depth range (0.4-0.6). The <strong>unlabeled</strong> pool is much larger (150 scenes, no depth labels — just images) and, like real-world unlabeled photo collections, spans the <em>full</em> range of conditions (depths 0.2-0.9). The <strong>test</strong> set matches that full range too — deliberately including depths the labeled set never showed.</p>
 </div>
 </div>
 </div>
@@ -135,7 +135,7 @@ test:      100 scenes, depth range [0.2, 0.9]
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Teacher,-pseudo-labels,-student">Teacher, pseudo-labels, student<a class="anchor-link" href="#Teacher,-pseudo-labels,-student">¶</a></h2><p>Train a <strong>teacher</strong> on the small labeled set only. Use it to pseudo-label every image in the unlabeled pool. Train a <strong>student</strong>, identical architecture, on the labeled set plus the pseudo-labeled pool combined — exactly Depth Anything's core recipe.</p>
-<p>Unlike Lesson 59's classical depth network, this one's encoder is a small Vision Transformer (patchify, Transformer encoder, Lesson 47) instead of a plain CNN — matching real Depth Anything's own choice of a ViT backbone (specifically DINOv2, which the "what actually makes Depth Anything work" section below returns to). A lightweight convolutional decoder head on top turns the ViT's patch tokens back into a full-resolution depth map, the same hybrid "Transformer encoder + conv decoder" design real dense-prediction Transformers (DPT) use.</p>
+<p>Unlike Lesson 60's classical depth network, this one's encoder is a small Vision Transformer (patchify, Transformer encoder, Lesson 47) instead of a plain CNN — matching real Depth Anything's own choice of a ViT backbone (specifically DINOv2, which the "what actually makes Depth Anything work" section below returns to). A lightweight convolutional decoder head on top turns the ViT's patch tokens back into a full-resolution depth map, the same hybrid "Transformer encoder + conv decoder" design real dense-prediction Transformers (DPT) use.</p>
 </div>
 </div>
 </div>
@@ -190,7 +190,7 @@ test:      100 scenes, depth range [0.2, 0.9]
 <span class="w">    </span><span class="sd">"""A ViT encoder (dense patch tokens) plus a small convolutional decoder head -- the same</span>
 <span class="sd">    "Transformer backbone, conv decoder" split real DPT-style dense-prediction Transformers use.</span>
 <span class="sd">    A shallow full-resolution conv path supplies the fine spatial detail the coarser patch grid</span>
-<span class="sd">    alone can't, the same role Lesson 59's first conv layer</span>
+<span class="sd">    alone can't, the same role Lesson 60's first conv layer</span>
 <span class="sd">    played as a U-Net skip connection."""</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -261,7 +261,7 @@ test:      100 scenes, depth range [0.2, 0.9]
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=5e1f75ce"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Why-didn't-self-training-help?">Why didn't self-training help?<a class="anchor-link" href="#Why-didn't-self-training-help?">¶</a></h2><p>The student's error is essentially unchanged from the teacher's. This is not a bug — it's the expected outcome of naive self-training, and it's worth understanding precisely why. The pseudo-labels for the unlabeled pool came <em>entirely</em> from the teacher, and the teacher was never shown a depth outside [0.4, 0.6]. For any unlabeled scene with a true depth of, say, 0.8, the teacher's pseudo-label isn't a noisy version of the right answer — it's the teacher's same systematic extrapolation error from Lesson 59's fooling experiment, confidently applied and then handed to the student as if it were ground truth. Training on that just teaches the student to reproduce the teacher's mistake more efficiently. No genuinely new information about depths in [0.6, 0.9] ever entered the pipeline — self-training redistributes what a model already knows, and cannot manufacture what it doesn't.</p>
+<h2 id="Why-didn't-self-training-help?">Why didn't self-training help?<a class="anchor-link" href="#Why-didn't-self-training-help?">¶</a></h2><p>The student's error is essentially unchanged from the teacher's. This is not a bug — it's the expected outcome of naive self-training, and it's worth understanding precisely why. The pseudo-labels for the unlabeled pool came <em>entirely</em> from the teacher, and the teacher was never shown a depth outside [0.4, 0.6]. For any unlabeled scene with a true depth of, say, 0.8, the teacher's pseudo-label isn't a noisy version of the right answer — it's the teacher's same systematic extrapolation error from Lesson 60's fooling experiment, confidently applied and then handed to the student as if it were ground truth. Training on that just teaches the student to reproduce the teacher's mistake more efficiently. No genuinely new information about depths in [0.6, 0.9] ever entered the pipeline — self-training redistributes what a model already knows, and cannot manufacture what it doesn't.</p>
 <h2 id="What-actually-makes-Depth-Anything-work">What actually makes Depth Anything work<a class="anchor-link" href="#What-actually-makes-Depth-Anything-work">¶</a></h2><p>The gap between this toy failure and Depth Anything's real, well-documented success comes from three ingredients this lesson's setup deliberately lacks:</p>
 <ul>
 <li><strong>Genuine distributional coverage.</strong> Depth Anything's unlabeled pool is not a narrow synthetic distribution shifted slightly from the labeled set — it's 62 million <em>real</em> images spanning an enormous range of scenes, lighting, and object types. The teacher's errors on any single unlabeled image are still real errors, but averaged over that much genuine diversity, the student's training signal is far less systematically biased than this lesson's 150-image, single-cue toy pool.</li>
@@ -280,8 +280,8 @@ test:      100 scenes, depth range [0.2, 0.9]
 
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson59_monocular_depth_estimation.html">&larr; Lesson 59: Monocular Depth Estimation</a></div>
-            <div class="lesson-nav-next"><a href="lesson61_stereo_foundationstereo.html">Lesson 61: Stereo Depth with Foundation Models &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson60_monocular_depth_estimation.html">&larr; Lesson 60: Monocular Depth Estimation</a></div>
+            <div class="lesson-nav-next"><a href="lesson62_stereo_foundationstereo.html">Lesson 62: Stereo Depth with Foundation Models &rarr;</a></div>
         </div>
     </div>
 </body>

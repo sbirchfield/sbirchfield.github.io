@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson 63: Diffusion Models - Introduction to Computer Vision</title>
+    <title>Lesson 64: Diffusion Models - Introduction to Computer Vision</title>
     <link rel="stylesheet" href="../../css/styles.css">
     <link rel="stylesheet" href="../css/pygments.css">
     <link rel="stylesheet" href="../css/notebook.css">
@@ -27,17 +27,17 @@
     </nav>
     <div class="container notebook-container">
         <div class="notebook-links">
-            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson63_diffusion_models.ipynb" target="_blank" rel="noopener">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson64_diffusion_models.ipynb" target="_blank" rel="noopener">
                 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
             </a>
-            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson63_diffusion_models.ipynb" download>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson64_diffusion_models.ipynb" download>
                 <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
             </a>
         </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=bb34e568"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Lesson-63:-Generative-and-Diffusion-Models">Lesson 63: Generative and Diffusion Models<a class="anchor-link" href="#Lesson-63:-Generative-and-Diffusion-Models">¶</a></h1><p>Every network so far has mapped an image to something smaller: a label, a box, a mask, an embedding. <strong>Diffusion models</strong> (<a href="../references.html#sohl-dickstein-2015">Sohl-Dickstein et al., 2015</a>; <a href="../references.html#ho-2020-ddpm">Ho et al., 2020</a>) run the idea in reverse: learn to map pure noise to a realistic image. The core trick is deceptively simple — train a network to undo one small step of noise-corruption at a time, then chain many such steps together, starting from noise and ending at something that looks like the training data.</p>
+<h1 id="Lesson-64:-Generative-and-Diffusion-Models">Lesson 64: Generative and Diffusion Models<a class="anchor-link" href="#Lesson-64:-Generative-and-Diffusion-Models">¶</a></h1><p>Every network so far has mapped an image to something smaller: a label, a box, a mask, an embedding. <strong>Diffusion models</strong> (<a href="../references.html#sohl-dickstein-2015">Sohl-Dickstein et al., 2015</a>; <a href="../references.html#ho-2020-ddpm">Ho et al., 2020</a>) run the idea in reverse: learn to map pure noise to a realistic image. The core trick is deceptively simple — train a network to undo one small step of noise-corruption at a time, then chain many such steps together, starting from noise and ending at something that looks like the training data.</p>
 </div>
 </div>
 </div>
@@ -352,8 +352,8 @@ mean # connected foreground blobs, pure random noise:    4.5
 
 
         <div class="lesson-nav">
-            <div class="lesson-nav-prev"><a href="lesson62_feedforward_pose_estimation.html">&larr; Lesson 62: Feed-Forward Camera Pose Estimation</a></div>
-            <div class="lesson-nav-next"><a href="lesson64_video_diffusion.html">Lesson 64: Video Diffusion and Generation &rarr;</a></div>
+            <div class="lesson-nav-prev"><a href="lesson63_feedforward_pose_estimation.html">&larr; Lesson 63: Feed-Forward Camera Pose Estimation</a></div>
+            <div class="lesson-nav-next"><a href="lesson65_video_diffusion.html">Lesson 65: Video Diffusion and Generation &rarr;</a></div>
         </div>
     </div>
 </body>

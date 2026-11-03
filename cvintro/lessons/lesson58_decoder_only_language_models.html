@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 58: Decoder Only Language Models - Introduction to Computer Vision</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <link rel="stylesheet" href="../css/pygments.css">
+    <link rel="stylesheet" href="../css/notebook.css">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="../index.html">Intro to Computer Vision</a></li>
+                <li style="display: flex; align-items: center; color: #2c3e50;">&bull;</li>
+                <li><a href="https://sbirchfield.github.io/">Stan Birchfield</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container notebook-container">
+        <div class="notebook-links">
+            <a href="https://colab.research.google.com/github/sbirchfield/sbirchfield.github.io/blob/main/cvintro/notebooks/lesson58_decoder_only_language_models.ipynb" target="_blank" rel="noopener">
+                <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab">
+            </a>
+            <a href="https://raw.githubusercontent.com/sbirchfield/sbirchfield.github.io/main/cvintro/notebooks/lesson58_decoder_only_language_models.ipynb" download>
+                <img src="https://img.shields.io/badge/Download-.ipynb-F37626?logo=jupyter&logoColor=white" alt="Download .ipynb">
+            </a>
+        </div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=60d967d2"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Lesson-58:-Decoder-Only-Language-Models">Lesson 58: Decoder-Only Language Models<a class="anchor-link" href="#Lesson-58:-Decoder-Only-Language-Models">¶</a></h1><p>Every Transformer this course has built so far — Lesson 47's ViT, Lesson 51's DINO, Lesson 53's image encoder, Lesson 55's CLIP — is <strong>encoder-only</strong>: it maps an input to a representation and stops. This lesson builds the opposite: a <strong>decoder-only</strong> model, the GPT-style design behind modern large language models — a single causal stream, no cross-attention, no separate encoder. This lesson also defines, precisely, what "self-attention" and "cross-attention" actually mean — a distinction this course has used informally but never defined.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=2c9b7f3d">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=a9257f94"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="A-tiny-language,-with-no-image-anywhere">A tiny language, with no image anywhere<a class="anchor-link" href="#A-tiny-language,-with-no-image-anywhere">¶</a></h2><p>Reuse Lesson 55's small synthetic caption vocabulary, but drop the image entirely — this lesson is pure sequence modeling. Every sentence describes a shape two different ways, chosen at random: <code>"a photo of a &lt;size&gt; &lt;shape&gt;"</code> or <code>"a &lt;size&gt; &lt;shape&gt; in the photo"</code>. The two styles start identically (<code>"a"</code>) but diverge at the very next word (<code>"photo"</code> vs. a size word) — so predicting the next token genuinely requires having inferred, from the tokens generated so far, which style this particular sentence is.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=81703c35">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">SPECIAL</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'&lt;pad&gt;'</span><span class="p">,</span> <span class="s1">'&lt;bos&gt;'</span><span class="p">,</span> <span class="s1">'&lt;eos&gt;'</span><span class="p">]</span>
+<span class="n">WORDS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'a'</span><span class="p">,</span> <span class="s1">'photo'</span><span class="p">,</span> <span class="s1">'of'</span><span class="p">,</span> <span class="s1">'in'</span><span class="p">,</span> <span class="s1">'the'</span><span class="p">,</span> <span class="s1">'large'</span><span class="p">,</span> <span class="s1">'small'</span><span class="p">,</span> <span class="s1">'plus'</span><span class="p">,</span> <span class="s1">'circle'</span><span class="p">]</span>
+<span class="n">VOCAB</span> <span class="o">=</span> <span class="n">SPECIAL</span> <span class="o">+</span> <span class="n">WORDS</span>
+<span class="n">W2ID</span> <span class="o">=</span> <span class="p">{</span><span class="n">w</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">VOCAB</span><span class="p">)}</span>
+
+<span class="n">SIZES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'large'</span><span class="p">,</span> <span class="s1">'small'</span><span class="p">]</span>
+<span class="n">SHAPES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'plus'</span><span class="p">,</span> <span class="s1">'circle'</span><span class="p">]</span>
+<span class="n">MAX_LEN</span> <span class="o">=</span> <span class="mi">9</span>  <span class="c1"># &lt;bos&gt; + up to 6 words + &lt;eos&gt;, with a little slack</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">caption_words</span><span class="p">(</span><span class="n">style</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">style</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">'a'</span><span class="p">,</span> <span class="s1">'photo'</span><span class="p">,</span> <span class="s1">'of'</span><span class="p">,</span> <span class="s1">'a'</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">shape</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">'a'</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="s1">'in'</span><span class="p">,</span> <span class="s1">'the'</span><span class="p">,</span> <span class="s1">'photo'</span><span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tokenize</span><span class="p">(</span><span class="n">words</span><span class="p">):</span>
+    <span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">W2ID</span><span class="p">[</span><span class="s1">'&lt;bos&gt;'</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span><span class="n">W2ID</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">words</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">W2ID</span><span class="p">[</span><span class="s1">'&lt;eos&gt;'</span><span class="p">]]</span>
+    <span class="n">ids</span> <span class="o">=</span> <span class="n">ids</span> <span class="o">+</span> <span class="p">[</span><span class="n">W2ID</span><span class="p">[</span><span class="s1">'&lt;pad&gt;'</span><span class="p">]]</span> <span class="o">*</span> <span class="p">(</span><span class="n">MAX_LEN</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">ids</span><span class="p">[:</span><span class="n">MAX_LEN</span><span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">make_dataset</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="n">seqs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">size</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">SIZES</span><span class="p">),</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">SHAPES</span><span class="p">)</span>
+        <span class="n">seqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tokenize</span><span class="p">(</span><span class="n">caption_words</span><span class="p">(</span><span class="n">style</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">shape</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">seqs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">N</span> <span class="o">=</span> <span class="mi">800</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">make_dataset</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">split</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">0.85</span> <span class="o">*</span> <span class="n">N</span><span class="p">)</span>
+<span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="n">split</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="n">split</span><span class="p">:]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">VOCAB</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">train</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">t</span> <span class="o">!=</span> <span class="n">W2ID</span><span class="p">[</span><span class="s1">'&lt;pad&gt;'</span><span class="p">]]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">words</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>&lt;bos&gt; a small circle in the photo &lt;eos&gt;
+&lt;bos&gt; a photo of a large plus &lt;eos&gt;
+&lt;bos&gt; a photo of a large plus &lt;eos&gt;
+&lt;bos&gt; a small circle in the photo &lt;eos&gt;
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=712de3bb"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="A-decoder-only-block:-an-encoder-block-plus-one-mask">A decoder-only block: an encoder block plus one mask<a class="anchor-link" href="#A-decoder-only-block:-an-encoder-block-plus-one-mask">¶</a></h2><p>Lesson 46's encoder block applies multi-head self-attention, where every token can see every other token — including ones "after" it in the sequence. A decoder-only block changes exactly one thing: a <strong>causal mask</strong> on that same self-attention, so token $t$ can only attend to tokens $1, \ldots, t$, never anything later. Nothing else about the block changes — no cross-attention, no second set of tokens, no separate encoder feeding it anything. That one mask is the entire architectural difference between "this block looks at a whole sequence at once" and "this block can only generate a sequence one token at a time, each new token conditioned on everything generated so far and nothing else."</p>
+<p>The explicit query/key/value projections below (rather than <code>nn.MultiheadAttention</code>) exist for the same reason Lesson 59 will use them: generating one token at a time can either recompute self-attention over the whole growing sequence at every step, or <strong>cache</strong> the keys and values already computed for earlier tokens and only do the work for the new one — explored below in its simplest possible setting, since there's no cross-attention memory to complicate it here.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=70485448">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">positional_encoding</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">D</span><span class="p">):</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">D</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+    <span class="n">angle_rates</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mi">10000</span> <span class="o">**</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">D</span><span class="p">))</span>
+    <span class="n">angles</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">*</span> <span class="n">angle_rates</span>
+    <span class="n">pe</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+    <span class="n">pe</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angles</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">pe</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angles</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">pe</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">GPTBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Causal self-attention only -- no cross-attention, no separate encoder anywhere.</span>
+<span class="sd">    Explicit Q/K/V projections so generation can cache keys/values (see below)."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">n_heads</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">max_len</span><span class="o">=</span><span class="n">MAX_LEN</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_heads</span> <span class="o">=</span> <span class="n">dim</span><span class="p">,</span> <span class="n">n_heads</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tok_embed</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">padding_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pos_embed</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">max_len</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_proj</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">);</span> <span class="bp">self</span><span class="o">.</span><span class="n">k_proj</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">);</span> <span class="bp">self</span><span class="o">.</span><span class="n">v_proj</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_proj</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ff</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">dim</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">GELU</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ln1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">dim</span><span class="p">);</span> <span class="bp">self</span><span class="o">.</span><span class="n">ln2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lm_head</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_causal_self_attn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">causal_offset</span><span class="p">):</span>
+        <span class="n">B</span><span class="p">,</span> <span class="n">Tq</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">Tk</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">H</span><span class="p">,</span> <span class="n">hd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_heads</span><span class="p">,</span> <span class="n">D</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_heads</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">Tq</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">hd</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">Tk</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">hd</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">Tk</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">hd</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="p">(</span><span class="n">q</span> <span class="o">@</span> <span class="n">k</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="n">hd</span> <span class="o">**</span> <span class="mf">0.5</span>
+        <span class="c1"># query position i (offset by however many earlier tokens are already cached) may</span>
+        <span class="c1"># attend to key position j only if j &lt;= i -- the causal mask, and the ONLY thing</span>
+        <span class="c1"># distinguishing this block from Lesson 46's encoder block.</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">Tq</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">causal_offset</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">Tk</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">scores</span><span class="o">.</span><span class="n">masked_fill</span><span class="p">(</span><span class="n">j</span> <span class="o">&gt;</span> <span class="n">i</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s1">'-inf'</span><span class="p">))</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">scores</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">weights</span> <span class="o">@</span> <span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">Tq</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokens_in</span><span class="p">,</span> <span class="n">past_kv</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""past_kv=None recomputes everything from scratch (used for training, and as the</span>
+<span class="sd">        'naive' generation baseline). Passing a (k, v) tuple from an earlier call appends</span>
+<span class="sd">        only the new token's key/value instead of recomputing the whole prefix -- the</span>
+<span class="sd">        actual KV cache."""</span>
+        <span class="n">B</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">tokens_in</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">start_pos</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">past_kv</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">past_kv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start_pos</span><span class="p">,</span> <span class="n">start_pos</span> <span class="o">+</span> <span class="n">T</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_embed</span><span class="p">(</span><span class="n">tokens_in</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_embed</span><span class="p">(</span><span class="n">pos</span><span class="p">)[</span><span class="kc">None</span><span class="p">]</span>
+        <span class="n">k_new</span><span class="p">,</span> <span class="n">v_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">k_proj</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">v_proj</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">past_kv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">past_kv</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">k_new</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">past_kv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">v_new</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">k_new</span><span class="p">,</span> <span class="n">v_new</span>
+        <span class="n">attn_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_causal_self_attn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_proj</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">causal_offset</span><span class="o">=</span><span class="n">start_pos</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ln1</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_proj</span><span class="p">(</span><span class="n">attn_out</span><span class="p">))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ln2</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ff</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lm_head</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">GPTBlock</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">VOCAB</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.003</span><span class="p">)</span>
+<span class="n">Tt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">800</span><span class="p">):</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">n</span><span class="p">)[:</span><span class="mi">128</span><span class="p">]</span>
+    <span class="n">batch</span> <span class="o">=</span> <span class="n">Tt</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="n">dec_in</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">batch</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>  <span class="c1"># teacher forcing: predict each next word from the true prefix</span>
+    <span class="n">logits</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">dec_in</span><span class="p">)</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">logits</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">logits</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">target</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">ignore_index</span><span class="o">=</span><span class="n">W2ID</span><span class="p">[</span><span class="s1">'&lt;pad&gt;'</span><span class="p">])</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'final training loss: </span><span class="si">{</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>final training loss: 0.2976
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=c4c3e3ea"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Generating,-one-token-at-a-time">Generating, one token at a time<a class="anchor-link" href="#Generating,-one-token-at-a-time">¶</a></h2><p>Start from just <code>&lt;bos&gt;</code>, feed it through the block, take the most likely next word, append it, and repeat — <strong>greedy decoding</strong>. The <code>use_cache</code> flag switches between recomputing the whole sequence from scratch at every step versus reusing cached keys/values and only processing the newest token. Both must produce identical output, since caching only changes <em>how much gets recomputed</em>, never <em>what</em> gets computed — checked explicitly below before trusting anything built on top of it.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=078931b9">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">generate</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">use_cache</span><span class="p">):</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">B</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">W2ID</span><span class="p">[</span><span class="s1">'&lt;bos&gt;'</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+    <span class="n">past_kv</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">MAX_LEN</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">use_cache</span><span class="p">:</span>
+            <span class="n">logits</span><span class="p">,</span> <span class="n">past_kv</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">tokens</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:],</span> <span class="n">past_kv</span><span class="o">=</span><span class="n">past_kv</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logits</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="n">past_kv</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">logits</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">next_tok</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">tokens</span><span class="p">,</span> <span class="n">next_tok</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tokens</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">trim_at_eos</span><span class="p">(</span><span class="n">seq</span><span class="p">):</span>
+    <span class="n">seq</span> <span class="o">=</span> <span class="n">seq</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">seq</span><span class="p">[:</span><span class="n">seq</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">W2ID</span><span class="p">[</span><span class="s1">'&lt;eos&gt;'</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">W2ID</span><span class="p">[</span><span class="s1">'&lt;eos&gt;'</span><span class="p">]</span> <span class="ow">in</span> <span class="n">seq</span> <span class="k">else</span> <span class="n">seq</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">is_valid_caption</span><span class="p">(</span><span class="n">words</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">words</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">caption_words</span><span class="p">(</span><span class="n">style</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">shape</span><span class="p">))</span> <span class="o">==</span> <span class="n">s</span>
+               <span class="k">for</span> <span class="n">style</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">SIZES</span> <span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="n">SHAPES</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">gen_cached</span> <span class="o">=</span> <span class="n">generate</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">gen_uncached</span> <span class="o">=</span> <span class="n">generate</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="n">use_cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">match_rate</span> <span class="o">=</span> <span class="p">(</span><span class="n">gen_cached</span> <span class="o">==</span> <span class="n">gen_uncached</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'cached vs. uncached generation, token-for-token agreement: </span><span class="si">{</span><span class="n">match_rate</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1"> (should be 1.0000)'</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'greedy decoding from &lt;bos&gt; alone, 3 runs:'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">VOCAB</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trim_at_eos</span><span class="p">(</span><span class="n">gen_cached</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">W2ID</span><span class="p">[</span><span class="s1">'&lt;bos&gt;'</span><span class="p">],</span> <span class="n">W2ID</span><span class="p">[</span><span class="s1">'&lt;eos&gt;'</span><span class="p">],</span> <span class="n">W2ID</span><span class="p">[</span><span class="s1">'&lt;pad&gt;'</span><span class="p">])]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">' '</span><span class="p">,</span> <span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">words</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>cached vs. uncached generation, token-for-token agreement: 1.0000 (should be 1.0000)
+greedy decoding from &lt;bos&gt; alone, 3 runs:
+  a photo of a small plus
+  a photo of a small plus
+  a photo of a small plus
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=cf33a0cb"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Greedy-decoding-hides-what-the-model-actually-learned">Greedy decoding hides what the model actually learned<a class="anchor-link" href="#Greedy-decoding-hides-what-the-model-actually-learned">¶</a></h2><p>Every greedy run above produces the <em>exact same</em> sentence — not a bug, but a direct consequence of always picking the single most-likely next word: starting from the same <code>&lt;bos&gt;</code>, that choice is deterministic at every step. That makes greedy decoding a poor way to check whether the model learned the <em>whole</em> grammar (both styles, both sizes, both shapes) rather than just memorizing whichever single sequence happens to be most probable overall. <strong>Sampling</strong> — drawing the next token from the predicted probability distribution instead of always taking its argmax — reveals the difference.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=1dc9e9eb">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">generate_sampled</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Generator</span><span class="p">()</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">B</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">W2ID</span><span class="p">[</span><span class="s1">'&lt;bos&gt;'</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+    <span class="n">past_kv</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">MAX_LEN</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">logits</span><span class="p">,</span> <span class="n">past_kv</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">tokens</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:],</span> <span class="n">past_kv</span><span class="o">=</span><span class="n">past_kv</span><span class="p">)</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">/</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">next_tok</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="n">g</span><span class="p">)</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">tokens</span><span class="p">,</span> <span class="n">next_tok</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tokens</span>
+
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">sampled</span> <span class="o">=</span> <span class="n">generate_sampled</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">valid</span><span class="p">,</span> <span class="n">unique</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">VOCAB</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trim_at_eos</span><span class="p">(</span><span class="n">sampled</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">W2ID</span><span class="p">[</span><span class="s1">'&lt;bos&gt;'</span><span class="p">],</span> <span class="n">W2ID</span><span class="p">[</span><span class="s1">'&lt;eos&gt;'</span><span class="p">],</span> <span class="n">W2ID</span><span class="p">[</span><span class="s1">'&lt;pad&gt;'</span><span class="p">])]</span>
+        <span class="n">unique</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">words</span><span class="p">))</span>
+        <span class="n">valid</span> <span class="o">+=</span> <span class="n">is_valid_caption</span><span class="p">(</span><span class="n">words</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">words</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'valid captions: </span><span class="si">{</span><span class="n">valid</span><span class="si">}</span><span class="s1">/20, unique sentences seen: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">unique</span><span class="p">)</span><span class="si">}</span><span class="s1">/8 possible'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>a photo of a small circle
+a large circle in the photo
+a small plus in the photo
+a small circle in the photo
+a small plus in the photo
+a photo of a large plus
+valid captions: 20/20, unique sentences seen: 7/8 possible
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=719a0d80"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Conditioning,-without-any-cross-attention">Conditioning, without any cross-attention<a class="anchor-link" href="#Conditioning,-without-any-cross-attention">¶</a></h2><p>How does a decoder-only model get "told" what to talk about, if it has no cross-attention and no separate encoder to feed it anything? The only mechanism available is the one already built: feed it a different <em>prompt</em> — a different starting sequence of tokens — and let the same causal self-attention continue from there. Since style 0 ("a photo of...") and style 1 ("a <code>&lt;size&gt;</code> <code>&lt;shape&gt;</code>...") diverge at the second token, prompting with <code>"a photo"</code> versus <code>"a small"</code> should steer generation into the matching style, purely because the model has learned which continuations are likely after each prefix — exactly the mechanism real chatbots use to follow a prompt, with no architecture beyond what's already here.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=3d4c281d">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">generate_from_prompt</span><span class="p">(</span><span class="n">prompt_words</span><span class="p">):</span>
+    <span class="n">prompt_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">W2ID</span><span class="p">[</span><span class="s1">'&lt;bos&gt;'</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span><span class="n">W2ID</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">prompt_words</span><span class="p">]</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">prompt_ids</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+    <span class="n">logits</span><span class="p">,</span> <span class="n">past_kv</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">tokens</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">past_kv</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># prime the cache with the prompt</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">MAX_LEN</span> <span class="o">-</span> <span class="n">tokens</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">logits</span><span class="p">,</span> <span class="n">past_kv</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">tokens</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:],</span> <span class="n">past_kv</span><span class="o">=</span><span class="n">past_kv</span><span class="p">)</span>
+        <span class="n">next_tok</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">tokens</span><span class="p">,</span> <span class="n">next_tok</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">prompt</span> <span class="ow">in</span> <span class="p">[[</span><span class="s1">'a'</span><span class="p">,</span> <span class="s1">'photo'</span><span class="p">],</span> <span class="p">[</span><span class="s1">'a'</span><span class="p">,</span> <span class="s1">'small'</span><span class="p">],</span> <span class="p">[</span><span class="s1">'a'</span><span class="p">,</span> <span class="s1">'large'</span><span class="p">]]:</span>
+        <span class="n">gen</span> <span class="o">=</span> <span class="n">generate_from_prompt</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">VOCAB</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trim_at_eos</span><span class="p">(</span><span class="n">gen</span><span class="p">)</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">W2ID</span><span class="p">[</span><span class="s1">'&lt;bos&gt;'</span><span class="p">],</span> <span class="n">W2ID</span><span class="p">[</span><span class="s1">'&lt;eos&gt;'</span><span class="p">],</span> <span class="n">W2ID</span><span class="p">[</span><span class="s1">'&lt;pad&gt;'</span><span class="p">])]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'prompt </span><span class="si">{</span><span class="n">prompt</span><span class="si">!r:</span><span class="s1">&lt;22</span><span class="si">}</span><span class="s1"> -&gt; </span><span class="si">{</span><span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">words</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>prompt ['a', 'photo']         -&gt; a photo of a small plus
+prompt ['a', 'small']         -&gt; a small circle in the photo
+prompt ['a', 'large']         -&gt; a large plus in the photo
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=0f7aca7b"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Measuring-the-KV-cache's-actual-speedup">Measuring the KV cache's actual speedup<a class="anchor-link" href="#Measuring-the-KV-cache's-actual-speedup">¶</a></h2><p>Recomputing self-attention from scratch at generation step $t$ costs $O(t)$ work; doing that at every step from $1$ to $T$ costs $O(T^2)$ in total. Caching makes every step cost $O(1)$ new work (just the newest token's attention against the growing cache), for $O(T)$ total — the whole reason real LLMs can generate long outputs without generation cost exploding quadratically with length. This is the cleanest possible setting to measure that in: no cross-attention memory, no image encoder, nothing but the causal self-attention itself.</p>
+<p>At this lesson's toy scale, most of the wall-clock time is Python/PyTorch call overhead rather than attention FLOPs, so a large batch and several repeats are needed to see the effect above that noise floor — exactly the regime (long sequences, large batches) where KV caching earns its keep in real deployments too.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=ef8ddaaa">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">BATCH</span><span class="p">,</span> <span class="n">REPEATS</span> <span class="o">=</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">6</span>
+
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">generate</span><span class="p">(</span><span class="n">BATCH</span><span class="p">,</span> <span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>   <span class="c1"># warm up (lazy initialization, etc.)</span>
+    <span class="n">generate</span><span class="p">(</span><span class="n">BATCH</span><span class="p">,</span> <span class="n">use_cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">REPEATS</span><span class="p">):</span>
+        <span class="n">generate</span><span class="p">(</span><span class="n">BATCH</span><span class="p">,</span> <span class="n">use_cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">t_uncached</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">REPEATS</span><span class="p">):</span>
+        <span class="n">generate</span><span class="p">(</span><span class="n">BATCH</span><span class="p">,</span> <span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">t_cached</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'uncached (full recompute every step): </span><span class="si">{</span><span class="n">t_uncached</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s1">.0f</span><span class="si">}</span><span class="s1"> ms total, </span><span class="si">{</span><span class="n">REPEATS</span><span class="si">}</span><span class="s1"> generations of a batch of </span><span class="si">{</span><span class="n">BATCH</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'cached (KV cache):                    </span><span class="si">{</span><span class="n">t_cached</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="si">:</span><span class="s1">.0f</span><span class="si">}</span><span class="s1"> ms total'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'speedup: </span><span class="si">{</span><span class="n">t_uncached</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">t_cached</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">x'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>uncached (full recompute every step): 67 ms total, 6 generations of a batch of 512
+cached (KV cache):                    36 ms total
+speedup: 1.88x
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=2045db7b"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Self-attention-vs.-cross-attention">Self-attention vs. cross-attention<a class="anchor-link" href="#Self-attention-vs.-cross-attention">¶</a></h2><p>Every attention computation this lesson has built and run so far is self-attention — look back at <code>GPTBlock</code>: one set of tokens, used as the queries, the keys, <em>and</em> the values, all at once. This course has used the word "self-attention" informally in passing since Lesson 50 (and "cross-attention" once, in Lesson 57's aside about SAM 3's real decoder), but never actually defined either term.</p>
+<p><strong>Self-attention</strong>: a block's queries, keys, <em>and</em> values are all computed from the <em>same</em> set of tokens. The sequence attends to itself — exactly what <code>GPTBlock</code> does above.</p>
+<p><strong>Cross-attention</strong>: the queries come from one set of tokens; the keys and values come from a <em>different</em> set, usually produced by something else entirely (a separate encoder).</p>
+<p>That's the whole distinction — and notice it says nothing about how many modalities are involved. It's tempting to assume "self-attention is what happens within one image, cross-attention is what happens across modalities or frames," but that's not the rule, and one of this course's own lessons is proof: Lesson 55's CLIP is thoroughly multimodal — an image tower and a text tower — yet the two towers never interact inside any attention layer at all; each self-attends only within its own modality, and they're compared only afterward, with a plain dot product. There is no cross-attention anywhere in CLIP.</p>
+<p>Lesson 59, next, builds this course's first genuine example of true cross-attention: a separate image+question encoder produces a representation, and a decoder's queries attend <em>into</em> that separate representation at every generation step.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=dfab8b1b"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Encoder-only-vs.-decoder-only">Encoder-only vs. decoder-only<a class="anchor-link" href="#Encoder-only-vs.-decoder-only">¶</a></h2><table>
+<thead>
+<tr>
+<th>Model family</th>
+<th>What it does</th>
+<th>Generates autoregressively?</th>
+<th>Built in this course</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Encoder-only</strong></td>
+<td>Maps an input to a fixed representation (an embedding, or per-token features) and stops. Bidirectional self-attention — every token can see every other token, including ones "after" it.</td>
+<td>No</td>
+<td>Every Transformer block built in this course before this lesson: Lesson 47's ViT, Lesson 53's image encoder, Lesson 55's CLIP, Lesson 51's DINO, and more.</td>
+</tr>
+<tr>
+<td><strong>Decoder-only</strong></td>
+<td>A single causal stream, no separate encoder, no cross-attention anywhere. Everything — a prompt and whatever gets generated after it — is just more tokens in one sequence, each attending only backward.</td>
+<td>Yes</td>
+<td>This lesson's <code>GPTBlock</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>A third family, <strong>encoder-decoder</strong> — a separate encoder plus a decoder that cross-attends back into it — is Lesson 59's job next, once a genuine cross-attention mechanism actually exists to put in the table.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=7e64efa9"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Real-decoder-only-LLMs-and-VLMs">Real decoder-only LLMs and VLMs<a class="anchor-link" href="#Real-decoder-only-LLMs-and-VLMs">¶</a></h2><p>This exact recipe — causal self-attention, a growing context, next-token prediction, scaled up enormously — is the GPT family (<a href="../references.html#radford-2019-gpt2">Radford et al., 2019</a>) and most of today's large language models. It's not just a text-only design, either: many modern multimodal LLMs (LLaVA-style) are decoder-only too, prepending image patch embeddings as extra tokens onto the front of the causal sequence and running ordinary self-attention over the whole mixed sequence jointly — no cross-attention block anywhere, just a longer sequence with two kinds of tokens in it. That's a real, different architectural choice from the encoder-decoder captioning design Lesson 59 builds next — both exist in production systems today, and now there's a concrete example of each to compare.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=c581f4b7"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Exercises">Exercises<a class="anchor-link" href="#Exercises">¶</a></h3><ol>
+<li>Drop the causal mask entirely in <code>_causal_self_attn</code> (let every query attend to every key, matching Lesson 46's encoder exactly) and retrain. Can this version still be used for autoregressive generation at all — and if you try anyway, what goes wrong?</li>
+<li>Raise <code>temperature</code> in <code>generate_sampled</code> from 0.8 to 2.0, and separately lower it to 0.3. How does <code>valid</code>/20 change in each direction, and why does a very high temperature eventually break the model's grasp of the grammar, while a very low one pushes sampling back toward greedy's single deterministic answer?</li>
+<li>The KV-cache benchmark above used <code>MAX_LEN=9</code> and a batch of 512. Predict, then check, how the measured speedup changes if you (a) grow <code>MAX_LEN</code> substantially (e.g. lengthen the toy sentences), and (b) shrink the batch back down to 8. Does the direction of each change match the $O(T^2)$ vs. $O(T)$ argument above?</li>
+</ol>
+</div>
+</div>
+</div>
+
+
+        <div class="lesson-nav">
+            <div class="lesson-nav-prev"><a href="lesson57_open_vocabulary_segmentation.html">&larr; Lesson 57: Open-Vocabulary Segmentation</a></div>
+            <div class="lesson-nav-next"><a href="lesson59_visual_question_answering.html">Lesson 59: Visual Question Answering (VQA) &rarr;</a></div>
+        </div>
+    </div>
+</body>
+</html>
