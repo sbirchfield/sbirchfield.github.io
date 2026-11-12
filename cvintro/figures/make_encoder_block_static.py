@@ -4,10 +4,11 @@ diagram (Vaswani et al., 2017), matching the lesson 46 notebook's own
 each wrapped in its own residual connection (Lesson 37) and layer norm
 (normalizing across the feature dimension per token, not across the batch).
 
-Drawn as a single vertical pipeline -- input at the bottom, output at the
-top, matching how the diagram is usually drawn in the literature -- with the
-two residual connections shown as curved arrows that skip around their
-sub-layer and rejoin at the "+" just before each LayerNorm.
+Drawn as a single vertical pipeline -- input at the top, output at the
+bottom, reading top to bottom like the course's other static diagrams
+(e.g. lesson 47's vit_architecture_diagram.png) -- with the two residual
+connections shown as curved arrows that skip around their sub-layer and
+rejoin at the "+" just before each LayerNorm.
 
 Run from anywhere:
     python make_encoder_block_static.py
@@ -112,6 +113,7 @@ ax.text(x + W_MAIN / 2 + 1.25, (y_norm1 + H_MAIN / 2 + y_sum2) / 2, "residual", 
 
 ax.set_xlim(x - W_MAIN / 2 - 0.6, x + W_MAIN / 2 + 2.1)
 ax.set_ylim(y_in - 0.6, y_out + 0.6)
+ax.invert_yaxis()  # input at top, output at bottom -- read top to bottom
 ax.axis("off")
 fig.suptitle("The Transformer encoder block", fontsize=14, color=TEXT_COLOR,
              fontweight="bold", y=0.975)
